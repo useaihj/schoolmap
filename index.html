@@ -944,7 +944,7 @@
         <div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="${bc};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">${s.type}</span>
-            <span style="font-size:12px;color:#9CA3AF">${s.district} · ${s.founding_type || ''}</span>
+            <span style="font-size:12px;color:#9CA3AF">${s.district}</span>
           </div>
           <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px">${s.name}</div>
         </div>
@@ -961,6 +961,7 @@
     let scrollHtml = `
       <div style="margin-bottom:16px">
         <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
+        ${infoRow('설립', s.founding_type)}
         ${infoRow('공학', s.coedu)}
         ${infoRow('고교유형', s.hs_category)}
         ${infoRow('개교', foundedStr)}
