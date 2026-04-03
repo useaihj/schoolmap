@@ -248,27 +248,6 @@
       z-index: 999 !important;
     }
 
-    /* 이 지역 검색 버튼 */
-    .search-area-btn {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      padding: 9px 20px;
-      background: #111827;
-      color: #fff;
-      border: none;
-      border-radius: 24px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-      display: none;
-      transition: all 0.2s ease;
-    }
-    .search-area-btn:hover { background: #1F2937; transform: translateX(-50%) scale(1.03); }
 
     /* 클러스터 */
     .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
@@ -503,7 +482,6 @@
     <div class="school-list" id="schoolList"></div>
   </div>
   <div id="map"></div>
-  <button class="search-area-btn" id="searchAreaBtn">이 지역에서 검색</button>
   <!-- 모바일 바텀 시트 -->
   <div class="sheet-overlay" id="sheetOverlay"></div>
   <div class="bottom-sheet" id="bottomSheet">
@@ -557,8 +535,6 @@
   let currentDistrict = 'all';
   let currentSearch = '';
   let currentSort = 'name';
-  let boundsFilter = null;
-  let userMovedMap = false;
   let compareList = [];
   let districtGeoData = null;
   let districtLayer = null;
@@ -660,7 +636,6 @@
       if (currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
       if (currentSearch && !s.name.includes(currentSearch)) return false;
-      if (boundsFilter && !boundsFilter.contains(L.latLng(s.lat, s.lng))) return false;
       return true;
     });
 
@@ -1086,11 +1061,9 @@
     currentDistrict = 'all';
     currentSearch = '';
     currentSort = 'name';
-    boundsFilter = null;
     document.getElementById('searchInput').value = '';
     document.getElementById('districtSelect').value = 'all';
     document.getElementById('sortSelect').value = 'name';
-    searchAreaBtn.style.display = 'none';
     showDistrictBoundary('all');
     clearSchoolZone();
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1099,29 +1072,10 @@
   }
   window._resetFilters = resetFilters;
 
-  // "이 지역에서 검색" 기능
-  const searchAreaBtn = document.getElementById('searchAreaBtn');
-
-  map.on('moveend', function() {
-    if (userMovedMap) {
-      searchAreaBtn.style.display = 'block';
-    }
-  });
-  map.on('movestart', function() {
-    userMovedMap = true;
-  });
-
-  searchAreaBtn.addEventListener('click', function() {
-    boundsFilter = map.getBounds();
-    searchAreaBtn.style.display = 'none';
-    userMovedMap = false;
-    applyFilters(true);
-  });
 
   // 이벤트: 검색
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
-    boundsFilter = null;
     applyFilters();
   });
 
@@ -1133,8 +1087,6 @@
       const type = this.dataset.type;
       document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.add('active'));
       currentType = type;
-      boundsFilter = null;
-      searchAreaBtn.style.display = 'none';
       clearSchoolZone();
       applyFilters();
     });
@@ -1155,8 +1107,6 @@
   // 이벤트: 구/군 필터
   document.getElementById('districtSelect').addEventListener('change', function() {
     currentDistrict = this.value;
-    boundsFilter = null;
-    searchAreaBtn.style.display = 'none';
     clearSchoolZone();
     showDistrictBoundary(this.value);
     applyFilters();
