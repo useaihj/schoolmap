@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=5&ATPT_OFCDC_SC_CODE=H10\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(json.dumps\\(data, indent=2, ensure_ascii=False\\)\\)\")",
+      "WebFetch(domain:open.neis.go.kr)",
+      "WebSearch",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=3\")",
+      "WebFetch(domain:www.data.go.kr)",
+      "WebFetch(domain:pythonkorea.com)",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=1&SCHUL_NM=%EC%9A%B8%EC%82%B0\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); rows=data['schoolInfo'][1]['row']; [print\\(r['ATPT_OFCDC_SC_CODE'], r['ATPT_OFCDC_SC_NM'], r['SCHUL_NM'], r['LCTN_SC_NM']\\) for r in rows]\")",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=3&ATPT_OFCDC_SC_CODE=H10\")",
+      "Bash(python3 -c \" import sys,json data=json.load\\(sys.stdin\\) if 'schoolInfo' in data: rows=data['schoolInfo'][1]['row'] for r in rows: print\\(json.dumps\\(r, indent=2, ensure_ascii=False\\)\\) print\\('---'\\) print\\('Total:', data['schoolInfo'][0]['head'][0]['list_total_count']\\) else: print\\(json.dumps\\(data, indent=2, ensure_ascii=False\\)\\) \")",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=2&ATPT_OFCDC_SC_CODE=H10\" --connect-timeout 10)",
+      "WebFetch(domain:www.schoolinfo.go.kr)",
+      "Bash(curl -s \"http://api.data.go.kr/openapi/tn_pubr_public_elesch_mskul_lc_api?type=json&numOfRows=2&pageNo=1&siDoEdOrgCode=H10\" --connect-timeout 10)",
+      "WebFetch(domain:www.gimi9.com)",
+      "Bash(curl -v \"http://api.data.go.kr/openapi/tn_pubr_public_elesch_mskul_lc_api?type=json&numOfRows=2&pageNo=1\" --connect-timeout 10)",
+      "Bash(curl -sL \"https://api.data.go.kr/openapi/tn_pubr_public_elesch_mskul_lc_api?type=json&numOfRows=2&pageNo=1\" --connect-timeout 10)",
+      "WebFetch(domain:schoolzone.emac.kr)",
+      "Bash(curl -sL \"https://api.data.go.kr/openapi/tn_pubr_public_elesch_mskul_lc_api?serviceKey=test&type=json&numOfRows=2&pageNo=1\" --connect-timeout 10)",
+      "WebFetch(domain:www.career.go.kr)",
+      "Bash(curl -s \"https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=1&ATPT_OFCDC_SC_CODE=H10\" --connect-timeout 10)",
+      "Bash(python3 -c \" import sys,json data=json.load\\(sys.stdin\\) head = data['schoolInfo'][0]['head'] print\\('Total Ulsan schools in NEIS:', head[0]['list_total_count']\\) print\\('Status:', head[1]['RESULT']['MESSAGE']\\) \")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\('Total Ulsan schools:', data['schoolInfo'][0]['head'][0]['list_total_count']\\)\")",
+      "WebFetch(domain:overpass-api.de)",
+      "Bash(curl --version)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(NEIS_API_KEY=da91bcfa94094f77a959d95136658d06 python:*)",
+      "WebFetch(domain:blog.koderpark.dev)",
+      "WebFetch(domain:velog.io)",
+      "WebFetch(domain:www.npmjs.com)"
+    ]
+  }
+}

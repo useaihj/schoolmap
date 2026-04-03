@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모바일 바텀시트 목업</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#1a1a2e; display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:-apple-system,'Inter',sans-serif; }
+
+  .phone-frame {
+    width:375px; height:812px;
+    background:#000; border-radius:44px;
+    padding:12px; position:relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .phone-screen {
+    width:100%; height:100%;
+    background:#fff; border-radius:34px;
+    overflow:hidden; position:relative;
+    display:flex; flex-direction:column;
+  }
+
+  /* 상태바 */
+  .status-bar {
+    height:44px; background:#fff; display:flex;
+    align-items:flex-end; justify-content:space-between;
+    padding:0 28px 6px; font-size:12px; font-weight:600;
+    flex-shrink:0; z-index:20; position:relative;
+  }
+
+  /* 앱 헤더 */
+  .app-header {
+    height:44px; background:#fff; display:flex;
+    align-items:center; justify-content:space-between;
+    padding:0 14px; border-bottom:1px solid #E5E7EB;
+    flex-shrink:0; z-index:20; position:relative;
+  }
+  .app-header h1 { font-size:15px; font-weight:700; color:#111; display:flex; align-items:center; gap:6px; }
+  .app-header .btn { padding:4px 10px; background:#F3F4F6; border-radius:6px; font-size:11px; color:#374151; font-weight:500; }
+
+  /* 필터칩 */
+  .filter-chips {
+    display:flex; gap:6px; padding:8px 14px;
+    border-bottom:1px solid #E5E7EB;
+    flex-shrink:0; z-index:20; position:relative; background:#fff;
+  }
+  .chip {
+    padding:5px 12px; border-radius:16px; font-size:12px; font-weight:500;
+    border:1px solid #E5E7EB; color:#6B7280; white-space:nowrap;
+  }
+  .chip.active { background:#111; color:#fff; border-color:#111; }
+
+  /* 지도 영역 */
+  .map-area {
+    flex:1; background:linear-gradient(145deg,#dce8d0 0%,#c9dcb8 30%,#d5e4c5 60%,#cddfc0 100%);
+    position:relative; min-height:0;
+  }
+  .map-area::before {
+    content:''; position:absolute; inset:0;
+    background:
+      linear-gradient(90deg, rgba(200,200,200,0.15) 1px, transparent 1px),
+      linear-gradient(rgba(200,200,200,0.15) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* 마커 */
+  .marker {
+    position:absolute; padding:3px 10px; border-radius:12px;
+    font-size:10px; font-weight:600; color:#fff;
+    border:2px solid rgba(255,255,255,0.9);
+    box-shadow:0 2px 6px rgba(0,0,0,0.25);
+    cursor:pointer; transition:all 0.2s; z-index:2;
+    user-select:none;
+  }
+  .marker:hover { transform:scale(1.05); }
+  .marker.elem { background:#059669; }
+  .marker.mid { background:#2563EB; }
+  .marker.high { background:#EA580C; }
+  .marker.selected {
+    box-shadow:0 0 0 3px rgba(5,150,105,0.4), 0 2px 8px rgba(0,0,0,0.3);
+    transform:scale(1.1);
+  }
+
+  /* 도로 */
+  .road {
+    position:absolute; background:rgba(255,255,255,0.5);
+  }
+
+  /* 오버레이 */
+  .overlay {
+    position:absolute; inset:0; background:rgba(0,0,0,0.15);
+    z-index:3; opacity:0; pointer-events:none;
+    transition:opacity 0.3s;
+  }
+  .overlay.visible { opacity:1; pointer-events:auto; }
+
+  /* 바텀 시트 */
+  .bottom-sheet {
+    position:absolute; bottom:0; left:0; right:0;
+    height:60%; background:#fff;
+    border-radius:16px 16px 0 0;
+    box-shadow:0 -4px 24px rgba(0,0,0,0.15);
+    z-index:10; display:flex; flex-direction:column;
+    transform:translateY(100%);
+    transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bottom-sheet.open { transform:translateY(0); }
+
+  /* 핸들 */
+  .sheet-handle {
+    display:flex; justify-content:center; padding:10px 0 4px; flex-shrink:0;
+  }
+  .sheet-handle div {
+    width:36px; height:4px; background:#D1D5DB; border-radius:2px;
+  }
+
+  /* 시트 헤더 */
+  .sheet-header {
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:4px 18px 12px; flex-shrink:0;
+  }
+  .sheet-header .badge {
+    display:inline-block; padding:2px 8px; border-radius:5px;
+    font-size:10px; font-weight:600;
+  }
+  .badge-elem { background:#ECFDF5; color:#059669; }
+  .badge-mid { background:#EFF6FF; color:#2563EB; }
+  .badge-high { background:#FFF7ED; color:#EA580C; }
+  .sheet-header .meta { font-size:11px; color:#9CA3AF; margin-left:6px; }
+  .sheet-header .name { font-size:17px; font-weight:700; color:#111; letter-spacing:-0.3px; margin-top:3px; }
+  .close-btn {
+    width:28px; height:28px; border-radius:50%; background:#F3F4F6;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:#6B7280; cursor:pointer; flex-shrink:0;
+    border:none; margin-top:2px;
+  }
+  .close-btn:active { background:#E5E7EB; }
+
+  /* 스크롤 영역 */
+  .sheet-scroll {
+    flex:1; overflow-y:auto; padding:0 18px 20px;
+    border-top:1px solid #F3F4F6;
+    -webkit-overflow-scrolling:touch;
+  }
+  .section-label {
+    font-size:10px; font-weight:600; color:#9CA3AF;
+    text-transform:uppercase; letter-spacing:0.5px;
+    margin:14px 0 6px;
+  }
+  .info-row {
+    display:flex; justify-content:space-between; padding:7px 0;
+    border-bottom:1px solid #F3F4F6;
+  }
+  .info-row .label { color:#9CA3AF; font-size:11px; }
+  .info-row .value { color:#374151; font-size:11px; font-weight:500; text-align:right; max-width:200px; }
+  .info-row .link { color:#2563EB; font-size:11px; font-weight:500; text-decoration:none; }
+
+  table { width:100%; font-size:11px; border-collapse:collapse; }
+  table th { padding:5px 6px; border-bottom:1px solid #E5E7EB; font-weight:600; color:#9CA3AF; font-size:10px; text-align:left; }
+  table th:not(:first-child) { text-align:right; }
+  table td { padding:5px 6px; border-bottom:1px solid #F3F4F6; color:#374151; }
+  table td:not(:first-child) { text-align:right; }
+  table tr.total td { font-weight:700; color:#111; border:none; padding-top:7px; }
+  table tr.total td:last-child { color:#2563EB; }
+
+  /* 안내 텍스트 */
+  .hint { text-align:center; padding:24px; color:#9CA3AF; font-size:13px; }
+
+  /* 홈 인디케이터 */
+  .home-indicator {
+    position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+    width:134px; height:5px; background:#000; border-radius:3px; opacity:0.2;
+    z-index:30;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="display:flex;gap:4px;align-items:center">
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M1 9h2v3H1zM5 6h2v6H5zM9 3h2v9H9zM13 0h2v12h-2z" fill="#111"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 12"><rect x="0" y="0" width="22" height="12" rx="2" stroke="#111" stroke-width="1.5" fill="none"/><rect x="23" y="3.5" width="2" height="5" rx="1" fill="#111"/><rect x="2" y="2" width="14" height="8" rx="1" fill="#34D399"/></svg>
+      </span>
+    </div>
+
+    <div class="app-header">
+      <h1>🏫 울산 학교 찾기</h1>
+      <div class="btn">대시보드</div>
+    </div>
+
+    <div class="filter-chips">
+      <div class="chip active">전체 245</div>
+      <div class="chip">초등 124</div>
+      <div class="chip">중학 64</div>
+      <div class="chip">고등 57</div>
+    </div>
+
+    <div class="map-area" id="mapArea">
+      <!-- 도로 -->
+      <div class="road" style="top:45%;left:0;right:0;height:3px"></div>
+      <div class="road" style="top:0;bottom:0;left:55%;width:3px"></div>
+      <div class="road" style="top:25%;left:10%;right:30%;height:2px;transform:rotate(-8deg)"></div>
+
+      <!-- 마커들 -->
+      <div class="marker elem" style="top:18%;left:15%" onclick="openSheet('울산삼산초등학교','초등학교','남구')">울산삼산초</div>
+      <div class="marker mid" style="top:25%;right:18%" onclick="openSheet('울산남부중학교','중학교','남구')">남부중</div>
+      <div class="marker elem selected" style="top:42%;left:35%" id="mainMarker" onclick="openSheet('울산강남초등학교','초등학교','남구')">울산강남초</div>
+      <div class="marker high" style="top:55%;right:22%" onclick="openSheet('울산고등학교','고등학교','중구')">울산고</div>
+      <div class="marker elem" style="top:68%;left:20%" onclick="openSheet('울산옥동초등학교','초등학교','남구')">울산옥동초</div>
+      <div class="marker mid" style="top:72%;right:30%" onclick="openSheet('울산남여중학교','중학교','남구')">남여중</div>
+
+      <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+
+      <!-- 바텀 시트 -->
+      <div class="bottom-sheet" id="sheet">
+        <div class="sheet-handle"><div></div></div>
+        <div class="sheet-header">
+          <div>
+            <div>
+              <span class="badge badge-elem" id="sheetBadge">초등학교</span>
+              <span class="meta" id="sheetMeta">남구 · 공립</span>
+            </div>
+            <div class="name" id="sheetName">울산강남초등학교</div>
+          </div>
+          <button class="close-btn" onclick="closeSheet()">✕</button>
+        </div>
+        <div class="sheet-scroll">
+          <div class="section-label">기본 정보</div>
+          <div class="info-row"><span class="label">공학</span><span class="value">남녀공학</span></div>
+          <div class="info-row"><span class="label">개교</span><span class="value">1990. 3. 1</span></div>
+          <div class="info-row"><span class="label">주소</span><span class="value">울산 남구 삼산로 123 (12345)</span></div>
+          <div class="info-row"><span class="label">전화</span><span class="value">052-123-4567</span></div>
+          <div class="info-row"><span class="label">팩스</span><span class="value">052-123-4568</span></div>
+          <div class="info-row"><span class="label">웹</span><a class="link" href="#">gangnam-e.ulsan.go.kr</a></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+            <div class="section-label" style="margin:0">학생/학급 현황</div>
+            <span style="font-size:9px;color:#D1D5DB">2026년 2월 기준</span>
+          </div>
+          <table style="margin-top:6px">
+            <tr><th>학년</th><th>학급</th><th>학생</th><th>평균</th></tr>
+            <tr><td>1학년</td><td>5</td><td>132</td><td>26.4</td></tr>
+            <tr><td>2학년</td><td>6</td><td>145</td><td>24.2</td></tr>
+            <tr><td>3학년</td><td>6</td><td>151</td><td>25.2</td></tr>
+            <tr><td>4학년</td><td>5</td><td>128</td><td>25.6</td></tr>
+            <tr><td>5학년</td><td>5</td><td>135</td><td>27.0</td></tr>
+            <tr><td>6학년</td><td>5</td><td>132</td><td>26.4</td></tr>
+            <tr class="total"><td>계</td><td>32</td><td>823</td><td>25.7</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <p class="hint" id="hint">마커를 클릭해보세요</p>
+    </div>
+
+    <div class="home-indicator"></div>
+  </div>
+</div>
+
+<script>
+  const sheet = document.getElementById('sheet');
+  const overlay = document.getElementById('overlay');
+  const hint = document.getElementById('hint');
+
+  // 시작 시 자동으로 바텀시트 열기
+  setTimeout(() => openSheet('울산강남초등학교','초등학교','남구'), 800);
+
+  function openSheet(name, type, district) {
+    document.getElementById('sheetName').textContent = name;
+    document.getElementById('sheetMeta').textContent = district + ' · 공립';
+
+    const badge = document.getElementById('sheetBadge');
+    badge.textContent = type;
+    badge.className = 'badge ' + (type==='초등학교'?'badge-elem':type==='중학교'?'badge-mid':'badge-high');
+
+    // 마커 선택 표시
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('selected'));
+    event && event.target && event.target.classList.add('selected');
+
+    sheet.classList.add('open');
+    overlay.classList.add('visible');
+    hint.style.display = 'none';
+  }
+
+  function closeSheet() {
+    sheet.classList.remove('open');
+    overlay.classList.remove('visible');
+    document.querySelectorAll('.marker').forEach(m => m.classList.remove('selected'));
+  }
+</script>
+</body>
+</html>

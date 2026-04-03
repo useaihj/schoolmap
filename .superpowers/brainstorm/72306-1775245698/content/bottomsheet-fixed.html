@@ -1,0 +1,155 @@
+<h2>고정 높이 바텀 시트</h2>
+<p class="subtitle">화면 60% 높이로 고정, 내부 스크롤. 아래로 스와이프 또는 X 버튼으로 닫기.</p>
+
+<div class="mockup">
+  <div class="mockup-header">모바일 화면 (375 x 667)</div>
+  <div class="mockup-body" style="padding:0;height:580px;position:relative;background:#e8e8e8;overflow:hidden;max-width:375px;margin:0 auto">
+
+    <!-- 상단 헤더 -->
+    <div style="background:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB;z-index:10;position:relative">
+      <div style="font-size:15px;font-weight:700;color:#111;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">🏫</span> 울산 학교 찾기
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="padding:4px 10px;background:#F3F4F6;border-radius:6px;font-size:11px;color:#374151">대시보드</div>
+      </div>
+    </div>
+
+    <!-- 지도 영역 (상단 40%) -->
+    <div style="height:40%;background:linear-gradient(135deg,#d4e6c3,#c5ddb5);position:relative;display:flex;align-items:center;justify-content:center">
+      <div style="font-size:12px;color:#888">지도 영역</div>
+      <!-- 마커들 -->
+      <div style="position:absolute;top:30px;left:60px;background:#059669;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;border:2px solid rgba(255,255,255,0.9);opacity:0.5">울산삼산초</div>
+      <div style="position:absolute;top:70px;left:160px;background:#059669;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;border:2px solid rgba(255,255,255,0.9);box-shadow:0 0 0 3px rgba(5,150,105,0.3)">울산강남초</div>
+      <div style="position:absolute;top:50px;right:50px;background:#2563EB;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;border:2px solid rgba(255,255,255,0.9);opacity:0.5">삼산중</div>
+      <!-- 반투명 오버레이 (시트가 올라온 상태) -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(transparent,rgba(0,0,0,0.05))"></div>
+    </div>
+
+    <!-- 바텀 시트 (하단 60%) -->
+    <div style="height:60%;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,0.12);position:relative;display:flex;flex-direction:column;margin-top:-12px;z-index:5">
+
+      <!-- 핸들 + 닫기 (고정) -->
+      <div style="flex-shrink:0;padding:8px 16px 0">
+        <div style="display:flex;justify-content:center;margin-bottom:8px">
+          <div style="width:36px;height:4px;background:#D1D5DB;border-radius:2px"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+              <span style="background:#ECFDF5;color:#059669;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600">초등학교</span>
+              <span style="font-size:11px;color:#9CA3AF">남구 · 공립</span>
+            </div>
+            <div style="font-size:17px;font-weight:700;color:#111;letter-spacing:-0.3px">울산강남초등학교</div>
+          </div>
+          <div style="width:28px;height:28px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:13px;color:#6B7280;cursor:pointer;flex-shrink:0;margin-top:2px">✕</div>
+        </div>
+      </div>
+
+      <!-- 스크롤 영역 -->
+      <div style="flex:1;overflow-y:auto;padding:12px 16px 16px;border-top:1px solid #F3F4F6;margin-top:10px">
+
+        <!-- 기본 정보 -->
+        <div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">기본 정보</div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">공학</span>
+          <span style="color:#374151;font-size:11px;font-weight:500">남녀공학</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">개교</span>
+          <span style="color:#374151;font-size:11px;font-weight:500">1990. 3. 1</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">주소</span>
+          <span style="color:#374151;font-size:11px;font-weight:500;text-align:right;max-width:200px">울산 남구 삼산로 123 (12345)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">전화</span>
+          <span style="color:#374151;font-size:11px;font-weight:500">052-123-4567</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">팩스</span>
+          <span style="color:#374151;font-size:11px;font-weight:500">052-123-4568</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:11px">웹</span>
+          <span style="color:#2563EB;font-size:11px;font-weight:500">gangnam-e.ulsan.go.kr</span>
+        </div>
+
+        <!-- 학년별 현황 -->
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
+            <span style="font-size:9px;color:#D1D5DB">2026년 2월 기준</span>
+          </div>
+          <table style="width:100%;font-size:11px;border-collapse:collapse">
+            <tr style="font-weight:600;color:#9CA3AF;font-size:10px">
+              <td style="padding:5px 6px;border-bottom:1px solid #E5E7EB">학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #E5E7EB;text-align:right">학급</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #E5E7EB;text-align:right">학생</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #E5E7EB;text-align:right">평균</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">1학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">5</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">132</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">26.4</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">2학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">6</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">145</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">24.2</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">3학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">6</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">151</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">25.2</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">4학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">5</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">128</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">25.6</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">5학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">5</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">135</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">27.0</td>
+            </tr>
+            <tr style="color:#374151">
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6">6학년</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">5</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">132</td>
+              <td style="padding:5px 6px;border-bottom:1px solid #F3F4F6;text-align:right">26.4</td>
+            </tr>
+            <tr style="font-weight:700;color:#111">
+              <td style="padding:6px 6px">계</td>
+              <td style="padding:6px 6px;text-align:right">32</td>
+              <td style="padding:6px 6px;text-align:right">823</td>
+              <td style="padding:6px 6px;text-align:right;color:#2563EB">25.7</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:20px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB">
+  <h3 style="margin-top:0">설계 요약</h3>
+  <ul style="font-size:14px;line-height:1.8;color:#374151">
+    <li><strong>적용 범위:</strong> 모바일(768px 이하)에서만. PC는 기존 Leaflet 팝업 그대로.</li>
+    <li><strong>높이:</strong> 화면의 60% 고정</li>
+    <li><strong>헤더 고정:</strong> 학교명 + 유형 + 닫기(✕) 버튼은 항상 상단 고정</li>
+    <li><strong>내부 스크롤:</strong> 기본정보 + 학년별 테이블이 스크롤 영역 안에</li>
+    <li><strong>닫기:</strong> ✕ 버튼 또는 시트 바깥(지도) 터치</li>
+    <li><strong>열기:</strong> 지도 마커 클릭 시 (기존 Leaflet 팝업 대신)</li>
+    <li><strong>애니메이션:</strong> 아래에서 위로 슬라이드 업</li>
+    <li><strong>반투명 배경:</strong> 시트 위의 지도는 살짝 어둡게 처리</li>
+  </ul>
+</div>

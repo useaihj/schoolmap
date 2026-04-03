@@ -1,0 +1,166 @@
+<h2>모바일 팝업 개선 방안</h2>
+<p class="subtitle">마커 클릭 시 학교 정보를 모바일에서 어떻게 보여줄지 3가지 방안입니다</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>바텀 시트 (Bottom Sheet)</h3>
+      <p>화면 하단에서 올라오는 시트. Google Maps, 네이버지도, 카카오맵 등 모든 지도앱의 표준 패턴.</p>
+      <div style="margin-top:12px">
+        <div class="mockup">
+          <div class="mockup-header">바텀 시트 미리보기</div>
+          <div class="mockup-body" style="padding:0;height:420px;position:relative;background:#e8e8e8;overflow:hidden">
+            <!-- 지도 영역 -->
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#d4e6c3,#c5ddb5);display:flex;align-items:center;justify-content:center">
+              <div style="font-size:13px;color:#666">🗺️ 지도 영역</div>
+              <!-- 마커 -->
+              <div style="position:absolute;top:100px;left:50%;transform:translateX(-50);background:#059669;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;border:2px solid rgba(255,255,255,0.9);box-shadow:0 2px 6px rgba(0,0,0,0.3)">울산강남초</div>
+            </div>
+            <!-- 바텀 시트 -->
+            <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,0.15);padding:0">
+              <!-- 핸들 -->
+              <div style="display:flex;justify-content:center;padding:10px 0 6px">
+                <div style="width:36px;height:4px;background:#D1D5DB;border-radius:2px"></div>
+              </div>
+              <!-- 헤더 -->
+              <div style="padding:4px 20px 12px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                  <span style="background:#ECFDF5;color:#059669;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600">초등학교</span>
+                  <span style="font-size:11px;color:#9CA3AF">남구</span>
+                </div>
+                <div style="font-size:16px;font-weight:700;color:#111">울산강남초등학교</div>
+              </div>
+              <!-- 정보 -->
+              <div style="padding:0 20px 14px;border-top:1px solid #F3F4F6">
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                  <span style="color:#9CA3AF;font-size:11px">설립</span>
+                  <span style="color:#374151;font-size:11px;font-weight:500">공립</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                  <span style="color:#9CA3AF;font-size:11px">학생수</span>
+                  <span style="color:#374151;font-size:11px;font-weight:500">823명</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                  <span style="color:#9CA3AF;font-size:11px">학급수</span>
+                  <span style="color:#374151;font-size:11px;font-weight:500">32학급</span>
+                </div>
+                <div style="font-size:10px;color:#9CA3AF;text-align:center;padding:6px 0 2px">↑ 위로 드래그하면 더 많은 정보</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>장점</h4><ul><li>지도앱 표준 UX — 사용자에게 익숙</li><li>드래그로 높이 조절 가능</li><li>지도와 시트를 동시에 볼 수 있음</li><li>긴 내용도 스크롤로 전부 표시</li></ul></div>
+        <div class="cons"><h4>단점</h4><ul><li>구현 복잡도 높음 (터치 제스처)</li><li>기존 Leaflet 팝업과 별도 구현</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>스크롤 팝업 + 위치 보정</h3>
+      <p>기존 Leaflet 팝업을 유지하되, max-height 제한 + 내부 스크롤 + 지도 자동 이동으로 팝업이 화면 안에 들어오도록 보정.</p>
+      <div style="margin-top:12px">
+        <div class="mockup">
+          <div class="mockup-header">스크롤 팝업 미리보기</div>
+          <div class="mockup-body" style="padding:0;height:420px;position:relative;background:linear-gradient(135deg,#d4e6c3,#c5ddb5);overflow:hidden">
+            <div style="font-size:13px;color:#666;position:absolute;top:10px;left:50%;transform:translateX(-50%)">🗺️ 지도 영역</div>
+            <!-- 마커 -->
+            <div style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:#059669;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;border:2px solid rgba(255,255,255,0.9);box-shadow:0 2px 6px rgba(0,0,0,0.3)">울산강남초</div>
+            <!-- 팝업 -->
+            <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:280px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.15);overflow:hidden">
+              <div style="max-height:280px;overflow-y:auto;padding:0">
+                <div style="padding:14px 16px 10px">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                    <span style="background:#ECFDF5;color:#059669;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600">초등학교</span>
+                    <span style="font-size:11px;color:#9CA3AF">남구</span>
+                  </div>
+                  <div style="font-size:15px;font-weight:700;color:#111">울산강남초등학교</div>
+                </div>
+                <div style="padding:0 16px 10px">
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F3F4F6">
+                    <span style="color:#9CA3AF;font-size:11px">설립</span>
+                    <span style="color:#374151;font-size:11px">공립</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F3F4F6">
+                    <span style="color:#9CA3AF;font-size:11px">학생수</span>
+                    <span style="color:#374151;font-size:11px">823명</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F3F4F6">
+                    <span style="color:#9CA3AF;font-size:11px">학급수</span>
+                    <span style="color:#374151;font-size:11px">32학급</span>
+                  </div>
+                </div>
+                <!-- 스크롤 표시 -->
+                <div style="background:linear-gradient(transparent,rgba(255,255,255,0.9));padding:8px;text-align:center;font-size:10px;color:#9CA3AF;position:sticky;bottom:0">↓ 스크롤하여 더 보기</div>
+              </div>
+            </div>
+            <!-- 꼬리 삼각형 -->
+            <div style="position:absolute;top:310px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid #fff"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>장점</h4><ul><li>변경 최소 — CSS 몇 줄 + autoPan 옵션</li><li>PC와 동일한 팝업 UX 유지</li></ul></div>
+        <div class="cons"><h4>단점</h4><ul><li>팝업 내부 스크롤 시 지도가 같이 움직일 수 있음</li><li>여전히 지도 공간을 팝업이 가림</li><li>작은 화면에서 답답한 느낌</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>풀스크린 모달</h3>
+      <p>마커 클릭 시 전체 화면 모달로 학교 상세 정보를 표시. 닫기 버튼으로 지도로 복귀.</p>
+      <div style="margin-top:12px">
+        <div class="mockup">
+          <div class="mockup-header">풀스크린 모달 미리보기</div>
+          <div class="mockup-body" style="padding:0;height:420px;position:relative;background:#fff;overflow:hidden">
+            <!-- 모달 헤더 -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #E5E7EB">
+              <div style="font-size:10px;color:#fff;background:#059669;padding:2px 8px;border-radius:4px;font-weight:600">초등학교</div>
+              <div style="width:28px;height:28px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:14px;color:#6B7280">✕</div>
+            </div>
+            <!-- 학교명 -->
+            <div style="padding:16px 20px 12px">
+              <div style="font-size:18px;font-weight:700;color:#111">울산강남초등학교</div>
+              <div style="font-size:12px;color:#9CA3AF;margin-top:2px">남구 · 공립</div>
+            </div>
+            <!-- 정보 -->
+            <div style="padding:0 20px">
+              <div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                <span style="color:#9CA3AF;font-size:12px">개교</span>
+                <span style="color:#374151;font-size:12px;font-weight:500">1990. 3. 1</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                <span style="color:#9CA3AF;font-size:12px">주소</span>
+                <span style="color:#374151;font-size:12px;font-weight:500;text-align:right">울산 남구 삼산로 123</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+                <span style="color:#9CA3AF;font-size:12px">전화</span>
+                <span style="color:#374151;font-size:12px;font-weight:500">052-123-4567</span>
+              </div>
+            </div>
+            <!-- 학년별 현황 -->
+            <div style="padding:14px 20px 0">
+              <div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">학생/학급 현황</div>
+              <table style="width:100%;font-size:11px;border-collapse:collapse">
+                <tr style="color:#9CA3AF;font-size:10px"><td style="padding:5px 4px">학년</td><td style="padding:5px 4px;text-align:right">학급</td><td style="padding:5px 4px;text-align:right">학생</td><td style="padding:5px 4px;text-align:right">평균</td></tr>
+                <tr style="color:#374151"><td style="padding:5px 4px;border-top:1px solid #F3F4F6">1학년</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">5</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">132</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">26.4</td></tr>
+                <tr style="color:#374151"><td style="padding:5px 4px;border-top:1px solid #F3F4F6">2학년</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">6</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">145</td><td style="padding:5px 4px;text-align:right;border-top:1px solid #F3F4F6">24.2</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>장점</h4><ul><li>모든 정보를 넉넉하게 표시</li><li>구현 비교적 단순</li></ul></div>
+        <div class="cons"><h4>단점</h4><ul><li>지도가 완전히 가려져 위치 맥락 상실</li><li>지도앱 UX와 다른 느낌</li><li>모달 열고 닫기가 무거움</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
