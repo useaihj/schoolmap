@@ -388,9 +388,69 @@
         border-bottom: 1px solid #E5E7EB;
       }
       .mobile-filters::-webkit-scrollbar { display: none; }
+
+      /* 바텀 시트 */
+      .sheet-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.15);
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      .sheet-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .bottom-sheet {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 60vh;
+        background: #fff;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+        z-index: 1001;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        pointer-events: none;
+      }
+      .bottom-sheet.open {
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .sheet-handle {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0 4px;
+        flex-shrink: 0;
+      }
+      .sheet-handle div {
+        width: 36px; height: 4px;
+        background: #D1D5DB; border-radius: 2px;
+      }
+
+      .sheet-header {
+        padding: 0 18px 12px;
+        flex-shrink: 0;
+      }
+
+      .sheet-scroll {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding: 0 18px 20px;
+        border-top: 1px solid #F3F4F6;
+      }
     }
     @media (min-width: 769px) {
       .mobile-filters { display: none; }
+      .bottom-sheet, .sheet-overlay { display: none !important; }
     }
   </style>
 </head>
@@ -430,7 +490,6 @@
     <option value="density_asc">학급당 학생 적은순</option>
   </select>
   <span class="result-count" id="stats"></span>
-  <span style="font-size:11px;color:#9CA3AF;margin-left:8px;white-space:nowrap">2026년 2월 기준</span>
 </div>
 
 <div class="main">
@@ -445,6 +504,13 @@
   </div>
   <div id="map"></div>
   <button class="search-area-btn" id="searchAreaBtn">이 지역에서 검색</button>
+  <!-- 모바일 바텀 시트 -->
+  <div class="sheet-overlay" id="sheetOverlay"></div>
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="sheet-handle"><div></div></div>
+    <div class="sheet-header" id="sheetHeader"></div>
+    <div class="sheet-scroll" id="sheetScroll"></div>
+  </div>
 </div>
 
 <!-- 비교 바 -->
@@ -589,6 +655,7 @@
 
   // 필터 적용
   function applyFilters(skipFitBounds) {
+    closeBottomSheet();
     filteredSchools = allSchools.filter(s => {
       if (currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
@@ -775,7 +842,10 @@
         <!-- 학생/학급 현황 -->
         ${tableHtml ? `
         <div style="padding:14px 20px 16px">
-          <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">학생/학급 현황</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
+            <span style="font-size:10px;color:#D1D5DB">2026년 2월 기준</span>
+          </div>
           ${tableHtml}
         </div>` : ''}
 
@@ -855,6 +925,119 @@
     if (schoolZoneLayer) { map.removeLayer(schoolZoneLayer); schoolZoneLayer = null; }
   }
 
+  // 모바일 판별
+  function isMobile() { return window.innerWidth <= 768; }
+
+  // 바텀 시트 콘텐츠 생성
+  function createSheetContent(s) {
+    const bc = BADGE_STYLES[s.type] || '';
+
+    let foundedStr = '';
+    if (s.founded && s.founded.length === 8) {
+      const y = s.founded.slice(0,4), m = s.founded.slice(4,6), d = s.founded.slice(6);
+      foundedStr = `${y}. ${parseInt(m)}. ${parseInt(d)}`;
+    }
+
+    // 헤더
+    let headerHtml = `
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="${bc};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">${s.type}</span>
+            <span style="font-size:12px;color:#9CA3AF">${s.district}</span>
+          </div>
+          <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px">${s.name}</div>
+        </div>
+        <button onclick="window._closeBottomSheet()" style="background:none;border:none;font-size:22px;color:#9CA3AF;cursor:pointer;padding:4px 8px;line-height:1">&times;</button>
+      </div>`;
+
+    // 스크롤 영역: 기본 정보
+    const infoRow = (label, value) => value ? `
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
+        <span style="color:#9CA3AF;font-size:12px">${label}</span>
+        <span style="color:#374151;font-size:12px;font-weight:500">${value}</span>
+      </div>` : '';
+
+    let scrollHtml = `
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
+        ${infoRow('설립', s.founding_type)}
+        ${infoRow('공학', s.coedu)}
+        ${infoRow('고교유형', s.hs_category)}
+        ${infoRow('개교', foundedStr)}
+        ${s.address ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:12px;flex-shrink:0">주소</span>
+          <span style="color:#374151;font-size:12px;font-weight:500;text-align:right;margin-left:12px">${s.address}${s.zipcode ? ' (' + s.zipcode.trim() + ')' : ''}</span>
+        </div>` : ''}
+        ${infoRow('전화', s.phone)}
+        ${infoRow('팩스', s.fax)}
+        ${s.homepage ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:12px">웹</span>
+          <a href="${s.homepage}" target="_blank" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:500">${s.homepage.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+        </div>` : ''}
+      </div>`;
+
+    // 학생/학급 현황 테이블
+    if (s.classes_by_grade && s.students_by_grade) {
+      const grades = Object.keys(s.classes_by_grade).sort();
+      const totalCls = grades.reduce((a, g) => a + (s.classes_by_grade[g]||0), 0);
+      const totalStu = grades.reduce((a, g) => a + (s.students_by_grade[g]||0), 0);
+      const rows = grades.map(g => {
+        const c = s.classes_by_grade[g]||0;
+        const st = s.students_by_grade[g]||0;
+        const av = s.avg_students_per_class_by_grade ? (s.avg_students_per_class_by_grade[g]||0) : 0;
+        return `<tr>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;color:#374151">${g}학년</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${c}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${st.toLocaleString()}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${av}</td>
+        </tr>`;
+      }).join('');
+
+      scrollHtml += `
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
+            <span style="font-size:10px;color:#D1D5DB">2026년 2월 기준</span>
+          </div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse;color:#6B7280;margin-top:4px">
+            <tr style="font-weight:600;color:#9CA3AF;font-size:11px">
+              <td style="padding:6px 8px;border-bottom:1px solid #E5E7EB">학년</td>
+              <td style="padding:6px 8px;border-bottom:1px solid #E5E7EB;text-align:right">학급</td>
+              <td style="padding:6px 8px;border-bottom:1px solid #E5E7EB;text-align:right">학생</td>
+              <td style="padding:6px 8px;border-bottom:1px solid #E5E7EB;text-align:right">평균</td>
+            </tr>
+            ${rows}
+            <tr style="font-weight:700;color:#111827">
+              <td style="padding:6px 8px">계</td>
+              <td style="padding:6px 8px;text-align:right">${totalCls}</td>
+              <td style="padding:6px 8px;text-align:right">${totalStu.toLocaleString()}</td>
+              <td style="padding:6px 8px;text-align:right;color:#2563EB">${s.avg_students_per_class||0}</td>
+            </tr>
+          </table>
+        </div>`;
+    }
+
+    return { headerHtml, scrollHtml };
+  }
+
+  // 바텀 시트 열기/닫기
+  function openBottomSheet(school) {
+    const content = createSheetContent(school);
+    document.getElementById('sheetHeader').innerHTML = content.headerHtml;
+    document.getElementById('sheetScroll').innerHTML = content.scrollHtml;
+    document.getElementById('bottomSheet').classList.add('open');
+    document.getElementById('sheetOverlay').classList.add('open');
+  }
+
+  function closeBottomSheet() {
+    document.getElementById('bottomSheet').classList.remove('open');
+    document.getElementById('sheetOverlay').classList.remove('open');
+  }
+  window._closeBottomSheet = closeBottomSheet;
+
+  document.getElementById('sheetOverlay').addEventListener('click', closeBottomSheet);
+
   // 학교 선택 (공통)
   function selectSchool(id, openPopup) {
     if (activeMarker) {
@@ -872,7 +1055,13 @@
     markers[id].setIcon(createIcon(school.type, 'active', school));
     markers[id].setZIndexOffset(1000);
     map.setView([school.lat, school.lng], 16);
-    if (openPopup) markers[id].openPopup();
+    if (openPopup) {
+      if (isMobile()) {
+        openBottomSheet(school);
+      } else {
+        markers[id].openPopup();
+      }
+    }
     showSchoolZone(school);
 
     document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
@@ -883,7 +1072,13 @@
     }
   }
   // 사이드바 클릭: 팝업 없이 이동 + 통학구역
-  window._selectSchool = function(id) { selectSchool(id, false); };
+  window._selectSchool = function(id) {
+    selectSchool(id, false);
+    if (isMobile()) {
+      const school = allSchools.find(s => s.id === id);
+      if (school) openBottomSheet(school);
+    }
+  };
 
   // 필터 초기화
   function resetFilters() {
@@ -962,6 +1157,7 @@
     currentDistrict = this.value;
     boundsFilter = null;
     searchAreaBtn.style.display = 'none';
+    clearSchoolZone();
     showDistrictBoundary(this.value);
     applyFilters();
   });
