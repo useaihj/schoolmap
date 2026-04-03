@@ -944,7 +944,10 @@
           <span style="color:#9CA3AF;font-size:12px;flex-shrink:0">주소</span>
           <span style="color:#374151;font-size:12px;font-weight:500;text-align:right;margin-left:12px">${s.address}${s.zipcode ? ' (' + s.zipcode.trim() + ')' : ''}</span>
         </div>` : ''}
-        ${infoRow('전화', s.phone)}
+        ${s.phone ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
+          <span style="color:#9CA3AF;font-size:12px">전화</span>
+          <a href="tel:${s.phone.replace(/[^0-9\-]/g,'')}" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:500">${s.phone}</a>
+        </div>` : ''}
         ${infoRow('팩스', s.fax)}
         ${s.homepage ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
           <span style="color:#9CA3AF;font-size:12px">웹</span>
