@@ -704,8 +704,8 @@
     });
 
     filteredSchools.forEach(s => {
-      const marker = L.marker([s.lat, s.lng], { icon: createIcon(s.type, 'normal', s) })
-        .bindPopup(createPopup(s), { maxWidth: 360, minWidth: 300 });
+      const marker = L.marker([s.lat, s.lng], { icon: createIcon(s.type, 'normal', s) });
+      if (!isMobile()) marker.bindPopup(createPopup(s), { maxWidth: 360, minWidth: 300 });
 
       marker.on('click', () => selectSchool(s.id, true));
 
