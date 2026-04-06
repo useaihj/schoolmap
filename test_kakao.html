@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>카카오맵 API 키 테스트</title>
+  <style>
+    body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+    #map { width: 600px; height: 400px; border: 1px solid #ccc; }
+    #status { margin-top: 12px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h2>카카오맵 API 키 테스트</h2>
+  <div id="map"></div>
+  <div id="status">로딩 중...</div>
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c02938e22add44191c77fb63b7a5b3d"></script>
+  <script>
+    try {
+      var map = new kakao.maps.Map(document.getElementById('map'), {
+        center: new kakao.maps.LatLng(35.5384, 129.3114),
+        level: 8
+      });
+      document.getElementById('status').textContent = '✅ 카카오맵 API 키 정상 작동!';
+      document.getElementById('status').style.color = 'green';
+    } catch(e) {
+      document.getElementById('status').textContent = '❌ 오류: ' + e.message;
+      document.getElementById('status').style.color = 'red';
+    }
+  </script>
+</body>
+</html>
