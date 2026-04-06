@@ -1,3 +1,8 @@
+# 작업 워크플로우
+1. 요청을 받으면 반영 계획을 먼저 정리해서 보여줄 것
+2. 승인을 받은 후에 실행할 것
+3. 정적 사이트 관련 파일 수정 후에는 빌드/배포까지 자동 진행
+
 # 울산 학교 찾기
 
 울산광역시 245개 학교(초등 124, 중학 64, 고등 57)를 지도에 표시하는 인터랙티브 웹앱.
@@ -61,7 +66,6 @@ GitHub vuski/admdongkor (2025년 1월) → 울산 55개 행정동 추출 → sha
 - 유형 필터 (전체/초등/중학/고등) — 헤더 버튼 + 모바일 칩
 - 구/군 드롭다운 필터
 - 정렬: 이름순, 학생수, 학급수, 학급당 학생수 (각 오름/내림)
-- "이 지역에서 검색" — 지도 이동 후 플로팅 버튼 → 현재 bounds 내 결과만 필터
 - 빈 상태 안내 + 필터 초기화 버튼
 
 ### 지도
@@ -79,7 +83,7 @@ GitHub vuski/admdongkor (2025년 1월) → 울산 55개 행정동 추출 → sha
 ### 사이드바 ↔ 지도 연동
 - 카드 hover → 마커 강조, 마커 hover → 카드 강조
 - **사이드바 클릭** → 지도 이동 + 마커 강조 + 통학구역 표시 (팝업 없음)
-- **지도 마커 클릭** → 위와 동일 + 팝업 표시
+- **지도 마커 클릭** → 위와 동일 + 팝업 표시 (PC) / 바텀 시트 표시 (모바일)
 - 팝업 닫아도 선택 상태 + 통학구역 유지
 - 필터(유형/구/군) 변경 → 통학구역 + 선택 상태 초기화
 
@@ -91,13 +95,21 @@ GitHub vuski/admdongkor (2025년 1월) → 울산 55개 행정동 추출 → sha
 - 헤더 "대시보드" 버튼 → 모달 (Chart.js)
 - 5개 차트: 구별 학교 분포(스택 바), 학교 유형 비율(도넛), 구별 학급당 평균 학생수(바), 설립 유형(도넛), 학생수 상위 15개(가로 바)
 
+### 모바일 바텀 시트 (768px 이하)
+- 마커/사이드바 클릭 시 Leaflet 팝업 대신 바텀 시트(60vh)로 학교 정보 표시
+- 고정 높이, 내부 스크롤, ✕ 버튼 또는 오버레이 터치로 닫기
+- 전화번호 tel: 링크 (클릭 시 전화 가능, 팩스는 링크 없음)
+- CSS transition: transform + pointer-events (display:none 사용 안 함)
+- 모바일에서는 bindPopup 하지 않음 (팝업 플래시 방지)
+- 관련 함수: `isMobile()`, `createSheetContent(s)`, `openBottomSheet(school)`, `closeBottomSheet()`
+
 ### 반응형
 - 768px 이하: 지도(상) + 목록(하) 세로 배치, 모바일 필터 칩
 
 ## JS 아키텍처 (index.html 내 IIFE)
 
 ### 전역 상태
-allSchools, filteredSchools, markers, activeMarker, hoveredMarker, currentType, currentDistrict, currentSearch, currentSort, boundsFilter, userMovedMap, compareList, districtGeoData, districtLayer, schoolZoneData, schoolZoneLayer, clusterGroup, dashCharts
+allSchools, filteredSchools, markers, activeMarker, hoveredMarker, currentType, currentDistrict, currentSearch, currentSort, compareList, districtGeoData, districtLayer, schoolZoneData, schoolZoneLayer, clusterGroup, dashCharts
 
 ### 핵심 함수
 - `applyFilters(skipFitBounds)` — 필터링 + 정렬 + 렌더링 오케스트레이션
@@ -108,6 +120,9 @@ allSchools, filteredSchools, markers, activeMarker, hoveredMarker, currentType, 
 - `shortName(name, type)` — 학교 약칭 생성
 - `showDistrictBoundary(districtName)` — 행정구역 경계 표시/해제
 - `showSchoolZone(school)` / `clearSchoolZone()` — 통학구역 표시/해제
+- `isMobile()` — 모바일 판별 (768px 이하)
+- `createSheetContent(s)` — 모바일 바텀 시트 내용 생성
+- `openBottomSheet(school)` / `closeBottomSheet()` — 모바일 바텀 시트 열기/닫기
 - `openDashboard()` / `closeDashboard()` — 대시보드 모달
 - `openCompare()` / `closeCompare()` / `toggleCompare(id)` — 학교 비교
 

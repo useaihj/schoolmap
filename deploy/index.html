@@ -316,27 +316,27 @@
     }
     .compare-table tr:hover td { background: #F9FAFB; }
 
-    /* 대시보드 헤더 버튼 */
     .header-btn {
       padding: 7px 14px; border: 1px solid #E5E7EB; border-radius: 8px;
       background: #fff; color: #374151; font-size: 13px; font-weight: 500;
       cursor: pointer; white-space: nowrap; font-family: 'Inter', sans-serif;
     }
     .header-btn:hover { background: #F3F4F6; border-color: #D1D5DB; }
+    .header-btn.dev-active {
+      background: #F59E0B; color: #fff; border-color: #F59E0B;
+    }
+    .header-btn.dev-active:hover { background: #D97706; border-color: #D97706; }
 
-    /* 대시보드 그리드 */
-    .dash-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    /* 개발사업 마커 */
+    .dev-marker {
+      background: #F59E0B; color: #fff; border-radius: 6px;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25);
+      text-align: center; line-height: 1.2; font-family: 'Inter', -apple-system, sans-serif;
     }
-    .dash-card {
-      background: #F9FAFB; border-radius: 14px; padding: 18px;
-      border: 1px solid #E5E7EB;
-    }
-    .dash-card.full { grid-column: 1 / -1; }
-    .dash-card h3 {
-      font-size: 13px; font-weight: 600; color: #6B7280;
-      margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.3px;
-    }
+    .dev-marker .dev-name { font-size: 10px; font-weight: 700; }
+    .dev-marker .dev-units { font-size: 8px; opacity: 0.85; }
+    .dev-marker.dev-small { padding: 3px 6px; }
+    .dev-marker.dev-large { padding: 5px 8px; }
 
     /* 반응형 */
     @media (max-width: 768px) {
@@ -447,7 +447,7 @@
     <button class="filter-btn" data-type="중학교">중학</button>
     <button class="filter-btn" data-type="고등학교">고등</button>
   </div>
-  <button class="header-btn" onclick="window._openDashboard()">대시보드</button>
+  <button class="header-btn" id="devToggleBtn" onclick="window._toggleDevProjects()">🏗 개발사업</button>
 </div>
 
 <div class="filter-bar">
@@ -509,20 +509,8 @@
   </div>
 </div>
 
-<!-- 대시보드 모달 -->
-<div class="modal-overlay" id="dashModal">
-  <div class="modal" style="max-width:960px">
-    <div class="modal-header">
-      <h2>데이터 대시보드</h2>
-      <button class="modal-close" onclick="window._closeDashboard()">&times;</button>
-    </div>
-    <div class="modal-body" id="dashBody"></div>
-  </div>
-</div>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 (function() {
   // 전역 상태
@@ -540,6 +528,12 @@
   let districtLayer = null;
   let schoolZoneData = null;
   let schoolZoneLayer = null;
+
+  // 개발사업 상태
+  let devProjects = [];
+  let devMarkers = {};
+  let devClusterGroup = null;
+  let devShowProjects = false;
 
   // 마커 색상
   const COLORS = {
@@ -628,6 +622,10 @@
   fetch('data/ulsan_school_zones.json')
     .then(r => r.json())
     .then(data => { schoolZoneData = data; });
+
+  fetch('data/ulsan_dev_projects.json')
+    .then(r => r.json())
+    .then(data => { devProjects = data; });
 
   // 필터 적용
   function applyFilters(skipFitBounds) {
@@ -1113,6 +1111,7 @@
     clearSchoolZone();
     showDistrictBoundary(this.value);
     applyFilters();
+    renderDevMarkers();
   });
 
   // === 학교 비교 ===
@@ -1193,96 +1192,157 @@
     applyFilters();
   });
 
-  // === 대시보드 ===
-  let dashCharts = [];
-  function openDashboard() {
-    const data = allSchools;
-    const districts = ['중구', '남구', '동구', '북구', '울주군'];
-    const types = ['초등학교', '중학교', '고등학교'];
-    const typeColors = ['#059669', '#2563EB', '#EA580C'];
+  // === 개발사업 ===
+  function devShortName(name) {
+    // 괄호 내용 제거 후 약칭
+    let short = name.replace(/\s*[\(（].*?[\)）]/g, '').trim();
+    // "동 번지" 패턴 제거 (예: "삼산동 1559-6 일원 주상복합" → "주상복합")
+    short = short.replace(/^[\w가-힣]+동\s+[\d\-]+.*?(주상복합|공동주택|오피스텔|주거복합)$/, '$1');
+    // 너무 긴 경우 앞 6글자
+    if (short.length > 10) short = short.substring(0, 8) + '…';
+    return short;
+  }
 
-    // 이전 차트 파괴
-    dashCharts.forEach(c => c.destroy());
-    dashCharts = [];
+  function createDevIcon(project) {
+    const zoom = map.getZoom();
+    const name = zoom >= 14 ? devShortName(project.name) : '';
+    const cls = zoom >= 14 ? 'dev-large' : 'dev-small';
+    const html = zoom >= 14
+      ? `<div class="dev-marker ${cls}"><div class="dev-name">${name}</div><div class="dev-units">${project.units}세대</div></div>`
+      : `<div class="dev-marker ${cls}"><div class="dev-units" style="font-size:9px;font-weight:700;opacity:1">${project.units}</div></div>`;
+    const w = zoom >= 14 ? 80 : 36;
+    const h = zoom >= 14 ? 32 : 20;
+    return L.divIcon({ className: '', html, iconSize: [w, h], iconAnchor: [w/2, h/2] });
+  }
 
-    document.getElementById('dashBody').innerHTML = `
-      <div class="dash-grid">
-        <div class="dash-card"><h3>구별 학교 분포</h3><canvas id="chartDistDist"></canvas></div>
-        <div class="dash-card"><h3>학교 유형 비율</h3><canvas id="chartTypeRatio"></canvas></div>
-        <div class="dash-card"><h3>구별 학급당 평균 학생수</h3><canvas id="chartDensity"></canvas></div>
-        <div class="dash-card"><h3>설립 유형 (공립/사립)</h3><canvas id="chartFounding"></canvas></div>
-        <div class="dash-card full"><h3>학생수 상위 15개 학교</h3><canvas id="chartTop15"></canvas></div>
-      </div>`;
+  function createDevPopup(p) {
+    const consBadge = p.construction
+      ? `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;${
+          p.construction === '미착공' ? 'background:#FEE2E2;color:#991B1B' :
+          p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
+          'background:#DCFCE7;color:#166534'
+        }">${p.construction}</span>` : '';
+    return `<div style="min-width:240px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#FEF3C7;color:#92400E">개발사업</span>
+        ${consBadge}
+        <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
+      </div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">${p.name}</div>
+      <table style="font-size:12px;width:100%;border-collapse:collapse">
+        <tr><td style="color:#6B7280;padding:3px 8px 3px 0;width:70px">위치</td><td>${p.location}</td></tr>
+        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">세대수</td><td><b>${p.units.toLocaleString()}세대</b></td></tr>
+        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">사업기간</td><td>${p.period || '-'}</td></tr>
+        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">착공여부</td><td>${p.construction || '-'}</td></tr>
+      </table>
+      ${p.school_elem ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
+        <table style="font-size:12px;width:100%"><tr><td style="color:#059669;font-weight:500;width:70px">초등학교</td><td>${p.school_elem}</td></tr></table>
+      </div>` : ''}
+    </div>`;
+  }
 
-    // 1) 구별 학교 분포 (스택 바)
-    const distData = types.map(t => districts.map(d => data.filter(s => s.type === t && s.district === d).length));
-    dashCharts.push(new Chart(document.getElementById('chartDistDist'), {
-      type: 'bar',
-      data: {
-        labels: districts,
-        datasets: types.map((t, i) => ({
-          label: t, data: distData[i], backgroundColor: typeColors[i]
-        }))
-      },
-      options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
-    }));
+  function createDevSheetContent(p) {
+    const consBadge = p.construction
+      ? `<span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;${
+          p.construction === '미착공' ? 'background:#FEE2E2;color:#991B1B' :
+          p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
+          'background:#DCFCE7;color:#166534'
+        }">${p.construction}</span>` : '';
+    const headerHtml = `
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#FEF3C7;color:#92400E">개발사업</span>
+        ${consBadge}
+        <span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
+      </div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:2px">${p.name}</div>
+      <div style="font-size:13px;color:#6B7280">${p.location}</div>`;
+    const scrollHtml = `
+      <table style="width:100%;font-size:14px;border-collapse:collapse">
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6;width:90px">세대수</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6;font-weight:600">${p.units.toLocaleString()}세대</td></tr>
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">사업기간</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6">${p.period || '-'}</td></tr>
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">착공여부</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6">${p.construction || '-'}</td></tr>
+        ${p.school_elem ? `<tr><td style="color:#059669;padding:10px 10px 10px 0;font-weight:500">초등학교</td><td style="padding:10px 0">${p.school_elem}</td></tr>` : ''}
+      </table>`;
+    return { headerHtml, scrollHtml };
+  }
 
-    // 2) 유형 비율 (도넛)
-    const typeCounts = types.map(t => data.filter(s => s.type === t).length);
-    dashCharts.push(new Chart(document.getElementById('chartTypeRatio'), {
-      type: 'doughnut',
-      data: { labels: types, datasets: [{ data: typeCounts, backgroundColor: typeColors }] },
-      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-    }));
+  function renderDevMarkers() {
+    // 기존 마커 제거
+    if (devClusterGroup) { map.removeLayer(devClusterGroup); }
+    devMarkers = {};
 
-    // 3) 구별 학급당 평균 학생수
-    const densityByDist = districts.map(d => {
-      const schools = data.filter(s => s.district === d && s.avg_students_per_class > 0);
-      return schools.length ? +(schools.reduce((a, s) => a + s.avg_students_per_class, 0) / schools.length).toFixed(1) : 0;
+    if (!devShowProjects || devProjects.length === 0) return;
+
+    devClusterGroup = L.markerClusterGroup({
+      maxClusterRadius: 50,
+      disableClusteringAtZoom: 14,
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      iconCreateFunction: function(cluster) {
+        const children = cluster.getAllChildMarkers();
+        let totalUnits = 0;
+        children.forEach(m => { totalUnits += m.options.devUnits || 0; });
+        const count = children.length;
+        const size = count < 5 ? 36 : count < 15 ? 44 : 52;
+        return L.divIcon({
+          className: '',
+          html: `<div style="background:#F59E0B;color:#fff;border-radius:6px;width:${size}px;height:${size}px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"><span>${count}건</span><span style="font-size:9px;font-weight:400">${totalUnits.toLocaleString()}</span></div>`,
+          iconSize: [size, size]
+        });
+      }
     });
-    dashCharts.push(new Chart(document.getElementById('chartDensity'), {
-      type: 'bar',
-      data: { labels: districts, datasets: [{ label: '학급당 학생수', data: densityByDist, backgroundColor: '#6366F1' }] },
-      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-    }));
 
-    // 4) 설립 유형 (도넛)
-    const pubCount = data.filter(s => s.founding_type === '공립').length;
-    const priCount = data.filter(s => s.founding_type === '사립').length;
-    const natCount = data.length - pubCount - priCount;
-    const foundLabels = ['공립', '사립']; const foundData = [pubCount, priCount];
-    if (natCount > 0) { foundLabels.push('국립'); foundData.push(natCount); }
-    dashCharts.push(new Chart(document.getElementById('chartFounding'), {
-      type: 'doughnut',
-      data: { labels: foundLabels, datasets: [{ data: foundData, backgroundColor: ['#2563EB', '#EA580C', '#6B7280'] }] },
-      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-    }));
+    const filtered = currentDistrict === 'all'
+      ? devProjects
+      : devProjects.filter(p => p.district === currentDistrict);
 
-    // 5) 학생수 상위 15개
-    const top15 = [...data].sort((a, b) => (b.total_students||0) - (a.total_students||0)).slice(0, 15);
-    dashCharts.push(new Chart(document.getElementById('chartTop15'), {
-      type: 'bar',
-      data: {
-        labels: top15.map(s => s.name.replace(/(초등학교|중학교|고등학교)$/, '')),
-        datasets: [{
-          label: '학생수',
-          data: top15.map(s => s.total_students||0),
-          backgroundColor: top15.map(s => COLORS[s.type] || '#6B7280')
-        }]
-      },
-      options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
-    }));
+    filtered.forEach(p => {
+      const marker = L.marker([p.lat, p.lng], {
+        icon: createDevIcon(p),
+        devUnits: p.units
+      });
 
-    document.getElementById('dashModal').classList.add('open');
+      if (!isMobile()) {
+        marker.bindPopup(createDevPopup(p), { maxWidth: 360, minWidth: 260 });
+      }
+
+      marker.on('click', () => {
+        if (isMobile()) {
+          const content = createDevSheetContent(p);
+          document.getElementById('sheetHeader').innerHTML = content.headerHtml;
+          document.getElementById('sheetScroll').innerHTML = content.scrollHtml;
+          document.getElementById('bottomSheet').classList.add('open');
+          document.getElementById('sheetOverlay').classList.add('open');
+        }
+        map.setView([p.lat, p.lng], Math.max(map.getZoom(), 15));
+      });
+
+      devMarkers[p.name] = marker;
+      devClusterGroup.addLayer(marker);
+    });
+
+    map.addLayer(devClusterGroup);
   }
-  window._openDashboard = openDashboard;
 
-  function closeDashboard() {
-    document.getElementById('dashModal').classList.remove('open');
-    dashCharts.forEach(c => c.destroy());
-    dashCharts = [];
+  // 줌 변경 시 개발사업 마커 아이콘 업데이트
+  map.on('zoomend', function() {
+    if (!devShowProjects) return;
+    Object.keys(devMarkers).forEach(key => {
+      const p = devProjects.find(d => d.name === key);
+      if (p && devMarkers[key]) {
+        devMarkers[key].setIcon(createDevIcon(p));
+      }
+    });
+  });
+
+  function toggleDevProjects() {
+    devShowProjects = !devShowProjects;
+    const btn = document.getElementById('devToggleBtn');
+    btn.classList.toggle('dev-active', devShowProjects);
+    renderDevMarkers();
   }
-  window._closeDashboard = closeDashboard;
+  window._toggleDevProjects = toggleDevProjects;
+
 })();
 </script>
 </body>

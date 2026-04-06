@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>울산 개발사업 현황 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, 'Pretendard', sans-serif; background:#f5f5f5; }
+
+/* 헤더 */
+.header {
+  background: #1e293b; color:#fff; padding:12px 20px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.header h1 { font-size:18px; font-weight:700; white-space:nowrap; }
+.header .badge { background:#f59e0b; color:#1e293b; font-size:12px; font-weight:700; padding:2px 8px; border-radius:10px; }
+.filters { display:flex; gap:8px; margin-left:auto; flex-wrap:wrap; }
+.filters select, .filters input {
+  padding:6px 10px; border:1px solid #475569; border-radius:6px;
+  background:#334155; color:#fff; font-size:13px; outline:none;
+}
+.filters input::placeholder { color:#94a3b8; }
+
+/* 레이아웃 */
+.container { display:flex; height:calc(100vh - 52px); }
+.sidebar {
+  width:380px; overflow-y:auto; background:#fff; border-right:1px solid #e2e8f0;
+  flex-shrink:0;
+}
+#map { flex:1; }
+
+/* 카드 */
+.card {
+  padding:14px 16px; border-bottom:1px solid #f1f5f9; cursor:pointer;
+  transition: background 0.15s;
+}
+.card:hover { background:#f8fafc; }
+.card.active { background:#eff6ff; border-left:3px solid #2563eb; }
+.card-title { font-size:14px; font-weight:600; color:#1e293b; margin-bottom:4px; }
+.card-loc { font-size:12px; color:#64748b; margin-bottom:6px; }
+.card-meta { display:flex; gap:8px; flex-wrap:wrap; }
+.tag {
+  font-size:11px; padding:2px 6px; border-radius:4px; font-weight:500;
+}
+.tag-district { background:#e0e7ff; color:#3730a3; }
+.tag-units { background:#fef3c7; color:#92400e; }
+.tag-construction { background:#dcfce7; color:#166534; }
+.tag-construction.미착공 { background:#fee2e2; color:#991b1b; }
+.tag-construction.공사중지 { background:#fef9c3; color:#854d0e; }
+
+/* 범례 */
+.legend {
+  position:absolute; bottom:20px; left:400px; z-index:1000;
+  background:#fff; padding:10px 14px; border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15); font-size:12px;
+}
+.legend-title { font-weight:700; margin-bottom:6px; }
+.legend-item { display:flex; align-items:center; gap:6px; margin:3px 0; }
+.legend-dot { width:12px; height:12px; border-radius:50%; }
+
+/* 통계 바 */
+.stats-bar {
+  padding:10px 16px; background:#f8fafc; border-bottom:1px solid #e2e8f0;
+  font-size:12px; color:#475569; display:flex; gap:12px; flex-wrap:wrap;
+}
+.stat-item { font-weight:600; }
+.stat-item span { color:#1e293b; }
+
+/* 빈 상태 */
+.empty { padding:40px 20px; text-align:center; color:#94a3b8; font-size:14px; }
+
+/* 모바일 */
+@media (max-width:768px) {
+  .container { flex-direction:column; }
+  .sidebar { width:100%; height:45vh; order:2; }
+  #map { height:55vh; order:1; }
+  .legend { left:10px; bottom:10px; }
+  .header h1 { font-size:15px; }
+  .filters { margin-left:0; width:100%; }
+  .filters select, .filters input { flex:1; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>울산 개발사업 현황</h1>
+  <span class="badge" id="countBadge">0건</span>
+  <div class="filters">
+    <select id="filterDistrict">
+      <option value="">전체 구/군</option>
+      <option value="남구">남구</option>
+      <option value="중구">중구</option>
+      <option value="동구">동구</option>
+      <option value="북구">북구</option>
+      <option value="울주군">울주군</option>
+    </select>
+    <select id="filterConstruction">
+      <option value="">착공 전체</option>
+      <option value="착공">착공/공사중</option>
+      <option value="미착공">미착공</option>
+      <option value="공사중지">공사중지</option>
+    </select>
+    <select id="filterSort">
+      <option value="units-desc">세대수 많은순</option>
+      <option value="units-asc">세대수 적은순</option>
+      <option value="name-asc">이름순</option>
+      <option value="district-asc">구/군순</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="사업명 검색...">
+  </div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="stats-bar" id="statsBar"></div>
+    <div id="list"></div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<div class="legend">
+  <div class="legend-title">세대수 규모</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> 1,000세대 이상</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> 500~999세대</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> 200~499세대</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> 200세대 미만</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+(function() {
+  let allProjects = [];
+  let filtered = [];
+  let markers = {};
+  let activeId = null;
+  let clusterGroup;
+  let districtGeoData = null;
+  let districtLayer = null;
+
+  const map = L.map('map').setView([35.54, 129.31], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap', maxZoom: 18
+  }).addTo(map);
+
+  clusterGroup = L.markerClusterGroup({
+    maxClusterRadius: 50,
+    disableClusteringAtZoom: 14,
+    spiderfyOnMaxZoom: true,
+    iconCreateFunction: function(cluster) {
+      const children = cluster.getAllChildMarkers();
+      let totalUnits = 0;
+      children.forEach(m => { totalUnits += m.options.units || 0; });
+      const count = children.length;
+      let size = count < 5 ? 36 : count < 15 ? 44 : 52;
+      return L.divIcon({
+        html: `<div style="
+          background:rgba(30,41,59,0.85); color:#fff; border-radius:50%;
+          width:${size}px; height:${size}px; display:flex; flex-direction:column;
+          align-items:center; justify-content:center; font-size:11px; font-weight:700;
+          border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.3);
+        "><span>${count}건</span><span style="font-size:9px;font-weight:400">${formatUnits(totalUnits)}</span></div>`,
+        className: '', iconSize: [size, size]
+      });
+    }
+  });
+  map.addLayer(clusterGroup);
+
+  function formatUnits(n) {
+    return n >= 10000 ? (n/10000).toFixed(1) + '만' : n >= 1000 ? (n/1000).toFixed(1) + '천' : n + '';
+  }
+
+  function getColor(units) {
+    if (units >= 1000) return '#ef4444';
+    if (units >= 500) return '#f97316';
+    if (units >= 200) return '#3b82f6';
+    return '#8b5cf6';
+  }
+
+  function getRadius(units) {
+    if (units >= 1000) return 12;
+    if (units >= 500) return 10;
+    if (units >= 200) return 8;
+    return 6;
+  }
+
+  function createMarker(p, idx) {
+    const color = getColor(p.units);
+    const r = getRadius(p.units);
+    const icon = L.divIcon({
+      html: `<div style="
+        background:${color}; width:${r*2}px; height:${r*2}px; border-radius:50%;
+        border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.3);
+        display:flex; align-items:center; justify-content:center;
+        color:#fff; font-size:9px; font-weight:700;
+      ">${p.units}</div>`,
+      className: '', iconSize: [r*2, r*2], iconAnchor: [r, r]
+    });
+
+    const marker = L.marker([p.lat, p.lng], { icon, units: p.units });
+    marker.bindPopup(`
+      <div style="min-width:220px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px">${p.name}</div>
+        <table style="font-size:12px;border-collapse:collapse;width:100%">
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">위치</td><td>${p.location}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">행정구역</td><td>${p.district}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">세대수</td><td><b>${p.units.toLocaleString()}세대</b></td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">사업기간</td><td>${p.period}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">착공</td><td>${p.construction || '-'}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">초등학교</td><td>${p.school_elem}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">중학교군</td><td>${p.school_mid}</td></tr>
+          <tr><td style="color:#64748b;padding:2px 8px 2px 0">고등학교군</td><td>${p.school_high}</td></tr>
+        </table>
+      </div>
+    `, { maxWidth: 300 });
+
+    marker.on('click', () => selectProject(idx, false));
+    markers[idx] = marker;
+    return marker;
+  }
+
+  function selectProject(idx, fromList) {
+    activeId = idx;
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    const card = document.querySelector(`.card[data-idx="${idx}"]`);
+    if (card) {
+      card.classList.add('active');
+      if (!fromList) card.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    const m = markers[idx];
+    if (m) {
+      map.setView(m.getLatLng(), Math.max(map.getZoom(), 15));
+      if (fromList) m.openPopup();
+    }
+  }
+
+  function applyFilters() {
+    const dist = document.getElementById('filterDistrict').value;
+    const cons = document.getElementById('filterConstruction').value;
+    const sort = document.getElementById('filterSort').value;
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    filtered = allProjects.filter((p, i) => {
+      p._idx = i;
+      if (dist && p.district !== dist) return false;
+      if (cons) {
+        if (cons === '착공') {
+          if (!p.construction || (!p.construction.includes('착공') && !p.construction.includes('공사중'))) return false;
+          if (p.construction === '미착공') return false;
+        } else if (cons === '미착공') {
+          if (p.construction !== '미착공') return false;
+        } else if (cons === '공사중지') {
+          if (!p.construction.includes('공사중지')) return false;
+        }
+      }
+      if (search && !p.name.toLowerCase().includes(search) && !p.location.toLowerCase().includes(search)) return false;
+      return true;
+    });
+
+    const [field, dir] = sort.split('-');
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (field === 'units') { va = a.units; vb = b.units; }
+      else if (field === 'name') { va = a.name; vb = b.name; }
+      else { va = a.district; vb = b.district; }
+      if (typeof va === 'string') return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      return dir === 'asc' ? va - vb : vb - va;
+    });
+
+    renderList();
+    renderMarkers();
+    showDistrictBoundary(dist);
+    updateStats();
+  }
+
+  function renderList() {
+    const listEl = document.getElementById('list');
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="empty">검색 결과가 없습니다</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.map(p => {
+      const consClass = p.construction === '미착공' ? '미착공' : p.construction?.includes('중지') ? '공사중지' : '';
+      const search = document.getElementById('searchInput').value.trim();
+      let name = p.name;
+      if (search) {
+        const re = new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+        name = name.replace(re, '<mark>$1</mark>');
+      }
+      return `
+        <div class="card ${p._idx === activeId ? 'active' : ''}" data-idx="${p._idx}" onclick="window._select(${p._idx})">
+          <div class="card-title">${name}</div>
+          <div class="card-loc">${p.location}</div>
+          <div class="card-meta">
+            <span class="tag tag-district">${p.district}</span>
+            <span class="tag tag-units">${p.units.toLocaleString()}세대</span>
+            ${p.construction ? `<span class="tag tag-construction ${consClass}">${p.construction}</span>` : ''}
+            ${p.period ? `<span class="tag" style="background:#f1f5f9;color:#475569">${p.period}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderMarkers() {
+    clusterGroup.clearLayers();
+    markers = {};
+    const bounds = [];
+    filtered.forEach(p => {
+      const m = createMarker(p, p._idx);
+      clusterGroup.addLayer(m);
+      bounds.push([p.lat, p.lng]);
+    });
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [30, 30] });
+    }
+    document.getElementById('countBadge').textContent = filtered.length + '건';
+  }
+
+  function updateStats() {
+    const total = filtered.length;
+    const totalUnits = filtered.reduce((s, p) => s + p.units, 0);
+    const byDist = {};
+    filtered.forEach(p => { byDist[p.district] = (byDist[p.district] || 0) + 1; });
+    const distStr = Object.entries(byDist).map(([k,v]) => `${k} ${v}`).join(' · ');
+
+    document.getElementById('statsBar').innerHTML = `
+      <span class="stat-item">총 <span>${total}건</span></span>
+      <span class="stat-item">합계 <span>${totalUnits.toLocaleString()}세대</span></span>
+      <span class="stat-item">${distStr}</span>
+    `;
+  }
+
+  function showDistrictBoundary(districtName) {
+    if (districtLayer) { map.removeLayer(districtLayer); districtLayer = null; }
+    if (!districtName || !districtGeoData) return;
+    const features = districtGeoData.features.filter(f =>
+      f.properties.name === districtName || f.properties.SIG_KOR_NM === districtName
+    );
+    if (features.length === 0) return;
+    districtLayer = L.geoJSON({ type:'FeatureCollection', features }, {
+      style: { color:'#2563eb', weight:2, fillOpacity:0.05, dashArray:'6 4' }
+    }).addTo(map);
+  }
+
+  window._select = function(idx) { selectProject(idx, true); };
+
+  // 데이터 로드
+  fetch('data/ulsan_dev_projects.json')
+    .then(r => r.json())
+    .then(data => {
+      allProjects = data;
+      applyFilters();
+    });
+
+  fetch('data/ulsan_districts.json')
+    .then(r => r.json())
+    .then(data => { districtGeoData = data; })
+    .catch(() => {});
+
+  document.getElementById('filterDistrict').addEventListener('change', applyFilters);
+  document.getElementById('filterConstruction').addEventListener('change', applyFilters);
+  document.getElementById('filterSort').addEventListener('change', applyFilters);
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+})();
+</script>
+</body>
+</html>

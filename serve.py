@@ -3,7 +3,8 @@ import http.server
 import socketserver
 
 PORT = 8080
-Handler = http.server.SimpleHTTPServer if hasattr(http.server, 'SimpleHTTPServer') else http.server.SimpleHTTPRequestHandler
+
+socketserver.TCPServer.allow_reuse_address = True
 
 with socketserver.TCPServer(("", PORT), http.server.SimpleHTTPRequestHandler) as httpd:
     print(f"서버 시작: http://localhost:{PORT}")
