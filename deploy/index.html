@@ -576,24 +576,6 @@
   // 줌 컨트롤
   map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
 
-  // 클러스터러
-  let clusterer = new kakao.maps.MarkerClusterer({
-    map: map,
-    averageCenter: true,
-    minLevel: 4,
-    disableClickZoom: false,
-    styles: [{
-      width: '40px', height: '40px',
-      background: 'rgba(37,99,235,0.85)',
-      borderRadius: '20px',
-      color: '#fff',
-      textAlign: 'center',
-      lineHeight: '40px',
-      fontSize: '13px',
-      fontWeight: '700',
-      fontFamily: 'Inter, sans-serif'
-    }]
-  });
 
   // 학교 약칭 생성
   function shortName(name, type) {
@@ -694,23 +676,14 @@
     // 기존 오버레이 제거
     Object.values(overlays).forEach(o => {
       o.overlay.setMap(null);
-      o.marker.setMap(null);
     });
     overlays = {};
-    clusterer.clear();
 
-    const kakaoMarkers = [];
     const bounds = new kakao.maps.LatLngBounds();
 
     filteredSchools.forEach(s => {
       const position = new kakao.maps.LatLng(s.lat, s.lng);
       bounds.extend(position);
-
-      // 클러스터용 투명 마커
-      const marker = new kakao.maps.Marker({
-        position: position,
-        opacity: 0
-      });
 
       // 커스텀 오버레이 (pill 마커)
       const content = document.createElement('div');
@@ -734,11 +707,8 @@
       content.addEventListener('mouseenter', function() { highlightCard(s.id, true); });
       content.addEventListener('mouseleave', function() { highlightCard(s.id, false); });
 
-      overlays[s.id] = { overlay, marker, position };
-      kakaoMarkers.push(marker);
+      overlays[s.id] = { overlay, position };
     });
-
-    clusterer.addMarkers(kakaoMarkers);
 
     if (filteredSchools.length > 0 && !skipFitBounds) {
       map.setBounds(bounds, 50, 50, 50, 50);
@@ -1160,8 +1130,19 @@
     overlays[id].overlay.setZIndex(1000);
     rebindOverlayEvents(id, school);
 
-    map.setCenter(new kakao.maps.LatLng(school.lat, school.lng));
     map.setLevel(3);
+
+    if (openPopup) {
+      // 팝업이 잘리지 않도록 학교 위치를 지도 아래쪽에 배치
+      const proj = map.getProjection();
+      const point = proj.pointFromCoords(new kakao.maps.LatLng(school.lat, school.lng));
+      const mapHeight = document.getElementById('map').offsetHeight;
+      point.y -= mapHeight * 0.3;
+      const shifted = proj.coordsFromPoint(point);
+      map.setCenter(shifted);
+    } else {
+      map.setCenter(new kakao.maps.LatLng(school.lat, school.lng));
+    }
 
     if (openPopup) {
       if (isMobile()) {
@@ -1173,7 +1154,7 @@
         currentInfoWindow = new kakao.maps.CustomOverlay({
           position: new kakao.maps.LatLng(school.lat, school.lng),
           content: iwContent,
-          yAnchor: 1.3,
+          yAnchor: 1.05,
           zIndex: 2000
         });
         currentInfoWindow.setMap(map);
@@ -1190,7 +1171,7 @@
   }
 
   window._selectSchool = function(id) {
-    selectSchool(id, false);
+    selectSchool(id, true);
     if (isMobile()) {
       const school = allSchools.find(s => s.id === id);
       if (school) openBottomSheet(school);
