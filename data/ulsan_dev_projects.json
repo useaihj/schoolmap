@@ -672,7 +672,7 @@
     "method": "address"
   },
   {
-    "name": "울산다운2지구A10(공공)",
+    "name": "울산다운2A10(공공)",
     "district": "울주군",
     "location": "다운2지구 A-10BL(울주군)",
     "units": 580,
@@ -681,12 +681,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59205,
-    "lng": 129.2741,
+    "lat": 35.592220,
+    "lng": 129.273772,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A10(임대)",
+    "name": "울산다운2A10(임대)",
     "district": "울주군",
     "location": "다운2지구 A-10BL(울주군)",
     "units": 293,
@@ -695,12 +695,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59205,
-    "lng": 129.2741,
+    "lat": 35.592220,
+    "lng": 129.273772,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A1",
+    "name": "울산다운2A1",
     "district": "울주군",
     "location": "다운2지구 A-1BL(울주군)",
     "units": 148,
@@ -709,12 +709,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59663,
-    "lng": 129.2732,
+    "lat": 35.596212,
+    "lng": 129.273769,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A2",
+    "name": "울산다운2A2",
     "district": "울주군",
     "location": "다운2지구 A-2BL(울주군)",
     "units": 412,
@@ -723,12 +723,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59583,
-    "lng": 129.27273,
+    "lat": 35.595569,
+    "lng": 129.272747,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A3(공공)",
+    "name": "울산다운2A3(공공)",
     "district": "울주군",
     "location": "다운2지구 A-3 BL(울주군)",
     "units": 890,
@@ -742,7 +742,7 @@
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A3(임대)",
+    "name": "울산다운2A3(임대)",
     "district": "울주군",
     "location": "다운2지구 A-3 BL(울주군)",
     "units": 445,
@@ -756,7 +756,7 @@
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A4(행복)",
+    "name": "울산다운2A4(행복)",
     "district": "중구",
     "location": "다운2지구 A-4BL(중구)",
     "units": 194,
@@ -770,7 +770,7 @@
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A4(국민)",
+    "name": "울산다운2A4(국민)",
     "district": "중구",
     "location": "다운2지구 A-4BL(중구)",
     "units": 194,
@@ -784,7 +784,7 @@
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A5",
+    "name": "울산다운2A5",
     "district": "중구",
     "location": "다운2지구 A-5BL(중구)",
     "units": 701,
@@ -793,12 +793,12 @@
     "school_elem": "다전초 배치 가능",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.57074,
-    "lng": 129.2708,
+    "lat": 35.570478,
+    "lng": 129.271602,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A6",
+    "name": "울산다운2A6",
     "district": "중구",
     "location": "다운2지구 A-6BL(중구)",
     "units": 800,
@@ -807,12 +807,12 @@
     "school_elem": "다전초 배치 가능",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.56831,
-    "lng": 129.2714,
+    "lat": 35.568180,
+    "lng": 129.271383,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A7(행복)",
+    "name": "울산다운2A7(행복)",
     "district": "중구",
     "location": "다운2지구 A-7BL(중구)",
     "units": 300,
@@ -821,12 +821,12 @@
     "school_elem": "다전초 배치 후 제2다운초 재배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58163,
-    "lng": 129.271,
+    "lat": 35.581267,
+    "lng": 129.271212,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구A7(영구)",
+    "name": "울산다운2A7(영구)",
     "district": "중구",
     "location": "다운2지구 A-7BL(중구)",
     "units": 400,
@@ -835,12 +835,12 @@
     "school_elem": "다전초 배치 후 제2다운초 재배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58163,
-    "lng": 129.271,
+    "lat": 35.581267,
+    "lng": 129.271212,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구유승한내들에듀포레",
+    "name": "울산다운2유승한내들에듀포레",
     "district": "울주군",
     "location": "다운2지구 B-1BL(울주군)",
     "units": 507,
@@ -849,12 +849,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59424,
-    "lng": 129.27104,
+    "lat": 35.593810,
+    "lng": 129.270474,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구우미린더시그니처",
+    "name": "울산다운2우미린더시그니처",
     "district": "울주군",
     "location": "다운2지구 B-2BL(울주군)",
     "units": 1430,
@@ -863,12 +863,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58825,
-    "lng": 129.27567,
+    "lat": 35.589076,
+    "lng": 129.274963,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구B3(일반)",
+    "name": "울산다운2B3(일반)",
     "district": "중구",
     "location": "다운2지구 B-3BL(중구)",
     "units": 231,
@@ -877,12 +877,12 @@
     "school_elem": "(가칭)서사초 배치 후 제2다운초 재배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58596,
-    "lng": 129.26838,
+    "lat": 35.585039,
+    "lng": 129.268269,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구B3(신혼)",
+    "name": "울산다운2B3(신혼)",
     "district": "중구",
     "location": "다운2지구 B-3BL(중구)",
     "units": 421,
@@ -891,12 +891,12 @@
     "school_elem": "(가칭)서사초 배치 후 제2다운초 재배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58596,
-    "lng": 129.26838,
+    "lat": 35.585039,
+    "lng": 129.268269,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구우미린어반파크",
+    "name": "울산다운2우미린어반파크",
     "district": "중구",
     "location": "다운2지구 B-4BL(중구)",
     "units": 731,
@@ -905,12 +905,12 @@
     "school_elem": "(가칭)제2다운초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.58158,
-    "lng": 129.26743,
+    "lat": 35.581623,
+    "lng": 129.267853,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구B5",
+    "name": "울산다운2B5",
     "district": "울주군",
     "location": "다운2지구 B-5BL(울주군)",
     "units": 582,
@@ -919,12 +919,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.596574,
-    "lng": 129.278033,
+    "lat": 35.596706,
+    "lng": 129.277882,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구B7",
+    "name": "울산다운2B7",
     "district": "울주군",
     "location": "다운2지구 B-7BL(울주군)",
     "units": 223,
@@ -933,12 +933,12 @@
     "school_elem": "(가칭)서사초 배치",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.59753,
-    "lng": 129.27488,
+    "lat": 35.597340,
+    "lng": 129.275577,
     "method": "keyword(다운2지구)"
   },
   {
-    "name": "울산다운2지구C1",
+    "name": "울산다운2C1",
     "district": "중구",
     "location": "다운2지구 C-1 BL(중구)",
     "units": 640,
@@ -947,8 +947,8 @@
     "school_elem": "다전초 배치 가능",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.56892,
-    "lng": 129.26814,
+    "lat": 35.569325,
+    "lng": 129.268471,
     "method": "keyword(다운2지구)"
   },
   {
@@ -1269,8 +1269,8 @@
     "school_elem": "굴화초 배치 가능",
     "school_mid": "무거학교군",
     "school_high": "남부학교군",
-    "lat": 35.559299,
-    "lng": 129.258209,
+    "lat": 35.559126,
+    "lng": 129.258319,
     "method": "address"
   },
   {
@@ -1283,8 +1283,8 @@
     "school_elem": "굴화초 배치 가능",
     "school_mid": "무거학교군",
     "school_high": "남부학교군",
-    "lat": 35.559995,
-    "lng": 129.259601,
+    "lat": 35.559597,
+    "lng": 129.259402,
     "method": "address"
   },
   {
@@ -1297,8 +1297,8 @@
     "school_elem": "굴화초 배치 가능",
     "school_mid": "무거학교군",
     "school_high": "남부학교군",
-    "lat": 35.558332,
-    "lng": 129.259606,
+    "lat": 35.558676,
+    "lng": 129.259514,
     "method": "address"
   },
   {
@@ -1521,8 +1521,8 @@
     "school_elem": "다전초 배치 가능",
     "school_mid": "태화다운학교군",
     "school_high": "중부학교군",
-    "lat": 35.565085,
-    "lng": 129.265434,
+    "lat": 35.565183,
+    "lng": 129.265575,
     "method": "address"
   },
   {

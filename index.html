@@ -535,6 +535,7 @@
   let districtPolygons = [];
   let schoolZoneData = null;
   let schoolZonePolygons = [];
+  let schoolZoneLabels = [];
   let allZonePolygons = [];
   let showAllZones = false;
   let currentInfoWindow = null;
@@ -976,16 +977,55 @@
     clearSchoolZone();
     if (!schoolZoneData || school.type !== '초등학교') return;
     const baseName = school.name.replace('초등학교', '초');
-    const feature = schoolZoneData.features.find(f => f.properties.name === baseName + '통학구역');
-    if (!feature) return;
-    schoolZonePolygons = geoJsonToKakaoPolygons(feature, {
-      color: '#059669', weight: 3, fillColor: '#059669', fillOpacity: 0.2
+    // 전용 통학구역 + 공동 통학구역 모두 찾기
+    const matchingFeatures = schoolZoneData.features.filter(f => {
+      const name = f.properties.name;
+      return name === baseName + '통학구역' || (name.includes(baseName) && name.includes('공동'));
     });
-    schoolZonePolygons.forEach(p => p.setMap(map));
+    if (matchingFeatures.length === 0) return;
+    matchingFeatures.forEach(feature => {
+      const isShared = feature.properties.name.includes('공동');
+      const style = isShared
+        ? { color: '#D97706', weight: 3, fillColor: '#D97706', fillOpacity: 0.15, dashArray: true }
+        : { color: '#059669', weight: 3, fillColor: '#059669', fillOpacity: 0.2 };
+      const polys = geoJsonToKakaoPolygons(feature, style);
+      polys.forEach(p => p.setMap(map));
+      schoolZonePolygons.push(...polys);
+      // 공동통학구역 라벨 표시
+      if (isShared) {
+        const zoneName = feature.properties.name;
+        // 학교 이름들 추출 (예: "대현초장생포초공동..." → "대현초 · 장생포초")
+        const beforeGongdong = zoneName.split('공동')[0];
+        const schoolNames = beforeGongdong.match(/.+?초/g) || [];
+        // 원본에 (일방) 없는 공동통학구역은 순서 반전
+        if (!zoneName.includes('(일방)') && schoolNames.length >= 2) {
+          schoolNames.reverse();
+        }
+        const labelText = schoolNames[0] + '→' + schoolNames.slice(1).join('·') + ' 공동(일방)통학구역';
+        // 폴리곤 중심점 계산
+        const coords = feature.geometry.type === 'MultiPolygon'
+          ? feature.geometry.coordinates[0][0]
+          : feature.geometry.coordinates[0];
+        let sumLat = 0, sumLng = 0;
+        coords.forEach(c => { sumLng += c[0]; sumLat += c[1]; });
+        const centerLat = sumLat / coords.length;
+        const centerLng = sumLng / coords.length;
+        const label = new kakao.maps.CustomOverlay({
+          position: new kakao.maps.LatLng(centerLat, centerLng),
+          content: '<div style="background:#D97706;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.2)">' + labelText + '</div>',
+          yAnchor: 0.5,
+          zIndex: 900
+        });
+        label.setMap(map);
+        schoolZoneLabels.push(label);
+      }
+    });
   }
   function clearSchoolZone() {
     schoolZonePolygons.forEach(p => p.setMap(null));
     schoolZonePolygons = [];
+    schoolZoneLabels.forEach(l => l.setMap(null));
+    schoolZoneLabels = [];
   }
 
   // 모바일 판별

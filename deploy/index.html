@@ -7,9 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; height: 100vh; display: flex; flex-direction: column; color: #111827; }
@@ -210,16 +207,8 @@
 
     /* 지도 */
     #map { flex: 1; }
-    .leaflet-popup-content { margin: 0 !important; padding: 0 !important; }
-    .leaflet-popup-content-wrapper {
-      border-radius: 16px !important;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
-      padding: 0 !important;
-      overflow: hidden;
-    }
-    .leaflet-popup-tip { box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; }
 
-    /* pill 마커 */
+    /* pill 마커 (카카오맵 커스텀 오버레이) */
     .marker-pill {
       display: flex;
       align-items: center;
@@ -236,6 +225,7 @@
       border: 2px solid rgba(255,255,255,0.9);
       transition: all 0.2s ease;
       cursor: pointer;
+      position: relative;
     }
     .marker-pill.active {
       transform: scale(1.15);
@@ -248,18 +238,46 @@
       z-index: 999 !important;
     }
 
+    /* 카카오맵 팝업 (인포윈도우) */
+    .kakao-popup-wrap {
+      min-width: 280px;
+      max-width: 340px;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+    .kakao-popup-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: #F3F4F6;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #6B7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .kakao-popup-close:hover { background: #E5E7EB; }
 
-    /* 클러스터 */
-    .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
-      background: rgba(37,99,235,0.15) !important;
+    /* 개발사업 마커 */
+    .dev-marker {
+      background: #F59E0B; color: #fff; border-radius: 6px;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25);
+      text-align: center; line-height: 1.2; font-family: 'Inter', -apple-system, sans-serif;
+      cursor: pointer;
     }
-    .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
-      background: #2563EB !important;
-      color: #fff !important;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-    }
+    .dev-marker .dev-name { font-size: 10px; font-weight: 700; }
+    .dev-marker .dev-units { font-size: 8px; opacity: 0.85; }
+    .dev-marker.dev-small { padding: 3px 6px; }
+    .dev-marker.dev-large { padding: 5px 8px; }
 
     /* 비교 체크박스 */
     .compare-cb {
@@ -326,17 +344,6 @@
       background: #F59E0B; color: #fff; border-color: #F59E0B;
     }
     .header-btn.dev-active:hover { background: #D97706; border-color: #D97706; }
-
-    /* 개발사업 마커 */
-    .dev-marker {
-      background: #F59E0B; color: #fff; border-radius: 6px;
-      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25);
-      text-align: center; line-height: 1.2; font-family: 'Inter', -apple-system, sans-serif;
-    }
-    .dev-marker .dev-name { font-size: 10px; font-weight: 700; }
-    .dev-marker .dev-units { font-size: 8px; opacity: 0.85; }
-    .dev-marker.dev-small { padding: 3px 6px; }
-    .dev-marker.dev-large { padding: 5px 8px; }
 
     /* 반응형 */
     @media (max-width: 768px) {
@@ -447,6 +454,7 @@
     <button class="filter-btn" data-type="중학교">중학</button>
     <button class="filter-btn" data-type="고등학교">고등</button>
   </div>
+  <button class="header-btn" id="zoneToggleBtn" onclick="window._toggleAllZones()">통학구역</button>
   <button class="header-btn" id="devToggleBtn" onclick="window._toggleDevProjects()">🏗 개발사업</button>
 </div>
 
@@ -509,14 +517,13 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c02938e22add44191c77fb63b7a5b3d&libraries=clusterer"></script>
 <script>
 (function() {
   // 전역 상태
   let allSchools = [];
   let filteredSchools = [];
-  let markers = {};
+  let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
   let currentType = 'all';
@@ -525,14 +532,17 @@
   let currentSort = 'name';
   let compareList = [];
   let districtGeoData = null;
-  let districtLayer = null;
+  let districtPolygons = [];
   let schoolZoneData = null;
-  let schoolZoneLayer = null;
+  let schoolZonePolygons = [];
+  let schoolZoneLabels = [];
+  let allZonePolygons = [];
+  let showAllZones = false;
+  let currentInfoWindow = null;
 
   // 개발사업 상태
   let devProjects = [];
-  let devMarkers = {};
-  let devClusterGroup = null;
+  let devOverlays = [];
   let devShowProjects = false;
 
   // 마커 색상
@@ -550,7 +560,6 @@
     '기타': '?'
   };
 
-  // 배지 색상 (팝업용)
   const BADGE_STYLES = {
     '초등학교': 'background:#ECFDF5;color:#059669',
     '중학교':  'background:#EFF6FF;color:#2563EB',
@@ -558,53 +567,74 @@
   };
 
   // 지도 초기화 - 울산 중심
-  const map = L.map('map', { zoomControl: true, tap: false }).setView([35.54, 129.31], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 19
-  }).addTo(map);
+  const mapContainer = document.getElementById('map');
+  const map = new kakao.maps.Map(mapContainer, {
+    center: new kakao.maps.LatLng(35.54, 129.31),
+    level: 8
+  });
+
+  // 줌 컨트롤
+  map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
+
+  // 클러스터러
+  let clusterer = new kakao.maps.MarkerClusterer({
+    map: map,
+    averageCenter: true,
+    minLevel: 4,
+    disableClickZoom: false,
+    styles: [{
+      width: '40px', height: '40px',
+      background: 'rgba(37,99,235,0.85)',
+      borderRadius: '20px',
+      color: '#fff',
+      textAlign: 'center',
+      lineHeight: '40px',
+      fontSize: '13px',
+      fontWeight: '700',
+      fontFamily: 'Inter, sans-serif'
+    }]
+  });
 
   // 학교 약칭 생성
   function shortName(name, type) {
     let short = name;
-    // 학교급 제거
     short = short.replace(/(초등학교|중학교|고등학교)$/, '');
-    // 축약 규칙
-    // 특수 축약 (접미사 포함)
     if (short.includes('여자상업')) return short.replace('여자상업', '여상');
-    // 일반 축약
     short = short.replace('상업', '상');
     short = short.replace('공업', '공');
     short = short.replace('여자', '여');
     short = short.replace('스포츠과학', '스포츠');
-    // 접미사
     const suffix = type === '초등학교' ? '초' : type === '중학교' ? '중' : type === '고등학교' ? '고' : '';
     return short + suffix;
   }
 
-  // pill 형태 마커 생성
-  function createIcon(type, state, school) {
+  // pill 마커 HTML 생성
+  function createPillHtml(type, state, school) {
     const color = COLORS[type] || COLORS['기타'];
-    const zoom = map.getZoom();
-    const label = zoom >= 14 ? shortName(school.name, type) : (SHORT_LABELS[type] || '?');
+    const zoom = map.getLevel();
+    const label = zoom <= 4 ? shortName(school.name, type) : (SHORT_LABELS[type] || '?');
     const cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
-    const width = zoom >= 14 ? 'auto' : '28px';
-    return L.divIcon({
-      className: '',
-      html: `<div class="marker-pill${cls}" style="background:${color}">${label}</div>`,
-      iconSize: zoom >= 14 ? [null, 22] : [28, 22],
-      iconAnchor: zoom >= 14 ? [20, 11] : [14, 11]
-    });
+    return `<div class="marker-pill${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
   }
 
   // 줌 변경 시 마커 라벨 갱신
-  map.on('zoomend', function() {
+  kakao.maps.event.addListener(map, 'zoom_changed', function() {
     filteredSchools.forEach(s => {
-      if (markers[s.id]) {
+      if (overlays[s.id]) {
         const state = activeMarker === s.id ? 'active' : hoveredMarker === s.id ? 'hovered' : 'normal';
-        markers[s.id].setIcon(createIcon(s.type, state, s));
+        const el = overlays[s.id].overlay.getContent();
+        if (el && el.querySelector) {
+          const pill = el.querySelector('.marker-pill');
+          if (pill) {
+            const zoom = map.getLevel();
+            const label = zoom <= 4 ? shortName(s.name, s.type) : (SHORT_LABELS[s.type] || '?');
+            pill.textContent = label;
+          }
+        }
       }
     });
+    // 개발사업 마커도 업데이트
+    if (devShowProjects) renderDevMarkers();
   });
 
   // 데이터 로드
@@ -630,6 +660,7 @@
   // 필터 적용
   function applyFilters(skipFitBounds) {
     closeBottomSheet();
+    closeInfoWindow();
     filteredSchools = allSchools.filter(s => {
       if (currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
@@ -637,7 +668,6 @@
       return true;
     });
 
-    // 정렬
     const sortFns = {
       name: (a, b) => a.name.localeCompare(b.name, 'ko'),
       students_desc: (a, b) => (b.total_students||0) - (a.total_students||0),
@@ -655,50 +685,63 @@
     renderList();
   }
 
-  // 통계
   function updateStats() {
-    document.getElementById('stats').textContent =
-      `${filteredSchools.length}개 학교`;
+    document.getElementById('stats').textContent = `${filteredSchools.length}개 학교`;
   }
 
   // 마커 렌더링
-  let clusterGroup = null;
-
   function renderMarkers(skipFitBounds) {
-    Object.values(markers).forEach(m => map.removeLayer(m));
-    markers = {};
-    if (clusterGroup) { map.removeLayer(clusterGroup); }
-
-    clusterGroup = L.markerClusterGroup({
-      maxClusterRadius: 40,
-      spiderfyOnMaxZoom: true,
-      showCoverageOnHover: false,
-      disableClusteringAtZoom: 14
+    // 기존 오버레이 제거
+    Object.values(overlays).forEach(o => {
+      o.overlay.setMap(null);
+      o.marker.setMap(null);
     });
+    overlays = {};
+    clusterer.clear();
+
+    const kakaoMarkers = [];
+    const bounds = new kakao.maps.LatLngBounds();
 
     filteredSchools.forEach(s => {
-      const marker = L.marker([s.lat, s.lng], { icon: createIcon(s.type, 'normal', s) });
-      if (!isMobile()) marker.bindPopup(createPopup(s), { maxWidth: 360, minWidth: 300 });
+      const position = new kakao.maps.LatLng(s.lat, s.lng);
+      bounds.extend(position);
 
-      marker.on('click', () => selectSchool(s.id, true));
-
-      marker.on('popupclose', () => {
-        // 팝업 닫아도 선택 상태 + 통학구역 유지
+      // 클러스터용 투명 마커
+      const marker = new kakao.maps.Marker({
+        position: position,
+        opacity: 0
       });
 
-      // 마커 hover → 카드 하이라이트
-      marker.on('mouseover', () => highlightCard(s.id, true));
-      marker.on('mouseout', () => highlightCard(s.id, false));
+      // 커스텀 오버레이 (pill 마커)
+      const content = document.createElement('div');
+      content.innerHTML = createPillHtml(s.type, 'normal', s);
 
-      markers[s.id] = marker;
-      clusterGroup.addLayer(marker);
+      const overlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 0.5,
+        zIndex: 10
+      });
+      overlay.setMap(map);
+
+      // 클릭 이벤트
+      content.addEventListener('click', function(e) {
+        e.stopPropagation();
+        selectSchool(s.id, true);
+      });
+
+      // hover 이벤트
+      content.addEventListener('mouseenter', function() { highlightCard(s.id, true); });
+      content.addEventListener('mouseleave', function() { highlightCard(s.id, false); });
+
+      overlays[s.id] = { overlay, marker, position };
+      kakaoMarkers.push(marker);
     });
 
-    map.addLayer(clusterGroup);
+    clusterer.addMarkers(kakaoMarkers);
 
     if (filteredSchools.length > 0 && !skipFitBounds) {
-      const group = L.featureGroup(Object.values(markers));
-      map.fitBounds(group.getBounds().pad(0.05));
+      map.setBounds(bounds, 50, 50, 50, 50);
     }
   }
 
@@ -714,32 +757,47 @@
   // 마커 하이라이트 (카드 hover 시)
   function highlightMarker(id, on) {
     const school = allSchools.find(s => s.id === id);
-    if (!school || !markers[id]) return;
+    if (!school || !overlays[id]) return;
     if (activeMarker === id) return;
 
     if (on) {
       hoveredMarker = id;
-      markers[id].setIcon(createIcon(school.type, 'hovered', school));
-      markers[id].setZIndexOffset(500);
+      overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'hovered', school);
+      overlays[id].overlay.setZIndex(500);
     } else {
       hoveredMarker = null;
-      markers[id].setIcon(createIcon(school.type, 'normal', school));
-      markers[id].setZIndexOffset(0);
+      overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'normal', school);
+      overlays[id].overlay.setZIndex(10);
     }
+    // 재바인딩 클릭/hover
+    rebindOverlayEvents(id, school);
   }
   window._highlightMarker = highlightMarker;
 
-  // 팝업
-  function createPopup(s) {
-    const bc = BADGE_STYLES[s.type] || '';
+  function rebindOverlayEvents(id, school) {
+    const content = overlays[id].overlay.getContent();
+    content.onclick = function(e) { e.stopPropagation(); selectSchool(id, true); };
+    content.onmouseenter = function() { highlightCard(id, true); };
+    content.onmouseleave = function() { highlightCard(id, false); };
+  }
 
+  // 인포윈도우 닫기
+  function closeInfoWindow() {
+    if (currentInfoWindow) {
+      currentInfoWindow.setMap(null);
+      currentInfoWindow = null;
+    }
+  }
+
+  // 팝업 콘텐츠 생성
+  function createPopupHtml(s) {
+    const bc = BADGE_STYLES[s.type] || '';
     let foundedStr = '';
     if (s.founded && s.founded.length === 8) {
       const y = s.founded.slice(0,4), m = s.founded.slice(4,6), d = s.founded.slice(6);
       foundedStr = `${y}. ${parseInt(m)}. ${parseInt(d)}`;
     }
 
-    // 학년별 테이블
     let tableHtml = '';
     if (s.classes_by_grade && s.students_by_grade) {
       const grades = Object.keys(s.classes_by_grade).sort();
@@ -781,10 +839,9 @@
         <span style="color:#374151;font-size:12px;font-weight:500">${value}</span>
       </div>` : '';
 
-    const html = `
-      <div style="min-width:280px;max-width:340px;font-family:'Inter',-apple-system,sans-serif">
-
-        <!-- 헤더 -->
+    return `
+      <div class="kakao-popup-wrap" style="position:relative">
+        <button class="kakao-popup-close" onclick="window._closeInfoWindow()">&times;</button>
         <div style="padding:18px 20px 14px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="${bc};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">${s.type}</span>
@@ -792,8 +849,6 @@
           </div>
           <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px">${s.name}</div>
         </div>
-
-        <!-- 기본 정보 -->
         <div style="padding:0 20px 14px;border-bottom:1px solid #F3F4F6">
           <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
           ${infoRow('설립', s.founding_type)}
@@ -811,8 +866,6 @@
             <a href="${s.homepage}" target="_blank" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:500">${s.homepage.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
           </div>` : ''}
         </div>
-
-        <!-- 학생/학급 현황 -->
         ${tableHtml ? `
         <div style="padding:14px 20px 16px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -821,10 +874,9 @@
           </div>
           ${tableHtml}
         </div>` : ''}
-
       </div>`;
-    return html;
   }
+  window._closeInfoWindow = closeInfoWindow;
 
   // 뱃지 클래스
   function getBadgeClass(type) {
@@ -876,26 +928,104 @@
     }).join('');
   }
 
-  // 검색어 하이라이트
   function highlightSearch(name) {
     if (!currentSearch) return name;
     return name.replace(currentSearch, `<mark style="background:#FEF3C7;color:#92400E;border-radius:2px;padding:0 1px">${currentSearch}</mark>`);
+  }
+
+  // GeoJSON → 카카오맵 폴리곤 변환
+  function geoJsonToKakaoPolygons(feature, style) {
+    const polygons = [];
+    const geom = feature.geometry;
+
+    function coordsToPath(coords) {
+      return coords.map(c => new kakao.maps.LatLng(c[1], c[0]));
+    }
+
+    if (geom.type === 'Polygon') {
+      const path = geom.coordinates.map(coordsToPath);
+      const polygon = new kakao.maps.Polygon({
+        path: path,
+        strokeWeight: style.weight || 2,
+        strokeColor: style.color || '#2563EB',
+        strokeOpacity: style.strokeOpacity || 0.8,
+        strokeStyle: style.dashArray ? 'shortdash' : 'solid',
+        fillColor: style.fillColor || '#2563EB',
+        fillOpacity: style.fillOpacity || 0.06
+      });
+      polygons.push(polygon);
+    } else if (geom.type === 'MultiPolygon') {
+      geom.coordinates.forEach(polyCoords => {
+        const path = polyCoords.map(coordsToPath);
+        const polygon = new kakao.maps.Polygon({
+          path: path,
+          strokeWeight: style.weight || 2,
+          strokeColor: style.color || '#2563EB',
+          strokeOpacity: style.strokeOpacity || 0.8,
+          strokeStyle: style.dashArray ? 'shortdash' : 'solid',
+          fillColor: style.fillColor || '#2563EB',
+          fillOpacity: style.fillOpacity || 0.06
+        });
+        polygons.push(polygon);
+      });
+    }
+    return polygons;
   }
 
   // 통학구역 표시
   function showSchoolZone(school) {
     clearSchoolZone();
     if (!schoolZoneData || school.type !== '초등학교') return;
-    // 매칭: "XX초등학교" → "XX초통학구역"
     const baseName = school.name.replace('초등학교', '초');
-    const feature = schoolZoneData.features.find(f => f.properties.name === baseName + '통학구역');
-    if (!feature) return;
-    schoolZoneLayer = L.geoJSON(feature, {
-      style: { color: '#059669', weight: 3, fillColor: '#059669', fillOpacity: 0.2 }
-    }).addTo(map);
+    // 전용 통학구역 + 공동 통학구역 모두 찾기
+    const matchingFeatures = schoolZoneData.features.filter(f => {
+      const name = f.properties.name;
+      return name === baseName + '통학구역' || (name.includes(baseName) && name.includes('공동'));
+    });
+    if (matchingFeatures.length === 0) return;
+    matchingFeatures.forEach(feature => {
+      const isShared = feature.properties.name.includes('공동');
+      const style = isShared
+        ? { color: '#D97706', weight: 3, fillColor: '#D97706', fillOpacity: 0.15, dashArray: true }
+        : { color: '#059669', weight: 3, fillColor: '#059669', fillOpacity: 0.2 };
+      const polys = geoJsonToKakaoPolygons(feature, style);
+      polys.forEach(p => p.setMap(map));
+      schoolZonePolygons.push(...polys);
+      // 공동통학구역 라벨 표시
+      if (isShared) {
+        const zoneName = feature.properties.name;
+        // 학교 이름들 추출 (예: "대현초장생포초공동..." → "대현초 · 장생포초")
+        const beforeGongdong = zoneName.split('공동')[0];
+        const schoolNames = beforeGongdong.match(/.+?초/g) || [];
+        // 원본에 (일방) 없는 공동통학구역은 순서 반전
+        if (!zoneName.includes('(일방)') && schoolNames.length >= 2) {
+          schoolNames.reverse();
+        }
+        const labelText = schoolNames[0] + '→' + schoolNames.slice(1).join('·') + ' 공동(일방)통학구역';
+        // 폴리곤 중심점 계산
+        const coords = feature.geometry.type === 'MultiPolygon'
+          ? feature.geometry.coordinates[0][0]
+          : feature.geometry.coordinates[0];
+        let sumLat = 0, sumLng = 0;
+        coords.forEach(c => { sumLng += c[0]; sumLat += c[1]; });
+        const centerLat = sumLat / coords.length;
+        const centerLng = sumLng / coords.length;
+        const label = new kakao.maps.CustomOverlay({
+          position: new kakao.maps.LatLng(centerLat, centerLng),
+          content: '<div style="background:#D97706;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.2)">' + labelText + '</div>',
+          yAnchor: 0.5,
+          zIndex: 900
+        });
+        label.setMap(map);
+        schoolZoneLabels.push(label);
+      }
+    });
   }
   function clearSchoolZone() {
-    if (schoolZoneLayer) { map.removeLayer(schoolZoneLayer); schoolZoneLayer = null; }
+    schoolZonePolygons.forEach(p => p.setMap(null));
+    schoolZonePolygons = [];
+    schoolZoneLabels.forEach(l => l.setMap(null));
+    schoolZoneLabels = [];
   }
 
   // 모바일 판별
@@ -904,14 +1034,12 @@
   // 바텀 시트 콘텐츠 생성
   function createSheetContent(s) {
     const bc = BADGE_STYLES[s.type] || '';
-
     let foundedStr = '';
     if (s.founded && s.founded.length === 8) {
       const y = s.founded.slice(0,4), m = s.founded.slice(4,6), d = s.founded.slice(6);
       foundedStr = `${y}. ${parseInt(m)}. ${parseInt(d)}`;
     }
 
-    // 헤더
     let headerHtml = `
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
@@ -924,7 +1052,6 @@
         <button onclick="window._closeBottomSheet()" style="background:none;border:none;font-size:22px;color:#9CA3AF;cursor:pointer;padding:4px 8px;line-height:1">&times;</button>
       </div>`;
 
-    // 스크롤 영역: 기본 정보
     const infoRow = (label, value) => value ? `
       <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
         <span style="color:#9CA3AF;font-size:12px">${label}</span>
@@ -953,7 +1080,6 @@
         </div>` : ''}
       </div>`;
 
-    // 학생/학급 현황 테이블
     if (s.classes_by_grade && s.students_by_grade) {
       const grades = Object.keys(s.classes_by_grade).sort();
       const totalCls = grades.reduce((a, g) => a + (s.classes_by_grade[g]||0), 0);
@@ -1016,26 +1142,41 @@
 
   // 학교 선택 (공통)
   function selectSchool(id, openPopup) {
-    if (activeMarker) {
+    // 이전 활성 마커 복원
+    if (activeMarker && overlays[activeMarker]) {
       const prev = allSchools.find(s => s.id === activeMarker);
-      if (prev && markers[activeMarker]) {
-        markers[activeMarker].setIcon(createIcon(prev.type, 'normal', prev));
-        markers[activeMarker].setZIndexOffset(0);
+      if (prev) {
+        overlays[activeMarker].overlay.getContent().innerHTML = createPillHtml(prev.type, 'normal', prev);
+        overlays[activeMarker].overlay.setZIndex(10);
+        rebindOverlayEvents(activeMarker, prev);
       }
     }
 
     const school = allSchools.find(s => s.id === id);
-    if (!school || !markers[id]) return;
+    if (!school || !overlays[id]) return;
 
     activeMarker = id;
-    markers[id].setIcon(createIcon(school.type, 'active', school));
-    markers[id].setZIndexOffset(1000);
-    map.setView([school.lat, school.lng], 16);
+    overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'active', school);
+    overlays[id].overlay.setZIndex(1000);
+    rebindOverlayEvents(id, school);
+
+    map.setCenter(new kakao.maps.LatLng(school.lat, school.lng));
+    map.setLevel(3);
+
     if (openPopup) {
       if (isMobile()) {
         openBottomSheet(school);
       } else {
-        markers[id].openPopup();
+        closeInfoWindow();
+        const iwContent = document.createElement('div');
+        iwContent.innerHTML = createPopupHtml(school);
+        currentInfoWindow = new kakao.maps.CustomOverlay({
+          position: new kakao.maps.LatLng(school.lat, school.lng),
+          content: iwContent,
+          yAnchor: 1.3,
+          zIndex: 2000
+        });
+        currentInfoWindow.setMap(map);
       }
     }
     showSchoolZone(school);
@@ -1047,7 +1188,7 @@
       item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
-  // 사이드바 클릭: 팝업 없이 이동 + 통학구역
+
   window._selectSchool = function(id) {
     selectSchool(id, false);
     if (isMobile()) {
@@ -1073,18 +1214,16 @@
   }
   window._resetFilters = resetFilters;
 
-
   // 이벤트: 검색
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
     applyFilters();
   });
 
-  // 이벤트: 유형 필터 (헤더 + 모바일 양쪽)
+  // 이벤트: 유형 필터
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      // 같은 data-type인 버튼 모두 active
       const type = this.dataset.type;
       document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.add('active'));
       currentType = type;
@@ -1094,15 +1233,16 @@
   });
 
   // 행정구역 경계 표시
-  const DISTRICT_NAME_MAP = { '중구':'중구','남구':'남구','동구':'동구','북구':'북구','울주군':'울주군' };
   function showDistrictBoundary(districtName) {
-    if (districtLayer) { map.removeLayer(districtLayer); districtLayer = null; }
+    districtPolygons.forEach(p => p.setMap(null));
+    districtPolygons = [];
     if (!districtGeoData || districtName === 'all') return;
     const feature = districtGeoData.features.find(f => f.properties.name === districtName);
     if (!feature) return;
-    districtLayer = L.geoJSON(feature, {
-      style: { color: '#2563EB', weight: 2.5, fillColor: '#2563EB', fillOpacity: 0.06, dashArray: '6 4' }
-    }).addTo(map);
+    districtPolygons = geoJsonToKakaoPolygons(feature, {
+      color: '#2563EB', weight: 2.5, fillColor: '#2563EB', fillOpacity: 0.06, dashArray: true
+    });
+    districtPolygons.forEach(p => p.setMap(map));
   }
 
   // 이벤트: 구/군 필터
@@ -1120,7 +1260,6 @@
     if (idx >= 0) { compareList.splice(idx, 1); }
     else if (compareList.length < 3) { compareList.push(id); }
     updateCompareBar();
-    // 체크박스 상태 동기화
     document.querySelectorAll('.compare-cb').forEach(cb => {
       const itemId = parseInt(cb.closest('.school-item').dataset.id);
       cb.checked = compareList.includes(itemId);
@@ -1194,50 +1333,47 @@
 
   // === 개발사업 ===
   function devShortName(name) {
-    // 괄호 내용 제거 후 약칭
     let short = name.replace(/\s*[\(（].*?[\)）]/g, '').trim();
-    // "동 번지" 패턴 제거 (예: "삼산동 1559-6 일원 주상복합" → "주상복합")
     short = short.replace(/^[\w가-힣]+동\s+[\d\-]+.*?(주상복합|공동주택|오피스텔|주거복합)$/, '$1');
-    // 너무 긴 경우 앞 6글자
     if (short.length > 10) short = short.substring(0, 8) + '…';
     return short;
   }
 
-  function createDevIcon(project) {
-    const zoom = map.getZoom();
-    const name = zoom >= 14 ? devShortName(project.name) : '';
-    const cls = zoom >= 14 ? 'dev-large' : 'dev-small';
-    const html = zoom >= 14
+  function createDevOverlayHtml(project) {
+    const zoom = map.getLevel();
+    const name = zoom <= 4 ? devShortName(project.name) : '';
+    const cls = zoom <= 4 ? 'dev-large' : 'dev-small';
+    return zoom <= 4
       ? `<div class="dev-marker ${cls}"><div class="dev-name">${name}</div><div class="dev-units">${project.units}세대</div></div>`
       : `<div class="dev-marker ${cls}"><div class="dev-units" style="font-size:9px;font-weight:700;opacity:1">${project.units}</div></div>`;
-    const w = zoom >= 14 ? 80 : 36;
-    const h = zoom >= 14 ? 32 : 20;
-    return L.divIcon({ className: '', html, iconSize: [w, h], iconAnchor: [w/2, h/2] });
   }
 
-  function createDevPopup(p) {
+  function createDevPopupHtml(p) {
     const consBadge = p.construction
       ? `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;${
           p.construction === '미착공' ? 'background:#FEE2E2;color:#991B1B' :
           p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
           'background:#DCFCE7;color:#166534'
         }">${p.construction}</span>` : '';
-    return `<div style="min-width:240px">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-        <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#FEF3C7;color:#92400E">개발사업</span>
-        ${consBadge}
-        <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
+    return `<div class="kakao-popup-wrap" style="position:relative;min-width:240px">
+      <button class="kakao-popup-close" onclick="window._closeInfoWindow()">&times;</button>
+      <div style="padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#FEF3C7;color:#92400E">개발사업</span>
+          ${consBadge}
+          <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
+        </div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px">${p.name}</div>
+        <table style="font-size:12px;width:100%;border-collapse:collapse">
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0;width:70px">위치</td><td>${p.location}</td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">세대수</td><td><b>${p.units.toLocaleString()}세대</b></td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">사업기간</td><td>${p.period || '-'}</td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">착공여부</td><td>${p.construction || '-'}</td></tr>
+        </table>
+        ${p.school_elem ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
+          <table style="font-size:12px;width:100%"><tr><td style="color:#059669;font-weight:500;width:70px">초등학교</td><td>${p.school_elem}</td></tr></table>
+        </div>` : ''}
       </div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:8px">${p.name}</div>
-      <table style="font-size:12px;width:100%;border-collapse:collapse">
-        <tr><td style="color:#6B7280;padding:3px 8px 3px 0;width:70px">위치</td><td>${p.location}</td></tr>
-        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">세대수</td><td><b>${p.units.toLocaleString()}세대</b></td></tr>
-        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">사업기간</td><td>${p.period || '-'}</td></tr>
-        <tr><td style="color:#6B7280;padding:3px 8px 3px 0">착공여부</td><td>${p.construction || '-'}</td></tr>
-      </table>
-      ${p.school_elem ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
-        <table style="font-size:12px;width:100%"><tr><td style="color:#059669;font-weight:500;width:70px">초등학교</td><td>${p.school_elem}</td></tr></table>
-      </div>` : ''}
     </div>`;
   }
 
@@ -1267,73 +1403,78 @@
   }
 
   function renderDevMarkers() {
-    // 기존 마커 제거
-    if (devClusterGroup) { map.removeLayer(devClusterGroup); }
-    devMarkers = {};
+    // 기존 제거
+    devOverlays.forEach(o => o.setMap(null));
+    devOverlays = [];
 
     if (!devShowProjects || devProjects.length === 0) return;
-
-    devClusterGroup = L.markerClusterGroup({
-      maxClusterRadius: 50,
-      disableClusteringAtZoom: 14,
-      spiderfyOnMaxZoom: true,
-      showCoverageOnHover: false,
-      iconCreateFunction: function(cluster) {
-        const children = cluster.getAllChildMarkers();
-        let totalUnits = 0;
-        children.forEach(m => { totalUnits += m.options.devUnits || 0; });
-        const count = children.length;
-        const size = count < 5 ? 36 : count < 15 ? 44 : 52;
-        return L.divIcon({
-          className: '',
-          html: `<div style="background:#F59E0B;color:#fff;border-radius:6px;width:${size}px;height:${size}px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"><span>${count}건</span><span style="font-size:9px;font-weight:400">${totalUnits.toLocaleString()}</span></div>`,
-          iconSize: [size, size]
-        });
-      }
-    });
 
     const filtered = currentDistrict === 'all'
       ? devProjects
       : devProjects.filter(p => p.district === currentDistrict);
 
     filtered.forEach(p => {
-      const marker = L.marker([p.lat, p.lng], {
-        icon: createDevIcon(p),
-        devUnits: p.units
-      });
+      const position = new kakao.maps.LatLng(p.lat, p.lng);
+      const content = document.createElement('div');
+      content.innerHTML = createDevOverlayHtml(p);
 
-      if (!isMobile()) {
-        marker.bindPopup(createDevPopup(p), { maxWidth: 360, minWidth: 260 });
-      }
-
-      marker.on('click', () => {
+      content.addEventListener('click', function(e) {
+        e.stopPropagation();
         if (isMobile()) {
-          const content = createDevSheetContent(p);
-          document.getElementById('sheetHeader').innerHTML = content.headerHtml;
-          document.getElementById('sheetScroll').innerHTML = content.scrollHtml;
+          const sheetContent = createDevSheetContent(p);
+          document.getElementById('sheetHeader').innerHTML = sheetContent.headerHtml;
+          document.getElementById('sheetScroll').innerHTML = sheetContent.scrollHtml;
           document.getElementById('bottomSheet').classList.add('open');
           document.getElementById('sheetOverlay').classList.add('open');
+        } else {
+          closeInfoWindow();
+          const iwContent = document.createElement('div');
+          iwContent.innerHTML = createDevPopupHtml(p);
+          currentInfoWindow = new kakao.maps.CustomOverlay({
+            position: position,
+            content: iwContent,
+            yAnchor: 1.3,
+            zIndex: 2000
+          });
+          currentInfoWindow.setMap(map);
         }
-        map.setView([p.lat, p.lng], Math.max(map.getZoom(), 15));
+        map.setCenter(position);
+        if (map.getLevel() > 3) map.setLevel(3);
       });
 
-      devMarkers[p.name] = marker;
-      devClusterGroup.addLayer(marker);
+      const overlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 0.5,
+        zIndex: 5
+      });
+      overlay.setMap(map);
+      devOverlays.push(overlay);
     });
-
-    map.addLayer(devClusterGroup);
   }
 
-  // 줌 변경 시 개발사업 마커 아이콘 업데이트
-  map.on('zoomend', function() {
-    if (!devShowProjects) return;
-    Object.keys(devMarkers).forEach(key => {
-      const p = devProjects.find(d => d.name === key);
-      if (p && devMarkers[key]) {
-        devMarkers[key].setIcon(createDevIcon(p));
-      }
-    });
-  });
+  // === 전체 통학구역 토글 ===
+  function toggleAllZones() {
+    showAllZones = !showAllZones;
+    const btn = document.getElementById('zoneToggleBtn');
+    btn.classList.toggle('dev-active', showAllZones);
+
+    if (showAllZones) {
+      clearSchoolZone();
+      if (!schoolZoneData) return;
+      schoolZoneData.features.forEach(f => {
+        const polys = geoJsonToKakaoPolygons(f, {
+          color: '#059669', weight: 2, fillColor: '#059669', fillOpacity: 0.15
+        });
+        polys.forEach(p => p.setMap(map));
+        allZonePolygons.push(...polys);
+      });
+    } else {
+      allZonePolygons.forEach(p => p.setMap(null));
+      allZonePolygons = [];
+    }
+  }
+  window._toggleAllZones = toggleAllZones;
 
   function toggleDevProjects() {
     devShowProjects = !devShowProjects;
@@ -1342,6 +1483,15 @@
     renderDevMarkers();
   }
   window._toggleDevProjects = toggleDevProjects;
+
+  // 지도 클릭 시 인포윈도우 닫기
+  kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+    closeInfoWindow();
+    const lat = mouseEvent.latLng.getLat().toFixed(6);
+    const lng = mouseEvent.latLng.getLng().toFixed(6);
+    navigator.clipboard.writeText(lat + ', ' + lng).catch(()=>{});
+    console.log(lat + ', ' + lng);
+  });
 
 })();
 </script>
