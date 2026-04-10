@@ -724,7 +724,7 @@
     .then(r => r.json())
     .then(data => {
       allSchools = data.schools;
-      applyFilters();
+      applyFilters(true); // 초기 로드: 시청 중심·레벨 6 유지 (setBounds 건너뜀)
     });
 
   fetch('data/ulsan_districts.json')
