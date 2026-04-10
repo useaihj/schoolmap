@@ -1,10 +1,12 @@
 """
-5개 엑셀 파일을 통합하여 ulsan_schools.json을 생성하는 스크립트.
+7개 엑셀 파일을 통합하여 ulsan_schools.json을 생성하는 스크립트.
 
 소스:
-  1. 초등학교현황.xlsx / 중학교현황.xlsx / 고등학교현황.xlsx → 학급·학생·교직원 등 전체 데이터
-  2. 울산학교주소위도경도.xlsx → 주소, 위도, 경도 (위도/경도는 보정된 값)
-  3. 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx → 개교일, 우편번호, 전화, 팩스, 홈페이지
+  1. 초등학교현황.xlsx / 중학교현황.xlsx / 고등학교현황.xlsx → 정규 초중고 학급·학생 데이터
+  2. 특수학교현황.xlsx → 특수학교 4개 (유치원/초등/중/고/전공과 5단계 학년)
+  3. 각종학교현황.xlsx → 각종학교 3개 (1·2·3학년)
+  4. 울산학교주소위도경도.xlsx → 주소, 위도, 경도 (위도/경도는 보정된 값)
+  5. 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx → 개교일, 우편번호, 전화, 팩스, 홈페이지
 """
 
 import json
@@ -103,6 +105,66 @@ def read_high(path):
     return schools
 
 
+def read_special(path):
+    """특수학교현황.xlsx → 특수학교 리스트.
+
+    컬럼: 교육지원청, 설립구분, 조직(학교명), 자치구,
+          학급수_유치원/초등/중/고/전공과, 학생수_유치원/초등/중/고/전공과 (계)
+    학년 라벨을 문자로 저장하므로 UI 렌더링에서 '학년' 접미사를 붙이면 안 된다.
+    """
+    wb = openpyxl.load_workbook(path)
+    ws = wb.active
+    stages = ["유치원", "초등", "중", "고", "전공과"]
+    schools = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        name = (row[2] or "").strip() if row[2] else ""
+        if not name:
+            continue
+        cbg = {stages[i]: int(row[4 + i] or 0) for i in range(5)}
+        sbg = {stages[i]: int(row[9 + i] or 0) for i in range(5)}
+        schools.append({
+            "name": name,
+            "type": "특수학교",
+            "founding_type": (row[1] or "").strip(),
+            "district": (row[3] or "").strip(),
+            "total_classes": sum(cbg.values()),
+            "classes_by_grade": cbg,
+            "special_classes": 0,
+            "total_students": sum(sbg.values()),
+            "students_by_grade": sbg,
+        })
+    return schools
+
+
+def read_alternative(path):
+    """각종학교현황.xlsx → 각종학교 리스트.
+
+    컬럼: 교육지원청, 설립구분, 조직(학교명), 자치구,
+          학급수_1/2/3학년, 학생수_1/2/3학년 (계)
+    """
+    wb = openpyxl.load_workbook(path)
+    ws = wb.active
+    schools = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        name = (row[2] or "").strip() if row[2] else ""
+        if not name:
+            continue
+        cbg = {str(g): int(row[4 + g - 1] or 0) for g in range(1, 4)}
+        sbg = {str(g): int(row[7 + g - 1] or 0) for g in range(1, 4)}
+        schools.append({
+            "name": name,
+            "type": "각종학교",
+            "founding_type": (row[1] or "").strip(),
+            "district": (row[3] or "").strip(),
+            "total_classes": sum(cbg.values()),
+            "classes_by_grade": cbg,
+            "special_classes": 0,
+            "total_students": sum(sbg.values()),
+            "students_by_grade": sbg,
+        })
+    return schools
+
+
 # ── 2) 위치 엑셀 읽기 ──────────────────────────────────────────
 
 def read_location(path):
@@ -169,6 +231,18 @@ def find_match(name, lookup):
     return None
 
 
+def matched_key(name, lookup):
+    """find_match와 동일한 규칙이지만 매칭된 lookup 키를 반환."""
+    if name in lookup:
+        return name
+    if ("울산" + name) in lookup:
+        return "울산" + name
+    short = name.replace("울산", "", 1)
+    if short != name and short in lookup:
+        return short
+    return None
+
+
 # ── 5) 통계 계산 ───────────────────────────────────────────────
 
 def calc_stats(s):
@@ -188,18 +262,24 @@ def calc_stats(s):
 # ── main ────────────────────────────────────────────────────────
 
 def main():
-    # 1) 현황 엑셀 → 245개 학교 기본 데이터
+    # 1) 현황 엑셀 → 학교 기본 데이터
     elem = read_elementary(BASE_DIR / "초등학교현황.xlsx")
     mid = read_middle(BASE_DIR / "중학교현황.xlsx")
     high = read_high(BASE_DIR / "고등학교현황.xlsx")
-    all_schools = elem + mid + high
-    print(f"현황 엑셀: {len(all_schools)}개 (초{len(elem)} + 중{len(mid)} + 고{len(high)})")
+    special = read_special(BASE_DIR / "특수학교현황.xlsx")
+    alt = read_alternative(BASE_DIR / "각종학교현황.xlsx")
+    all_schools = elem + mid + high + special + alt
+    print(
+        f"현황 엑셀: {len(all_schools)}개 "
+        f"(초{len(elem)} + 중{len(mid)} + 고{len(high)} + 특수{len(special)} + 각종{len(alt)})"
+    )
 
     # 2) 위치 엑셀 → 주소/위도/경도
     loc = read_location(BASE_DIR / "울산학교주소위도경도.xlsx")
     print(f"위치 데이터: {len(loc)}개")
 
     loc_ok, loc_miss = 0, []
+    used_loc_keys = set()
     for s in all_schools:
         m = find_match(s["name"], loc)
         if m:
@@ -207,6 +287,9 @@ def main():
             s["lat"] = round(m["lat"], 7)
             s["lng"] = round(m["lng"], 7)
             loc_ok += 1
+            k = matched_key(s["name"], loc)
+            if k:
+                used_loc_keys.add(k)
         else:
             s["address"] = ""
             s["lat"] = 0
@@ -214,24 +297,39 @@ def main():
             loc_miss.append(s["name"])
     print(f"  위치 매칭: {loc_ok}/{len(all_schools)}")
     if loc_miss:
-        print(f"  미매칭: {loc_miss}")
+        print(f"  [신규 학교 의심] 현황에 있지만 위치 엑셀에 없음: {loc_miss}")
 
     # 3) 연락처 엑셀 → 개교일/우편번호/전화/팩스/홈페이지
     contact = read_contact(BASE_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx")
     print(f"연락처 데이터: {len(contact)}개")
 
     ct_ok, ct_miss = 0, []
+    used_ct_keys = set()
     for s in all_schools:
         m = find_match(s["name"], contact)
         if m:
             s.update(m)
             ct_ok += 1
+            k = matched_key(s["name"], contact)
+            if k:
+                used_ct_keys.add(k)
         else:
             s.update({"founded": "", "zipcode": "", "phone": "", "fax": "", "homepage": ""})
             ct_miss.append(s["name"])
     print(f"  연락처 매칭: {ct_ok}/{len(all_schools)}")
     if ct_miss:
-        print(f"  미매칭: {ct_miss}")
+        print(f"  [신규 학교 의심] 현황에 있지만 연락처 엑셀에 없음: {ct_miss}")
+
+    # 3b) 폐교/개명 의심: 위치·연락처 엑셀에는 있지만 현황에는 없는 학교
+    loc_orphans = sorted(set(loc.keys()) - used_loc_keys)
+    ct_orphans = sorted(set(contact.keys()) - used_ct_keys)
+    if loc_orphans or ct_orphans:
+        print()
+        print("[폐교/개명 의심] 위치·연락처 엑셀에는 있지만 현황 엑셀에 없는 학교:")
+        if loc_orphans:
+            print(f"  위치 엑셀 잔존: {loc_orphans}")
+        if ct_orphans:
+            print(f"  연락처 엑셀 잔존: {ct_orphans}")
 
     # 4) 통계 계산
     for s in all_schools:
