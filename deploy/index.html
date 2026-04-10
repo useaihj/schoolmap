@@ -237,6 +237,93 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.25);
       z-index: 999 !important;
     }
+    /* 큰 pill: 학교 약칭 표시 (줌 1~4) */
+    .marker-pill.size-large {
+      padding: 4px 11px;
+      font-size: 12px;
+      min-width: 40px;
+      border-radius: 13px;
+    }
+    /* 중간 pill: 단일 글자 (줌 5~7) */
+    .marker-pill.size-medium {
+      padding: 2px 7px;
+      font-size: 10px;
+      min-width: 22px;
+      border-radius: 10px;
+    }
+    /* 작은 도트 (줌 8~14) — 44px 터치 영역 확보 */
+    .marker-pill.size-small {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent !important;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      min-width: 0;
+      border-radius: 0;
+      transform: none !important;
+    }
+    .marker-pill.size-small .dot-inner {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+    }
+    .marker-pill.size-small.active .dot-inner,
+    .marker-pill.size-small.hovered .dot-inner {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* 초기 구/군 경계 라벨 */
+    .district-initial-label {
+      background: transparent;
+      color: #6B7280;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.9);
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* 초기 안내 화면 */
+    .initial-guide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 260px;
+      padding: 32px 20px;
+      text-align: center;
+      color: #6B7280;
+    }
+    .initial-guide .guide-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 14px;
+      color: #D1D5DB;
+    }
+    .initial-guide .guide-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+    .initial-guide .guide-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #9CA3AF;
+    }
 
     /* 카카오맵 팝업 (인포윈도우) */
     .kakao-popup-wrap {
@@ -449,7 +536,7 @@
     <input type="text" id="searchInput" placeholder="학교 이름으로 검색...">
   </div>
   <div class="filters">
-    <button class="filter-btn active" data-type="all">전체</button>
+    <button class="filter-btn" data-type="all">전체</button>
     <button class="filter-btn" data-type="초등학교">초등</button>
     <button class="filter-btn" data-type="중학교">중학</button>
     <button class="filter-btn" data-type="고등학교">고등</button>
@@ -482,7 +569,7 @@
 <div class="main">
   <div class="sidebar">
     <div class="mobile-filters">
-      <button class="filter-btn active" data-type="all">전체</button>
+      <button class="filter-btn" data-type="all">전체</button>
       <button class="filter-btn" data-type="초등학교">초등</button>
       <button class="filter-btn" data-type="중학교">중학</button>
       <button class="filter-btn" data-type="고등학교">고등</button>
@@ -526,19 +613,25 @@
   let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
-  let currentType = 'all';
+  let currentType = null;
   let currentDistrict = 'all';
   let currentSearch = '';
   let currentSort = 'name';
   let compareList = [];
   let districtGeoData = null;
   let districtPolygons = [];
+  let initialBoundaryPolygons = [];
+  let initialBoundaryLabels = [];
   let schoolZoneData = null;
   let schoolZonePolygons = [];
   let schoolZoneLabels = [];
   let allZonePolygons = [];
   let showAllZones = false;
   let currentInfoWindow = null;
+
+  // 지도 초기 상태
+  const INITIAL_CENTER = { lat: 35.5384, lng: 129.3114 }; // 울산시청
+  const INITIAL_LEVEL = 6;
 
   // 개발사업 상태
   let devProjects = [];
@@ -566,11 +659,11 @@
     '고등학교': 'background:#FFF7ED;color:#EA580C',
   };
 
-  // 지도 초기화 - 울산 중심
+  // 지도 초기화 - 울산시청 중심
   const mapContainer = document.getElementById('map');
   const map = new kakao.maps.Map(mapContainer, {
-    center: new kakao.maps.LatLng(35.54, 129.31),
-    level: 8
+    center: new kakao.maps.LatLng(INITIAL_CENTER.lat, INITIAL_CENTER.lng),
+    level: INITIAL_LEVEL
   });
 
   // 줌 컨트롤
@@ -590,28 +683,35 @@
     return short + suffix;
   }
 
-  // pill 마커 HTML 생성
+  // pill 마커 HTML 생성 (줌 레벨별 3단계)
   function createPillHtml(type, state, school) {
     const color = COLORS[type] || COLORS['기타'];
     const zoom = map.getLevel();
-    const label = zoom <= 4 ? shortName(school.name, type) : (SHORT_LABELS[type] || '?');
     const cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
-    return `<div class="marker-pill${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
+
+    if (zoom <= 4) {
+      // 큰 pill + 학교 약칭
+      const label = shortName(school.name, type);
+      return `<div class="marker-pill size-large${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
+    } else if (zoom <= 7) {
+      // 중간 pill + 단일 글자
+      const label = SHORT_LABELS[type] || '?';
+      return `<div class="marker-pill size-medium${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
+    } else {
+      // 작은 도트 (텍스트 없음, 44px 터치 영역)
+      return `<div class="marker-pill size-small${cls}" data-id="${school.id}"><div class="dot-inner" style="background:${color}"></div></div>`;
+    }
   }
 
-  // 줌 변경 시 마커 라벨 갱신
+  // 줌 변경 시 마커 HTML 재생성 + 이벤트 재바인딩
   kakao.maps.event.addListener(map, 'zoom_changed', function() {
     filteredSchools.forEach(s => {
       if (overlays[s.id]) {
         const state = activeMarker === s.id ? 'active' : hoveredMarker === s.id ? 'hovered' : 'normal';
         const el = overlays[s.id].overlay.getContent();
-        if (el && el.querySelector) {
-          const pill = el.querySelector('.marker-pill');
-          if (pill) {
-            const zoom = map.getLevel();
-            const label = zoom <= 4 ? shortName(s.name, s.type) : (SHORT_LABELS[s.type] || '?');
-            pill.textContent = label;
-          }
+        if (el) {
+          el.innerHTML = createPillHtml(s.type, state, s);
+          rebindOverlayEvents(s.id, s);
         }
       }
     });
@@ -629,7 +729,13 @@
 
   fetch('data/ulsan_districts.json')
     .then(r => r.json())
-    .then(data => { districtGeoData = data; });
+    .then(data => {
+      districtGeoData = data;
+      // 초기 상태(currentType === null)이면 구/군 경계 표시
+      if (currentType === null && !currentSearch) {
+        showAllDistrictBoundaries();
+      }
+    });
 
   fetch('data/ulsan_school_zones.json')
     .then(r => r.json())
@@ -643,8 +749,21 @@
   function applyFilters(skipFitBounds) {
     closeBottomSheet();
     closeInfoWindow();
+
+    // 초기 상태: currentType === null 이고 검색어 없음 → 빈 지도 + 안내
+    if (currentType === null && !currentSearch) {
+      clearAllMarkers();
+      filteredSchools = [];
+      activeMarker = null;
+      document.getElementById('stats').textContent = '';
+      renderInitialGuide();
+      showAllDistrictBoundaries();
+      return;
+    }
+
+    // 필터링
     filteredSchools = allSchools.filter(s => {
-      if (currentType !== 'all' && s.type !== currentType) return false;
+      if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
       if (currentSearch && !s.name.includes(currentSearch)) return false;
       return true;
@@ -663,12 +782,99 @@
 
     activeMarker = null;
     updateStats();
-    renderMarkers(skipFitBounds);
-    renderList();
+
+    if (currentType === null) {
+      // 검색어만 있는 경우: 초기 안내 경계는 유지, 마커는 표시 안 함, 사이드바 목록만
+      clearAllMarkers();
+      renderList();
+    } else {
+      // 유형 선택됨: 초기 안내 경계 제거, 마커 표시
+      clearInitialBoundaries();
+      renderMarkers(skipFitBounds);
+      renderList();
+    }
   }
 
   function updateStats() {
     document.getElementById('stats').textContent = `${filteredSchools.length}개 학교`;
+  }
+
+  // 모든 학교 마커 제거
+  function clearAllMarkers() {
+    Object.values(overlays).forEach(o => {
+      if (o && o.overlay) o.overlay.setMap(null);
+    });
+    overlays = {};
+    activeMarker = null;
+    hoveredMarker = null;
+  }
+
+  // 초기 사이드바 안내 렌더링
+  function renderInitialGuide() {
+    const list = document.getElementById('schoolList');
+    list.innerHTML = `
+      <div class="initial-guide">
+        <svg class="guide-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3L2 9l10 6 10-6-10-6z"/>
+          <path d="M2 15l10 6 10-6"/>
+          <path d="M2 12l10 6 10-6"/>
+        </svg>
+        <div class="guide-title">학교를 찾아보세요</div>
+        <div class="guide-desc">
+          유형(초등/중학/고등)을 선택하거나<br>
+          학교 이름으로 검색하세요
+        </div>
+      </div>`;
+  }
+
+  // 5개 구/군 경계 표시 (초기 상태)
+  function showAllDistrictBoundaries() {
+    clearInitialBoundaries();
+    if (!districtGeoData) return;
+    districtGeoData.features.forEach(feature => {
+      const polys = geoJsonToKakaoPolygons(feature, {
+        color: '#9CA3AF', weight: 1.5, fillColor: '#9CA3AF', fillOpacity: 0.03, dashArray: true, strokeOpacity: 0.7
+      });
+      polys.forEach(p => p.setMap(map));
+      initialBoundaryPolygons.push(...polys);
+
+      // 폴리곤 중심 계산 → 라벨
+      const geom = feature.geometry;
+      let coords;
+      if (geom.type === 'Polygon') {
+        coords = geom.coordinates[0];
+      } else if (geom.type === 'MultiPolygon') {
+        // 가장 큰 폴리곤 선택
+        let maxLen = 0, maxCoords = null;
+        geom.coordinates.forEach(poly => {
+          if (poly[0].length > maxLen) { maxLen = poly[0].length; maxCoords = poly[0]; }
+        });
+        coords = maxCoords;
+      }
+      if (coords && coords.length > 0) {
+        let sumLat = 0, sumLng = 0;
+        coords.forEach(c => { sumLng += c[0]; sumLat += c[1]; });
+        const centerLat = sumLat / coords.length;
+        const centerLng = sumLng / coords.length;
+        const label = new kakao.maps.CustomOverlay({
+          position: new kakao.maps.LatLng(centerLat, centerLng),
+          content: '<div class="district-initial-label">' + feature.properties.name + '</div>',
+          yAnchor: 0.5,
+          xAnchor: 0.5,
+          zIndex: 2
+        });
+        label.setMap(map);
+        initialBoundaryLabels.push(label);
+      }
+    });
+  }
+
+  // 초기 경계/라벨 제거
+  function clearInitialBoundaries() {
+    initialBoundaryPolygons.forEach(p => p.setMap(null));
+    initialBoundaryPolygons = [];
+    initialBoundaryLabels.forEach(l => l.setMap(null));
+    initialBoundaryLabels = [];
   }
 
   // 마커 렌더링
@@ -697,15 +903,15 @@
       });
       overlay.setMap(map);
 
-      // 클릭 이벤트
-      content.addEventListener('click', function(e) {
+      // 클릭 이벤트 (onclick 방식으로 통일 — rebindOverlayEvents와 이중 등록 방지)
+      content.onclick = function(e) {
         e.stopPropagation();
         selectSchool(s.id, true);
-      });
+      };
 
       // hover 이벤트
-      content.addEventListener('mouseenter', function() { highlightCard(s.id, true); });
-      content.addEventListener('mouseleave', function() { highlightCard(s.id, false); });
+      content.onmouseenter = function() { highlightCard(s.id, true); };
+      content.onmouseleave = function() { highlightCard(s.id, false); };
 
       overlays[s.id] = { overlay, position };
     });
@@ -1110,6 +1316,30 @@
 
   document.getElementById('sheetOverlay').addEventListener('click', closeBottomSheet);
 
+  // 단일 학교 오버레이 동적 생성 (overlays에 아직 없는 경우)
+  function createOverlayForSchool(s) {
+    const position = new kakao.maps.LatLng(s.lat, s.lng);
+    const content = document.createElement('div');
+    content.innerHTML = createPillHtml(s.type, 'normal', s);
+
+    const overlay = new kakao.maps.CustomOverlay({
+      position: position,
+      content: content,
+      yAnchor: 0.5,
+      zIndex: 10
+    });
+    overlay.setMap(map);
+
+    content.onclick = function(e) {
+      e.stopPropagation();
+      selectSchool(s.id, true);
+    };
+    content.onmouseenter = function() { highlightCard(s.id, true); };
+    content.onmouseleave = function() { highlightCard(s.id, false); };
+
+    overlays[s.id] = { overlay, position };
+  }
+
   // 학교 선택 (공통)
   function selectSchool(id, openPopup) {
     // 이전 활성 마커 복원
@@ -1123,7 +1353,12 @@
     }
 
     const school = allSchools.find(s => s.id === id);
-    if (!school || !overlays[id]) return;
+    if (!school) return;
+
+    // overlays에 없으면 동적으로 생성 (검색 결과 클릭, 초기 상태 등)
+    if (!overlays[id]) {
+      createOverlayForSchool(school);
+    }
 
     activeMarker = id;
     overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'active', school);
@@ -1178,9 +1413,9 @@
     }
   };
 
-  // 필터 초기화
+  // 필터 초기화 → 초기 안내 화면으로 복귀
   function resetFilters() {
-    currentType = 'all';
+    currentType = null;
     currentDistrict = 'all';
     currentSearch = '';
     currentSort = 'name';
@@ -1190,7 +1425,9 @@
     showDistrictBoundary('all');
     clearSchoolZone();
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.filter-btn[data-type="all"]').forEach(b => b.classList.add('active'));
+    // 지도 초기 위치/줌 복귀
+    map.setLevel(INITIAL_LEVEL);
+    map.setCenter(new kakao.maps.LatLng(INITIAL_CENTER.lat, INITIAL_CENTER.lng));
     applyFilters();
   }
   window._resetFilters = resetFilters;
@@ -1201,11 +1438,22 @@
     applyFilters();
   });
 
-  // 이벤트: 유형 필터
+  // 이벤트: 유형 필터 (토글 지원)
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       const type = this.dataset.type;
+      // 이미 활성 상태면 토글 해제 → 초기 상태로
+      if (currentType === type) {
+        currentType = null;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        clearSchoolZone();
+        // 지도 초기 위치/줌 복귀
+        map.setLevel(INITIAL_LEVEL);
+        map.setCenter(new kakao.maps.LatLng(INITIAL_CENTER.lat, INITIAL_CENTER.lng));
+        applyFilters();
+        return;
+      }
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.add('active'));
       currentType = type;
       clearSchoolZone();
