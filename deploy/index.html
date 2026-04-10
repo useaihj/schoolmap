@@ -540,9 +540,9 @@
   </div>
   <div class="filters">
     <button class="filter-btn active" data-type="all">전체</button>
-    <button class="filter-btn" data-type="초등학교">초등</button>
-    <button class="filter-btn" data-type="중학교">중학</button>
-    <button class="filter-btn" data-type="고등학교">고등</button>
+    <button class="filter-btn" data-type="초등학교">초</button>
+    <button class="filter-btn" data-type="중학교">중</button>
+    <button class="filter-btn" data-type="고등학교">고</button>
     <button class="filter-btn" data-type="특수학교">특수</button>
     <button class="filter-btn" data-type="각종학교">각종</button>
   </div>
@@ -575,9 +575,9 @@
   <div class="sidebar">
     <div class="mobile-filters">
       <button class="filter-btn active" data-type="all">전체</button>
-      <button class="filter-btn" data-type="초등학교">초등</button>
-      <button class="filter-btn" data-type="중학교">중학</button>
-      <button class="filter-btn" data-type="고등학교">고등</button>
+      <button class="filter-btn" data-type="초등학교">초</button>
+      <button class="filter-btn" data-type="중학교">중</button>
+      <button class="filter-btn" data-type="고등학교">고</button>
       <button class="filter-btn" data-type="특수학교">특수</button>
       <button class="filter-btn" data-type="각종학교">각종</button>
     </div>
@@ -685,6 +685,8 @@
 
   // 학년 라벨 정렬 순서 (특수학교용). 숫자 학년("1","2"...)은 숫자 정렬.
   const GRADE_ORDER = { '유치원': 0, '초등': 1, '중': 2, '고': 3, '전공과': 4 };
+  // JSON 키 → 표시용 축약 라벨 (특수학교 테이블에서 "유치원"→"유", "초등"→"초")
+  const GRADE_DISPLAY = { '유치원': '유', '초등': '초' };
   function sortGrades(grades) {
     return grades.slice().sort((a, b) => {
       const aNum = /^\d+$/.test(a);
@@ -694,9 +696,10 @@
       return aNum ? -1 : 1;
     });
   }
-  // '1' → '1학년', '유치원' → '유치원'
+  // '1' → '1학년', '유치원' → '유', '중' → '중'
   function gradeLabel(g) {
-    return /^\d+$/.test(g) ? `${g}학년` : g;
+    if (/^\d+$/.test(g)) return `${g}학년`;
+    return GRADE_DISPLAY[g] || g;
   }
 
   // 학교 약칭 생성
@@ -805,15 +808,13 @@
     }
 
     // 필터링
-    // 규칙: '전체'(all) + 구/군 필터 없음 상태에서는 특수·각종학교를 숨김.
-    // 사용자가 구/군을 선택하거나 '특수'/'각종' 버튼을 직접 누를 때만 노출.
+    // 특수·각종학교는 '전체' 모드에서도 초·중·고와 함께 노출됨.
+    // (하단 정렬 분기에서 EXTRA_TYPES가 정렬 순서 규칙에 사용됨)
     const EXTRA_TYPES = new Set(['특수학교', '각종학교']);
     filteredSchools = allSchools.filter(s => {
       if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
       if (currentSearch && !s.name.includes(currentSearch)) return false;
-      if (currentType === 'all' && currentDistrict === 'all' && !currentSearch
-          && EXTRA_TYPES.has(s.type)) return false;
       return true;
     });
 
