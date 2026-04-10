@@ -536,7 +536,7 @@
     <input type="text" id="searchInput" placeholder="학교 이름으로 검색...">
   </div>
   <div class="filters">
-    <button class="filter-btn" data-type="all">전체</button>
+    <button class="filter-btn active" data-type="all">전체</button>
     <button class="filter-btn" data-type="초등학교">초등</button>
     <button class="filter-btn" data-type="중학교">중학</button>
     <button class="filter-btn" data-type="고등학교">고등</button>
@@ -569,7 +569,7 @@
 <div class="main">
   <div class="sidebar">
     <div class="mobile-filters">
-      <button class="filter-btn" data-type="all">전체</button>
+      <button class="filter-btn active" data-type="all">전체</button>
       <button class="filter-btn" data-type="초등학교">초등</button>
       <button class="filter-btn" data-type="중학교">중학</button>
       <button class="filter-btn" data-type="고등학교">고등</button>
@@ -613,7 +613,7 @@
   let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
-  let currentType = null;
+  let currentType = 'all';
   let currentDistrict = 'all';
   let currentSearch = '';
   let currentSort = 'name';
