@@ -3,6 +3,38 @@
 2. 승인을 받은 후에 실행할 것
 3. 정적 사이트 관련 파일 수정 후에는 빌드/배포까지 자동 진행
 
+# 개발 환경 체크리스트 (Claude가 지켜야 할 사전 점검 규칙)
+
+이 프로젝트는 여러 PC(회사·집)에서 번갈아 작업되므로, 환경 의존 작업을 하기 전에 반드시 사전 점검한다.
+
+## 반드시 먼저 실행할 상황
+
+아래 상황에서는 **해당 명령을 실행하기 직전에** `python scripts/check_env.py`를 먼저 돌려서 환경 요건이 갖춰져 있는지 확인할 것.
+
+- `python scripts/import_excel.py` 실행 예정 (openpyxl + 엑셀 파일 7개 + 잠금 없음 필요)
+- `python scripts/add_school.py` / `remove_school.py` 실행 예정 (엑셀 쓰기 작업)
+- `bash deploy.sh` 실행 예정 (Node.js + wrangler + CLOUDFLARE_API_TOKEN 필요)
+- 사용자가 "집에서 작업 시작했어", "다른 PC에서 처음 열었어" 같이 새 환경 신호를 주는 경우
+- `scripts/check_env.py`가 마지막으로 통과한 이력이 이 세션에 없는 상태에서 엑셀 관련 커밋 작업을 하는 경우
+
+## 점검 결과 해석
+
+`check_env.py`는 5개 항목을 확인한다.
+
+| 항목 | 실패 시 조치 |
+|---|---|
+| 1. openpyxl 설치 | `pip install openpyxl` |
+| 2. Node.js / npx | https://nodejs.org 에서 Node.js 설치 |
+| 3. Cloudflare API 토큰 | Windows 사용자 환경변수 `CLOUDFLARE_API_TOKEN` 등록. 현재 셸에 토큰이 없고 Windows 환경변수에 있으면 `export CLOUDFLARE_API_TOKEN=$(powershell.exe -Command "[Environment]::GetEnvironmentVariable('CLOUDFLARE_API_TOKEN','User')" \| tr -d '\r\n')` 로 주입 |
+| 4. 필수 엑셀 7개 존재 | 누락 파일을 복구하거나 프로젝트 구조 확인 |
+| 5. 엑셀 잠금 파일(~$) | **사용자에게 해당 엑셀 파일을 닫아달라고 요청할 것.** 잠긴 상태에서 import_excel.py나 쓰기 스크립트를 돌리면 `PermissionError`로 실패함 |
+
+## 환경 이슈 처리 원칙
+
+- 필수 항목 실패가 있으면 작업을 강행하지 말고 사용자에게 알린 뒤 해결 방법을 안내한다.
+- 잠금 파일 경고는 "쓰기 작업"일 때만 차단 사유가 된다. 읽기만 하는 경우(예: `check_env.py` 자체, 엑셀 구조 확인)는 진행 가능.
+- 토큰이 셸에 없고 Windows 환경변수에만 있는 상태는 정상이다. `deploy.sh` 실행 직전에 위 export 명령으로 주입하면 된다.
+
 # 울산 학교 찾기
 
 울산광역시 252개 학교를 지도에 표시하는 인터랙티브 웹앱.
