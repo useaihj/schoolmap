@@ -3,7 +3,7 @@
 
 소스:
   1. 초등학교현황.xlsx / 중학교현황.xlsx / 고등학교현황.xlsx → 학급·학생·교직원 등 전체 데이터
-  2. 울산학교주소위도경도.xls → 주소, 위도, 경도
+  2. 울산학교주소위도경도.xlsx → 주소, 위도, 경도 (위도/경도는 보정된 값)
   3. 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx → 개교일, 우편번호, 전화, 팩스, 홈페이지
 """
 
@@ -11,7 +11,6 @@ import json
 from pathlib import Path
 
 import openpyxl
-import xlrd
 
 BASE_DIR = Path(__file__).parent.parent
 DATA_PATH = BASE_DIR / "data" / "ulsan_schools.json"
@@ -107,18 +106,21 @@ def read_high(path):
 # ── 2) 위치 엑셀 읽기 ──────────────────────────────────────────
 
 def read_location(path):
-    """울산학교주소위도경도.xls → {학교명: {address, lat, lng}}"""
-    wb = xlrd.open_workbook(path)
-    ws = wb.sheet_by_index(0)
+    """울산학교주소위도경도.xlsx → {학교명: {address, lat, lng}}"""
+    wb = openpyxl.load_workbook(path)
+    ws = wb.active
     loc = {}
-    for r in range(1, ws.nrows):
-        name = ws.cell_value(r, 0).strip()
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        name = (row[0] or "").strip() if row[0] else ""
         if not name:
             continue
+        addr_val = row[7] if len(row) > 7 else ""
+        lat_val = row[8] if len(row) > 8 else 0
+        lng_val = row[9] if len(row) > 9 else 0
         loc[name] = {
-            "address": ws.cell_value(r, 7).strip() if ws.cell_value(r, 7) else "",
-            "lat": float(ws.cell_value(r, 8)) if ws.cell_value(r, 8) else 0,
-            "lng": float(ws.cell_value(r, 9)) if ws.cell_value(r, 9) else 0,
+            "address": str(addr_val).strip() if addr_val else "",
+            "lat": float(lat_val) if lat_val not in (None, "") else 0,
+            "lng": float(lng_val) if lng_val not in (None, "") else 0,
         }
     return loc
 
@@ -194,7 +196,7 @@ def main():
     print(f"현황 엑셀: {len(all_schools)}개 (초{len(elem)} + 중{len(mid)} + 고{len(high)})")
 
     # 2) 위치 엑셀 → 주소/위도/경도
-    loc = read_location(BASE_DIR / "울산학교주소위도경도.xls")
+    loc = read_location(BASE_DIR / "울산학교주소위도경도.xlsx")
     print(f"위치 데이터: {len(loc)}개")
 
     loc_ok, loc_miss = 0, []
