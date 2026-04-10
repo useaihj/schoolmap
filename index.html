@@ -69,6 +69,7 @@
     .filters {
       display: flex;
       gap: 6px;
+      flex-wrap: wrap;
     }
     .filter-btn {
       padding: 7px 16px;
@@ -204,6 +205,8 @@
     .badge-elem { background: #ECFDF5; color: #059669; }
     .badge-mid { background: #EFF6FF; color: #2563EB; }
     .badge-high { background: #FFF7ED; color: #EA580C; }
+    .badge-special { background: #F5F3FF; color: #7C3AED; }
+    .badge-alt { background: #ECFEFF; color: #0891B2; }
 
     /* 지도 */
     #map { flex: 1; }
@@ -540,6 +543,8 @@
     <button class="filter-btn" data-type="초등학교">초등</button>
     <button class="filter-btn" data-type="중학교">중학</button>
     <button class="filter-btn" data-type="고등학교">고등</button>
+    <button class="filter-btn" data-type="특수학교">특수</button>
+    <button class="filter-btn" data-type="각종학교">각종</button>
   </div>
   <button class="header-btn" id="zoneToggleBtn" onclick="window._toggleAllZones()">통학구역</button>
   <button class="header-btn" id="devToggleBtn" onclick="window._toggleDevProjects()">🏗 개발사업</button>
@@ -573,6 +578,8 @@
       <button class="filter-btn" data-type="초등학교">초등</button>
       <button class="filter-btn" data-type="중학교">중학</button>
       <button class="filter-btn" data-type="고등학교">고등</button>
+      <button class="filter-btn" data-type="특수학교">특수</button>
+      <button class="filter-btn" data-type="각종학교">각종</button>
     </div>
     <div class="school-list" id="schoolList"></div>
   </div>
@@ -643,6 +650,8 @@
     '초등학교': '#059669',
     '중학교': '#2563EB',
     '고등학교': '#EA580C',
+    '특수학교': '#7C3AED',
+    '각종학교': '#0891B2',
     '기타': '#6B7280'
   };
 
@@ -650,6 +659,8 @@
     '초등학교': '초',
     '중학교': '중',
     '고등학교': '고',
+    '특수학교': '특',
+    '각종학교': '각',
     '기타': '?'
   };
 
@@ -657,6 +668,8 @@
     '초등학교': 'background:#ECFDF5;color:#059669',
     '중학교':  'background:#EFF6FF;color:#2563EB',
     '고등학교': 'background:#FFF7ED;color:#EA580C',
+    '특수학교': 'background:#F5F3FF;color:#7C3AED',
+    '각종학교': 'background:#ECFEFF;color:#0891B2',
   };
 
   // 지도 초기화 - 울산시청 중심
@@ -670,8 +683,38 @@
   map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
 
 
+  // 학년 라벨 정렬 순서 (특수학교용). 숫자 학년("1","2"...)은 숫자 정렬.
+  const GRADE_ORDER = { '유치원': 0, '초등': 1, '중': 2, '고': 3, '전공과': 4 };
+  function sortGrades(grades) {
+    return grades.slice().sort((a, b) => {
+      const aNum = /^\d+$/.test(a);
+      const bNum = /^\d+$/.test(b);
+      if (aNum && bNum) return parseInt(a) - parseInt(b);
+      if (!aNum && !bNum) return (GRADE_ORDER[a] ?? 99) - (GRADE_ORDER[b] ?? 99);
+      return aNum ? -1 : 1;
+    });
+  }
+  // '1' → '1학년', '유치원' → '유치원'
+  function gradeLabel(g) {
+    return /^\d+$/.test(g) ? `${g}학년` : g;
+  }
+
   // 학교 약칭 생성
   function shortName(name, type) {
+    // 특수학교: '울산' 접두사 제거, '학교' 포함한 원래 이름 유지
+    // 예) 울산행복학교 → 행복학교, 메아리학교 → 메아리학교
+    if (type === '특수학교') {
+      return name.replace(/^울산/, '');
+    }
+    // 각종학교: 중/고/기타 구분
+    // 예) 울산고운중학교 → 울산고운중, 울산고운고등학교 → 울산고운고,
+    //     울산온라인학교 → 온라인학교
+    if (type === '각종학교') {
+      if (name.endsWith('중학교')) return name.slice(0, -2);
+      if (name.endsWith('고등학교')) return name.slice(0, -3);
+      return name.replace(/^울산/, '');
+    }
+    // 기존 초/중/고 로직
     let short = name;
     short = short.replace(/(초등학교|중학교|고등학교)$/, '');
     if (short.includes('여자상업')) return short.replace('여자상업', '여상');
@@ -762,10 +805,15 @@
     }
 
     // 필터링
+    // 규칙: '전체'(all) + 구/군 필터 없음 상태에서는 특수·각종학교를 숨김.
+    // 사용자가 구/군을 선택하거나 '특수'/'각종' 버튼을 직접 누를 때만 노출.
+    const EXTRA_TYPES = new Set(['특수학교', '각종학교']);
     filteredSchools = allSchools.filter(s => {
       if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
       if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
       if (currentSearch && !s.name.includes(currentSearch)) return false;
+      if (currentType === 'all' && currentDistrict === 'all' && !currentSearch
+          && EXTRA_TYPES.has(s.type)) return false;
       return true;
     });
 
@@ -778,7 +826,17 @@
       density_desc: (a, b) => (b.avg_students_per_class||0) - (a.avg_students_per_class||0),
       density_asc: (a, b) => (a.avg_students_per_class||0) - (b.avg_students_per_class||0),
     };
-    filteredSchools.sort(sortFns[currentSort] || sortFns.name);
+    // 이름순 정렬은 특수·각종학교를 초·중·고와 함께 가나다순 배치.
+    // 그 외 정렬(학생수·학급수·학급당)은 특수·각종학교를 하단에 이름순으로 고정.
+    if (currentSort === 'name' || !sortFns[currentSort]) {
+      filteredSchools.sort(sortFns.name);
+    } else {
+      const mainList = filteredSchools.filter(s => !EXTRA_TYPES.has(s.type));
+      const extraList = filteredSchools.filter(s => EXTRA_TYPES.has(s.type));
+      mainList.sort(sortFns[currentSort]);
+      extraList.sort(sortFns.name);
+      filteredSchools = [...mainList, ...extraList];
+    }
 
     activeMarker = null;
     updateStats();
@@ -976,7 +1034,7 @@
 
     let tableHtml = '';
     if (s.classes_by_grade && s.students_by_grade) {
-      const grades = Object.keys(s.classes_by_grade).sort();
+      const grades = sortGrades(Object.keys(s.classes_by_grade));
       const totalCls = grades.reduce((a, g) => a + (s.classes_by_grade[g]||0), 0);
       const totalStu = grades.reduce((a, g) => a + (s.students_by_grade[g]||0), 0);
       const rows = grades.map(g => {
@@ -984,7 +1042,7 @@
         const st = s.students_by_grade[g]||0;
         const av = s.avg_students_per_class_by_grade ? (s.avg_students_per_class_by_grade[g]||0) : 0;
         return `<tr>
-          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;color:#374151">${g}학년</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;color:#374151">${gradeLabel(g)}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${c}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${st.toLocaleString()}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${av}</td>
@@ -1059,6 +1117,8 @@
     if (type === '초등학교') return 'badge-elem';
     if (type === '중학교') return 'badge-mid';
     if (type === '고등학교') return 'badge-high';
+    if (type === '특수학교') return 'badge-special';
+    if (type === '각종학교') return 'badge-alt';
     return '';
   }
 
@@ -1257,7 +1317,7 @@
       </div>`;
 
     if (s.classes_by_grade && s.students_by_grade) {
-      const grades = Object.keys(s.classes_by_grade).sort();
+      const grades = sortGrades(Object.keys(s.classes_by_grade));
       const totalCls = grades.reduce((a, g) => a + (s.classes_by_grade[g]||0), 0);
       const totalStu = grades.reduce((a, g) => a + (s.students_by_grade[g]||0), 0);
       const rows = grades.map(g => {
@@ -1265,7 +1325,7 @@
         const st = s.students_by_grade[g]||0;
         const av = s.avg_students_per_class_by_grade ? (s.avg_students_per_class_by_grade[g]||0) : 0;
         return `<tr>
-          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;color:#374151">${g}학년</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;color:#374151">${gradeLabel(g)}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${c}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${st.toLocaleString()}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #F3F4F6;text-align:right">${av}</td>

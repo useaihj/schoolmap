@@ -331,6 +331,27 @@ def main():
         if ct_orphans:
             print(f"  연락처 엑셀 잔존: {ct_orphans}")
 
+    # 3c) 중복 좌표 감지 및 자동 오프셋
+    # 같은 건물·부지에 둘 이상 학교가 있는 경우(예: 울산고운중·고) 지도에서
+    # 마커가 완전히 겹쳐 하나만 보이는 문제 방지. xlsx 원본은 건드리지 않고
+    # JSON 단계에서만 학교명 가나다순 2번째부터 약 16m(위도 0.00015) 간격 오프셋.
+    coord_groups = {}
+    for s in all_schools:
+        if s["lat"] and s["lng"]:
+            key = (round(s["lat"], 6), round(s["lng"], 6))
+            coord_groups.setdefault(key, []).append(s)
+
+    dup_adjusted = 0
+    for group in coord_groups.values():
+        if len(group) <= 1:
+            continue
+        group.sort(key=lambda x: x["name"])
+        for i, s in enumerate(group[1:], start=1):
+            s["lat"] = round(s["lat"] + 0.00015 * i, 7)
+            dup_adjusted += 1
+    if dup_adjusted > 0:
+        print(f"중복 좌표 오프셋: {dup_adjusted}건 (같은 부지 학교 마커 분리)")
+
     # 4) 통계 계산
     for s in all_schools:
         calc_stats(s)
