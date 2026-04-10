@@ -1442,22 +1442,19 @@
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const type = this.dataset.type;
-      // 이미 활성 상태면 토글 해제 → 초기 상태로
+      // 이미 활성 상태면 토글 해제 → 빈 지도 안내 (현재 줌/위치 유지)
       if (currentType === type) {
         currentType = null;
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         clearSchoolZone();
-        // 지도 초기 위치/줌 복귀
-        map.setLevel(INITIAL_LEVEL);
-        map.setCenter(new kakao.maps.LatLng(INITIAL_CENTER.lat, INITIAL_CENTER.lng));
-        applyFilters();
+        applyFilters(true);
         return;
       }
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.add('active'));
       currentType = type;
       clearSchoolZone();
-      applyFilters();
+      applyFilters(true);
     });
   });
 
