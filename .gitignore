@@ -1,0 +1,5 @@
+.DS_Store
+.wrangler/
+.superpowers/
+.claude/settings.local.json
+mockup-*.html

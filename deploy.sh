@@ -11,6 +11,14 @@ cp data/ulsan_schools.json deploy/data/ulsan_schools.json
 cp data/ulsan_districts.json deploy/data/ulsan_districts.json
 cp data/ulsan_school_zones.json deploy/data/ulsan_school_zones.json
 
+# 중학교/고등학교 학구 파일
+if [ -f data/ulsan_middle_school_zones.json ]; then
+  cp data/ulsan_middle_school_zones.json deploy/data/ulsan_middle_school_zones.json
+fi
+if [ -f data/ulsan_high_school_zones.json ]; then
+  cp data/ulsan_high_school_zones.json deploy/data/ulsan_high_school_zones.json
+fi
+
 # dev_projects 파일이 있으면 같이 복사
 if [ -f data/ulsan_dev_projects.json ]; then
   cp data/ulsan_dev_projects.json deploy/data/ulsan_dev_projects.json

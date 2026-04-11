@@ -30,7 +30,10 @@
       white-space: nowrap;
       letter-spacing: -0.3px;
       color: #111827;
+      cursor: pointer;
+      user-select: none;
     }
+    .header h1:hover { color: #2563EB; }
 
     /* 검색 */
     .search-box {
@@ -330,8 +333,7 @@
 
     /* 카카오맵 팝업 (인포윈도우) */
     .kakao-popup-wrap {
-      min-width: 280px;
-      max-width: 340px;
+      width: 320px;
       font-family: 'Inter', -apple-system, sans-serif;
       background: #fff;
       border-radius: 16px;
@@ -435,11 +437,250 @@
     }
     .header-btn.dev-active:hover { background: #D97706; border-color: #D97706; }
 
+    /* 학구 레이어 라벨 */
+    .zone-layer-label {
+      background: rgba(255,255,255,0.92);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      pointer-events: none;
+      font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+      transition: opacity 0.15s ease, font-size 0.15s ease;
+    }
+    .zone-layer-label.zone-label-selected {
+      font-size: 13px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    }
+    .zone-layer-label.zone-label-dimmed {
+      opacity: 0.35;
+    }
+
+    /* 학구 정보 팝업 (지도 컨테이너 내부 absolute) */
+    .zone-info-popup {
+      position: absolute;
+      width: 280px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      padding: 14px 16px 12px;
+      font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+      z-index: 2500;
+    }
+    .zone-info-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.2px;
+      padding-right: 26px;
+    }
+    .zone-info-meta {
+      font-size: 11px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+    .zone-info-close {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 24px; height: 24px;
+      border: none;
+      background: #F3F4F6;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #6B7280;
+      font-size: 14px;
+    }
+    .zone-info-close:hover { background: #E5E7EB; }
+
+    /* 사이드바 학구 필터 안내 바 */
+    .zone-filter-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      margin: 6px 6px 2px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .zone-filter-bar.active { display: flex; }
+    .zone-filter-bar.middle { background: linear-gradient(90deg, #DBEAFE, #EFF6FF); border: 1px solid #93C5FD; color: #1E40AF; }
+    .zone-filter-bar.high   { background: linear-gradient(90deg, #FFEDD5, #FFF7ED); border: 1px solid #FDBA74; color: #9A3412; }
+    .zone-filter-bar.elem   { background: linear-gradient(90deg, #D1FAE5, #ECFDF5); border: 1px solid #6EE7B7; color: #065F46; }
+    .zone-filter-bar.gongdong { background: linear-gradient(90deg, #FEF3C7, #FFFBEB); border: 1px solid #FCD34D; color: #92400E; }
+    .zone-filter-bar .zf-label { font-weight: 600; font-size: 11px; letter-spacing: 0.3px; flex-shrink: 0; }
+    .zone-filter-bar .zf-name { font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .zone-filter-bar .zf-close {
+      background: #fff; border: 1px solid currentColor;
+      width: 22px; height: 22px; border-radius: 50%;
+      cursor: pointer; color: inherit;
+      font-size: 14px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0; flex-shrink: 0;
+    }
+    .zone-filter-bar .zf-close:hover { background: rgba(255,255,255,0.7); }
+    .header-btn.nearby-active {
+      background: #2563EB; color: #fff; border-color: #2563EB;
+    }
+    .header-btn.nearby-active:hover { background: #1D4ED8; border-color: #1D4ED8; }
+
+    .nearby-radius-select {
+      padding: 6px 10px; border: 1px solid #2563EB; border-radius: 8px;
+      font-size: 13px; font-weight: 500; color: #2563EB; background: #fff;
+      cursor: pointer; outline: none; font-family: 'Inter', sans-serif;
+    }
+
+    /* 거리 뱃지 (사이드바 카드) */
+    .distance-badge {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: #EFF6FF; color: #2563EB;
+      padding: 2px 7px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; margin-left: auto;
+    }
+    .school-item .top-row { align-items: center; }
+
+    /* 기준 학교 카드 강조 */
+    .school-item.base-school {
+      border-color: #2563EB;
+      background: linear-gradient(90deg, #DBEAFE 0%, #fff 100%);
+      box-shadow: 0 0 0 2px #2563EB;
+    }
+    .school-item .base-badge {
+      display: inline-flex; align-items: center;
+      background: #2563EB; color: #fff;
+      padding: 2px 7px; border-radius: 6px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+      margin-left: auto;
+    }
+
+    /* 기준 학교 마커 주변 링 (pill 마커 wrapper에 추가) */
+    .base-school-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      border: 3px solid #2563EB;
+      background: rgba(37, 99, 235, 0.1);
+      animation: baseRingPulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+    @keyframes baseRingPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 0.4; }
+    }
+
+    /* 사이드바 상단 기준 안내 바 */
+    .nearby-info-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      margin: 6px 6px 2px;
+      background: linear-gradient(90deg, #DBEAFE, #EFF6FF);
+      border: 1px solid #93C5FD;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #1E40AF;
+    }
+    .nearby-info-bar.active { display: flex; }
+    .nearby-info-bar .nb-label {
+      font-weight: 600;
+      color: #1E3A8A;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+    .nearby-info-bar .nb-school {
+      font-weight: 700;
+      color: #1E3A8A;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nearby-info-bar .nb-radius {
+      font-weight: 600;
+      color: #2563EB;
+      padding: 2px 8px;
+      background: #fff;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+    .nearby-info-bar .nb-close {
+      background: #fff;
+      border: 1px solid #93C5FD;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #1E40AF;
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .nearby-info-bar .nb-close:hover { background: #EFF6FF; }
+
+    /* 팝업/바텀시트 내 "반경 내 학교" 액션 버튼 */
+    .nearby-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #2563EB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+    }
+    .nearby-action-btn:hover { background: #1D4ED8; }
+    .nearby-action-btn.active {
+      background: #DC2626;
+    }
+    .nearby-action-btn.active:hover { background: #B91C1C; }
+
+    /* 토스트 알림 */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #111827; color: #fff;
+      padding: 12px 22px; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 5000; opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none; white-space: nowrap;
+      font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
     /* 반응형 */
     @media (max-width: 768px) {
-      .header { padding: 0 14px; gap: 10px; height: 50px; }
-      .header h1 { font-size: 15px; }
+      .header { padding: 0 10px; gap: 6px; height: 50px; }
+      .header h1 { font-size: 15px; display: none; }
       .filters { display: none; }
+      .header .search-box { max-width: none; }
+      .header .header-btn { padding: 7px 10px; font-size: 12px; }
+      #shareBtn, #zoneToggleBtn, #devToggleBtn {
+        font-size: 0; padding: 7px 9px;
+      }
+      #shareBtn::before { content: "🔗"; font-size: 14px; }
+      #zoneToggleBtn::before { content: "🏘"; font-size: 14px; }
+      #devToggleBtn::before { content: "🏗"; font-size: 14px; }
+      #nearbyBtn { padding: 7px 10px; font-size: 11px; }
+      .nearby-radius-select { padding: 6px 6px; font-size: 12px; }
       .filter-bar { padding: 0 14px; overflow-x: auto; gap: 8px; }
       .filter-bar::-webkit-scrollbar { display: none; }
 
@@ -533,7 +774,7 @@
 <body>
 
 <div class="header">
-  <h1>울산 학교 찾기</h1>
+  <h1 onclick="window._resetToHome()" title="처음 화면으로">울산 학교 찾기</h1>
   <div class="search-box">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" id="searchInput" placeholder="학교 이름으로 검색...">
@@ -546,8 +787,18 @@
     <button class="filter-btn" data-type="특수학교">특수</button>
     <button class="filter-btn" data-type="각종학교">각종</button>
   </div>
-  <button class="header-btn" id="zoneToggleBtn" onclick="window._toggleAllZones()">통학구역</button>
+  <button class="header-btn" id="nearbyBtn" onclick="window._clearNearby()" style="display:none">✕ 반경 해제</button>
+  <select id="nearbyRadius" class="nearby-radius-select" style="display:none">
+    <option value="1" selected>1km</option>
+    <option value="1.5">1.5km</option>
+    <option value="2">2km</option>
+    <option value="3">3km</option>
+  </select>
+  <button class="header-btn" id="zoneToggleBtn" onclick="window._toggleAllZones()">초등 통학구역</button>
+  <button class="header-btn" id="midZoneToggleBtn" onclick="window._toggleMidZones()">중학구/학교군</button>
+  <button class="header-btn" id="highZoneToggleBtn" onclick="window._toggleHighZones()">고등 학교군</button>
   <button class="header-btn" id="devToggleBtn" onclick="window._toggleDevProjects()">🏗 개발사업</button>
+  <button class="header-btn" id="shareBtn" onclick="window._copyShareLink()" title="링크 복사">🔗 공유</button>
 </div>
 
 <div class="filter-bar">
@@ -580,6 +831,17 @@
       <button class="filter-btn" data-type="고등학교">고</button>
       <button class="filter-btn" data-type="특수학교">특수</button>
       <button class="filter-btn" data-type="각종학교">각종</button>
+    </div>
+    <div class="nearby-info-bar" id="nearbyInfoBar">
+      <span class="nb-label">기준</span>
+      <span class="nb-school" id="nbSchoolName"></span>
+      <span class="nb-radius" id="nbRadiusText">1.5km</span>
+      <button class="nb-close" onclick="window._clearNearby()" title="반경 해제">&times;</button>
+    </div>
+    <div class="zone-filter-bar" id="zoneFilterBar">
+      <span class="zf-label" id="zfLabel">학구</span>
+      <span class="zf-name" id="zfName"></span>
+      <button class="zf-close" onclick="window._clearZoneFilter()" title="학구 필터 해제">&times;</button>
     </div>
     <div class="school-list" id="schoolList"></div>
   </div>
@@ -634,6 +896,22 @@
   let schoolZoneLabels = [];
   let allZonePolygons = [];
   let showAllZones = false;
+
+  // 중/고 학구 데이터 및 상태
+  let midZoneData = null;
+  let highZoneData = null;
+  let midZonePolygons = [];
+  let midZoneLabels = [];
+  let highZonePolygons = [];
+  let highZoneLabels = [];
+  let showMidZones = false;
+  let showHighZones = false;
+  // 학교 선택 시 자동 표시되는 zone 폴리곤 (중학교·고등학교용)
+  let selectedMidZonePolygons = [];
+  let selectedHighZonePolygons = [];
+  // 학구 폴리곤 클릭 팝업 + 사이드바 필터
+  let zoneInfoPopupEl = null;   // HTML absolute 요소
+  let zoneFilter = null;        // { kind: 'middle'|'high'|'elem', name, schoolNames: Set }
   let currentInfoWindow = null;
 
   // 지도 초기 상태
@@ -644,6 +922,15 @@
   let devProjects = [];
   let devOverlays = [];
   let devShowProjects = false;
+
+  // 반경 모드 상태 (기준 학교 중심)
+  let nearbyMode = false;
+  let baseSchoolId = null;
+  let radiusCircle = null;
+  let nearbyRadiusKm = 1;
+  let schoolDistances = {};
+  let urlRestorePending = null;
+  let dataLoadedCount = 0;
 
   // 마커 색상
   const COLORS = {
@@ -678,6 +965,7 @@
     center: new kakao.maps.LatLng(INITIAL_CENTER.lat, INITIAL_CENTER.lng),
     level: INITIAL_LEVEL
   });
+  window._map = map;  // 임시: 디버그/테스트용
 
   // 줌 컨트롤
   map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
@@ -765,27 +1053,51 @@
     if (devShowProjects) renderDevMarkers();
   });
 
+  // URL 상태 확인 (데이터 로드 전에 파싱만 해두기)
+  // 단, 새로고침(reload)인 경우는 URL 해시 무시 → 초기 상태로
+  const navEntries = performance.getEntriesByType('navigation');
+  const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
+  if (isReload && location.hash) {
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  urlRestorePending = isReload ? null : parseURLState();
+
   // 데이터 로드
   fetch('data/ulsan_schools.json')
     .then(r => r.json())
     .then(data => {
       allSchools = data.schools;
-      applyFilters(true); // 초기 로드: 시청 중심·레벨 6 유지 (setBounds 건너뜀)
+      dataLoadedCount++;
+      if (urlRestorePending) {
+        tryRestoreURLState();
+      } else {
+        applyFilters(true); // 초기 로드: 시청 중심·레벨 6 유지 (setBounds 건너뜀)
+      }
     });
 
   fetch('data/ulsan_districts.json')
     .then(r => r.json())
     .then(data => {
       districtGeoData = data;
+      dataLoadedCount++;
       // 초기 상태(currentType === null)이면 구/군 경계 표시
-      if (currentType === null && !currentSearch) {
+      if (!urlRestorePending && currentType === null && !currentSearch) {
         showAllDistrictBoundaries();
       }
+      if (urlRestorePending) tryRestoreURLState();
     });
 
   fetch('data/ulsan_school_zones.json')
     .then(r => r.json())
     .then(data => { schoolZoneData = data; });
+
+  fetch('data/ulsan_middle_school_zones.json')
+    .then(r => r.json())
+    .then(data => { midZoneData = data; });
+
+  fetch('data/ulsan_high_school_zones.json')
+    .then(r => r.json())
+    .then(data => { highZoneData = data; });
 
   fetch('data/ulsan_dev_projects.json')
     .then(r => r.json())
@@ -797,7 +1109,7 @@
     closeInfoWindow();
 
     // 초기 상태: currentType === null 이고 검색어 없음 → 빈 지도 + 안내
-    if (currentType === null && !currentSearch) {
+    if (currentType === null && !currentSearch && !zoneFilter) {
       clearAllMarkers();
       filteredSchools = [];
       activeMarker = null;
@@ -812,9 +1124,22 @@
     // (하단 정렬 분기에서 EXTRA_TYPES가 정렬 순서 규칙에 사용됨)
     const EXTRA_TYPES = new Set(['특수학교', '각종학교']);
     filteredSchools = allSchools.filter(s => {
-      if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
-      if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
-      if (currentSearch && !s.name.includes(currentSearch)) return false;
+      // 학구 필터: 해당 학구 학교만 (다른 필터 무시)
+      if (zoneFilter) {
+        return zoneFilter.schoolNames.has(s.name);
+      }
+      // 반경 모드: 기준 학교는 유형·구군 필터 무시하고 무조건 포함
+      const isBase = nearbyMode && baseSchoolId === s.id;
+      if (!isBase) {
+        if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
+        if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
+        if (currentSearch && !s.name.includes(currentSearch)) return false;
+      }
+      // 반경 모드: 기준 학교 제외한 나머지는 반경 내만
+      if (nearbyMode && baseSchoolId != null && !isBase) {
+        const d = schoolDistances[s.id];
+        if (d === undefined || d > nearbyRadiusKm) return false;
+      }
       return true;
     });
 
@@ -826,10 +1151,22 @@
       classes_asc: (a, b) => (a.total_classes||0) - (b.total_classes||0),
       density_desc: (a, b) => (b.avg_students_per_class||0) - (a.avg_students_per_class||0),
       density_asc: (a, b) => (a.avg_students_per_class||0) - (b.avg_students_per_class||0),
+      distance: (a, b) => (schoolDistances[a.id] ?? 999) - (schoolDistances[b.id] ?? 999),
     };
+    // 거리순 정렬(내 주변 모드): 모든 학교를 거리순으로, 특수·각종 섞여서
     // 이름순 정렬은 특수·각종학교를 초·중·고와 함께 가나다순 배치.
     // 그 외 정렬(학생수·학급수·학급당)은 특수·각종학교를 하단에 이름순으로 고정.
-    if (currentSort === 'name' || !sortFns[currentSort]) {
+    if (zoneFilter) {
+      // 학구 모드: 초→중→고→특수→각종 순, 같은 타입 내 이름순
+      const TYPE_ORDER = {'초등학교':0, '중학교':1, '고등학교':2, '특수학교':3, '각종학교':4};
+      filteredSchools.sort((a, b) => {
+        const to = (TYPE_ORDER[a.type] ?? 9) - (TYPE_ORDER[b.type] ?? 9);
+        if (to !== 0) return to;
+        return a.name.localeCompare(b.name, 'ko');
+      });
+    } else if (currentSort === 'distance' && nearbyMode) {
+      filteredSchools.sort(sortFns.distance);
+    } else if (currentSort === 'name' || !sortFns[currentSort]) {
       filteredSchools.sort(sortFns.name);
     } else {
       const mainList = filteredSchools.filter(s => !EXTRA_TYPES.has(s.type));
@@ -842,12 +1179,12 @@
     activeMarker = null;
     updateStats();
 
-    if (currentType === null) {
+    if (currentType === null && !zoneFilter) {
       // 검색어만 있는 경우: 초기 안내 경계는 유지, 마커는 표시 안 함, 사이드바 목록만
       clearAllMarkers();
       renderList();
     } else {
-      // 유형 선택됨: 초기 안내 경계 제거, 마커 표시
+      // 유형 선택됨 또는 학구 필터: 초기 안내 경계 제거, 마커 표시
       clearInitialBoundaries();
       renderMarkers(skipFitBounds);
       renderList();
@@ -926,6 +1263,8 @@
         initialBoundaryLabels.push(label);
       }
     });
+    // Kakao Polygon 렌더링 큐 버그 안전망
+    setTimeout(function() { map.relayout(); }, 0);
   }
 
   // 초기 경계/라벨 제거
@@ -1074,15 +1413,20 @@
         <span style="color:#374151;font-size:12px;font-weight:500">${value}</span>
       </div>` : '';
 
+    const isBase = (nearbyMode && baseSchoolId === s.id);
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
+
     return `
       <div class="kakao-popup-wrap" style="position:relative">
         <button class="kakao-popup-close" onclick="window._closeInfoWindow()">&times;</button>
-        <div style="padding:18px 20px 14px">
+        <div style="padding:18px 20px 10px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="${bc};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">${s.type}</span>
             <span style="font-size:12px;color:#9CA3AF">${s.district}</span>
           </div>
-          <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px">${s.name}</div>
+          <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px;margin-bottom:10px">${s.name}</div>
+          <button class="${nearbyBtnCls}" data-nearby-btn="1">${nearbyBtnLabel}</button>
         </div>
         <div style="padding:0 20px 14px;border-bottom:1px solid #F3F4F6">
           <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
@@ -1090,15 +1434,18 @@
           ${infoRow('공학', s.coedu)}
           ${infoRow('고교유형', s.hs_category)}
           ${infoRow('개교', foundedStr)}
-          ${s.address ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
+          ${s.elem_zone ? infoRow('통학구역', s.elem_zone) : ''}
+          ${s.middle_zone ? infoRow('중학구/학교군', s.middle_zone) : ''}
+          ${s.high_zone ? infoRow('고등 학교군', s.high_zone) : ''}
+          ${s.address ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6;gap:12px;align-items:flex-start">
             <span style="color:#9CA3AF;font-size:12px;flex-shrink:0">주소</span>
-            <span style="color:#374151;font-size:12px;font-weight:500;text-align:right">${s.address}${s.zipcode ? ' (' + s.zipcode.trim() + ')' : ''}</span>
+            <span style="color:#374151;font-size:12px;font-weight:500;text-align:right;word-break:keep-all;line-height:1.45">${s.address}${s.zipcode ? ' (' + s.zipcode.trim() + ')' : ''}</span>
           </div>` : ''}
           ${infoRow('전화', s.phone)}
           ${infoRow('팩스', s.fax)}
-          ${s.homepage ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
-            <span style="color:#9CA3AF;font-size:12px">웹</span>
-            <a href="${s.homepage}" target="_blank" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:500">${s.homepage.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
+          ${s.homepage ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6;gap:12px;align-items:flex-start">
+            <span style="color:#9CA3AF;font-size:12px;flex-shrink:0">웹</span>
+            <a href="${s.homepage}" target="_blank" style="color:#2563EB;text-decoration:none;font-size:12px;font-weight:500;text-align:right;word-break:break-all;line-height:1.45">${s.homepage.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>
           </div>` : ''}
         </div>
         ${tableHtml ? `
@@ -1147,8 +1494,18 @@
       if (s.total_students) metaParts.push(`${s.total_students.toLocaleString()}명`);
 
       const checked = compareList.includes(s.id) ? 'checked' : '';
+      const isBase = (nearbyMode && baseSchoolId === s.id);
+      let rightHtml = '';
+      if (isBase) {
+        rightHtml = `<span class="base-badge">기준</span>`;
+      } else if (nearbyMode && schoolDistances[s.id] !== undefined) {
+        const d = schoolDistances[s.id];
+        const dStr = d < 1 ? Math.round(d * 1000) + 'm' : d.toFixed(1) + 'km';
+        rightHtml = `<span class="distance-badge">📍 ${dStr}</span>`;
+      }
+      const itemCls = 'school-item' + (isBase ? ' base-school' : '');
       return `
-        <div class="school-item" data-id="${s.id}"
+        <div class="${itemCls}" data-id="${s.id}"
              onclick="window._selectSchool(${s.id})"
              onmouseenter="window._highlightMarker(${s.id}, true)"
              onmouseleave="window._highlightMarker(${s.id}, false)">
@@ -1158,6 +1515,7 @@
                    title="비교에 추가">
             <span class="badge ${badge}">${s.type}</span>
             <span class="district-tag">${s.district}</span>
+            ${rightHtml}
           </div>
           <div class="name">${highlightSearch(s.name)}</div>
           <div class="meta">${metaParts.join('<span class="sep">&middot;</span>')}</div>
@@ -1180,7 +1538,12 @@
     }
 
     if (geom.type === 'Polygon') {
-      const path = geom.coordinates.map(coordsToPath);
+      // 단일 ring은 평탄화된 LatLng 배열로 전달 (Kakao Polygon 권장 형태).
+      // [[ring]]로 전달하면 일부 케이스에서 폴리곤 내부 경계선이 깨짐.
+      // 다중 ring(구멍 있는 폴리곤)일 때만 배열의 배열로 전달.
+      const path = geom.coordinates.length === 1
+        ? coordsToPath(geom.coordinates[0])
+        : geom.coordinates.map(coordsToPath);
       const polygon = new kakao.maps.Polygon({
         path: path,
         strokeWeight: style.weight || 2,
@@ -1193,7 +1556,10 @@
       polygons.push(polygon);
     } else if (geom.type === 'MultiPolygon') {
       geom.coordinates.forEach(polyCoords => {
-        const path = polyCoords.map(coordsToPath);
+        // 동일하게 단일 ring은 평탄화
+        const path = polyCoords.length === 1
+          ? coordsToPath(polyCoords[0])
+          : polyCoords.map(coordsToPath);
         const polygon = new kakao.maps.Polygon({
           path: path,
           strokeWeight: style.weight || 2,
@@ -1263,6 +1629,36 @@
     schoolZonePolygons = [];
     schoolZoneLabels.forEach(l => l.setMap(null));
     schoolZoneLabels = [];
+    // 학교 선택용 중/고 폴리곤도 함께 제거
+    selectedMidZonePolygons.forEach(p => p.setMap(null));
+    selectedMidZonePolygons = [];
+    selectedHighZonePolygons.forEach(p => p.setMap(null));
+    selectedHighZonePolygons = [];
+  }
+
+  // 중학교 선택 시 자기 속한 중학구 폴리곤 표시
+  function showMidZoneForSchool(school) {
+    if (!midZoneData || !school.middle_zone) return;
+    const feature = midZoneData.features.find(f => f.properties.name === school.middle_zone);
+    if (!feature) return;
+    const isGongdong = feature.properties.gb === '1';
+    const style = isGongdong
+      ? { color: '#D97706', weight: 3, fillColor: '#D97706', fillOpacity: 0.2, dashArray: true }
+      : { color: '#2563EB', weight: 3, fillColor: '#2563EB', fillOpacity: 0.15 };
+    const polys = geoJsonToKakaoPolygons(feature, style);
+    polys.forEach(p => p.setMap(map));
+    selectedMidZonePolygons.push(...polys);
+  }
+
+  // 고등학교 선택 시 자기 속한 고등 학교군 폴리곤 표시
+  function showHighZoneForSchool(school) {
+    if (!highZoneData || !school.high_zone) return;
+    const feature = highZoneData.features.find(f => f.properties.name === school.high_zone);
+    if (!feature) return;
+    const style = { color: '#EA580C', weight: 3, fillColor: '#EA580C', fillOpacity: 0.12 };
+    const polys = geoJsonToKakaoPolygons(feature, style);
+    polys.forEach(p => p.setMap(map));
+    selectedHighZonePolygons.push(...polys);
   }
 
   // 모바일 판별
@@ -1277,16 +1673,21 @@
       foundedStr = `${y}. ${parseInt(m)}. ${parseInt(d)}`;
     }
 
+    const isBase = (nearbyMode && baseSchoolId === s.id);
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
+
     let headerHtml = `
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
+        <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="${bc};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">${s.type}</span>
             <span style="font-size:12px;color:#9CA3AF">${s.district}</span>
           </div>
-          <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px">${s.name}</div>
+          <div style="font-size:18px;font-weight:700;color:#111827;letter-spacing:-0.3px;margin-bottom:8px">${s.name}</div>
+          <button class="${nearbyBtnCls}" data-nearby-btn="1">${nearbyBtnLabel}</button>
         </div>
-        <button onclick="window._closeBottomSheet()" style="background:none;border:none;font-size:22px;color:#9CA3AF;cursor:pointer;padding:4px 8px;line-height:1">&times;</button>
+        <button onclick="window._closeBottomSheet()" style="background:none;border:none;font-size:22px;color:#9CA3AF;cursor:pointer;padding:4px 8px;line-height:1;align-self:flex-start">&times;</button>
       </div>`;
 
     const infoRow = (label, value) => value ? `
@@ -1302,6 +1703,9 @@
         ${infoRow('공학', s.coedu)}
         ${infoRow('고교유형', s.hs_category)}
         ${infoRow('개교', foundedStr)}
+        ${s.elem_zone ? infoRow('통학구역', s.elem_zone) : ''}
+        ${s.middle_zone ? infoRow('중학구/학교군', s.middle_zone) : ''}
+        ${s.high_zone ? infoRow('고등 학교군', s.high_zone) : ''}
         ${s.address ? `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6">
           <span style="color:#9CA3AF;font-size:12px;flex-shrink:0">주소</span>
           <span style="color:#374151;font-size:12px;font-weight:500;text-align:right;margin-left:12px">${s.address}${s.zipcode ? ' (' + s.zipcode.trim() + ')' : ''}</span>
@@ -1363,8 +1767,18 @@
   // 바텀 시트 열기/닫기
   function openBottomSheet(school) {
     const content = createSheetContent(school);
-    document.getElementById('sheetHeader').innerHTML = content.headerHtml;
+    const sheetHeaderEl = document.getElementById('sheetHeader');
+    sheetHeaderEl.innerHTML = content.headerHtml;
     document.getElementById('sheetScroll').innerHTML = content.scrollHtml;
+    // 바텀시트 내 '반경 내 학교' 버튼 직접 바인딩 (안전장치)
+    const nearbyBtn = sheetHeaderEl.querySelector('.nearby-action-btn');
+    if (nearbyBtn && school.id != null) {
+      nearbyBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        window._toggleNearbyForSchool(school.id);
+      });
+    }
     document.getElementById('bottomSheet').classList.add('open');
     document.getElementById('sheetOverlay').classList.add('open');
   }
@@ -1447,6 +1861,30 @@
         closeInfoWindow();
         const iwContent = document.createElement('div');
         iwContent.innerHTML = createPopupHtml(school);
+
+        // 팝업 전체에서 클릭 이벤트가 맵으로 새나가지 않도록 차단
+        // ⚠ 반드시 bubble phase (third arg: false/생략) — capture phase면 하위 버튼 클릭이 차단됨
+        iwContent.addEventListener('click', function(e) { e.stopPropagation(); });
+        iwContent.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+
+        // 반경 버튼 직접 바인딩
+        const nearbyBtn = iwContent.querySelector('.nearby-action-btn');
+        console.log('[팝업] 반경 버튼 찾음:', !!nearbyBtn, '학교:', school.name, 'id:', school.id);
+        if (nearbyBtn) {
+          nearbyBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            console.log('[버튼] 반경 버튼 클릭 감지됨!');
+            window._toggleNearbyForSchool(school.id);
+          });
+        }
+        const closeBtn = iwContent.querySelector('.kakao-popup-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeInfoWindow();
+          });
+        }
         currentInfoWindow = new kakao.maps.CustomOverlay({
           position: new kakao.maps.LatLng(school.lat, school.lng),
           content: iwContent,
@@ -1454,9 +1892,12 @@
           zIndex: 2000
         });
         currentInfoWindow.setMap(map);
+        console.log('[팝업] 표시 완료:', school.name);
       }
     }
     showSchoolZone(school);
+    if (school.type === '중학교') showMidZoneForSchool(school);
+    else if (school.type === '고등학교') showHighZoneForSchool(school);
 
     document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
     const item = document.querySelector(`.school-item[data-id="${id}"]`);
@@ -1464,6 +1905,7 @@
       item.classList.add('active');
       item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+    updateURLState();
   }
 
   window._selectSchool = function(id) {
@@ -1472,6 +1914,7 @@
       const school = allSchools.find(s => s.id === id);
       if (school) openBottomSheet(school);
     }
+    updateURLState();
   };
 
   // 필터 초기화 → 초기 안내 화면으로 복귀
@@ -1493,15 +1936,26 @@
   }
   window._resetFilters = resetFilters;
 
+  // 제목 클릭 → 새로고침과 완전 동일
+  window._resetToHome = function() {
+    // URL 해시 먼저 제거 (reload 직후 init에서도 감지되지만 명시적으로)
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(e) {}
+    location.reload();
+  };
+
   // 이벤트: 검색
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
     applyFilters();
+    updateURLState();
   });
 
   // 이벤트: 유형 필터 (토글 지원)
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
+      // 학구 필터 자동 해제
+      if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
       const type = this.dataset.type;
       // 이미 활성 상태면 토글 해제 → 빈 지도 안내 (현재 줌/위치 유지)
       if (currentType === type) {
@@ -1509,6 +1963,9 @@
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         clearSchoolZone();
         applyFilters(true);
+        updateURLState();
+        const list1 = document.getElementById('schoolList');
+        if (list1) list1.scrollTop = 0;
         return;
       }
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1516,6 +1973,10 @@
       currentType = type;
       clearSchoolZone();
       applyFilters(true);
+      updateURLState();
+      // 사이드바 최상단으로 스크롤
+      const list2 = document.getElementById('schoolList');
+      if (list2) list2.scrollTop = 0;
     });
   });
 
@@ -1530,15 +1991,41 @@
       color: '#2563EB', weight: 2.5, fillColor: '#2563EB', fillOpacity: 0.06, dashArray: true
     });
     districtPolygons.forEach(p => p.setMap(map));
+    // Kakao Polygon 렌더링 큐 버그 안전망: 다음 tick에 relayout으로 강제 재렌더
+    setTimeout(function() { map.relayout(); }, 0);
   }
 
   // 이벤트: 구/군 필터
+  // 구/군별 고정 줌 레벨 (학교 일부가 벗어나도 OK)
+  const DISTRICT_LEVEL = { '중구': 6, '남구': 6, '동구': 6, '북구': 7, '울주군': 7 };
+  // 구/군 중심 좌표
+  const DISTRICT_CENTER = {
+    '중구':   { lat: 35.570058, lng: 129.308619 },
+    '남구':   { lat: 35.531005, lng: 129.302075 },
+    '동구':   { lat: 35.510504, lng: 129.424915 },
+    '북구':   { lat: 35.610768, lng: 129.378066 },
+    '울주군': { lat: 35.552981, lng: 129.162538 }
+  };
+
   document.getElementById('districtSelect').addEventListener('change', function() {
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
     currentDistrict = this.value;
     clearSchoolZone();
+    // 고정 레벨/중심 먼저 적용 (맵 안정화 후 폴리곤 그리기)
+    if (currentDistrict !== 'all' && DISTRICT_LEVEL[currentDistrict]) {
+      const c = DISTRICT_CENTER[currentDistrict];
+      if (c) map.setCenter(new kakao.maps.LatLng(c.lat, c.lng));
+      map.setLevel(DISTRICT_LEVEL[currentDistrict]);
+      applyFilters(true);
+    } else {
+      applyFilters();
+    }
+    // 맵 이동/줌 후에 폴리곤 그리기 (렌더링 큐 충돌 방지)
     showDistrictBoundary(this.value);
-    applyFilters();
+    // 반경 원이 있으면 강제 재렌더링
+    if (nearbyMode) drawRadiusCircle();
     renderDevMarkers();
+    updateURLState();
   });
 
   // === 학교 비교 ===
@@ -1616,6 +2103,7 @@
   document.getElementById('sortSelect').addEventListener('change', function() {
     currentSort = this.value;
     applyFilters();
+    updateURLState();
   });
 
   // === 개발사업 ===
@@ -1635,6 +2123,38 @@
       : `<div class="dev-marker ${cls}"><div class="dev-units" style="font-size:9px;font-weight:700;opacity:1">${project.units}</div></div>`;
   }
 
+  // Point-in-polygon (ray-casting, ring은 [[lng,lat],...])
+  function pointInRing(lng, lat, ring) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const xi = ring[i][0], yi = ring[i][1];
+      const xj = ring[j][0], yj = ring[j][1];
+      const intersect = ((yi > lat) !== (yj > lat)) &&
+        (lng < (xj - xi) * (lat - yi) / (yj - yi + 1e-12) + xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInFeature(lng, lat, feature) {
+    const g = feature.geometry;
+    if (g.type === 'Polygon') {
+      return pointInRing(lng, lat, g.coordinates[0]);
+    } else if (g.type === 'MultiPolygon') {
+      for (const poly of g.coordinates) {
+        if (pointInRing(lng, lat, poly[0])) return true;
+      }
+    }
+    return false;
+  }
+  // 좌표에 해당하는 zone 이름 찾기
+  function findZoneByPoint(data, lng, lat) {
+    if (!data) return null;
+    for (const f of data.features) {
+      if (pointInFeature(lng, lat, f)) return f.properties.name;
+    }
+    return null;
+  }
+
   function createDevPopupHtml(p) {
     const consBadge = p.construction
       ? `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;${
@@ -1642,6 +2162,11 @@
           p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
           'background:#DCFCE7;color:#166534'
         }">${p.construction}</span>` : '';
+    const elemZone = findZoneByPoint(schoolZoneData, p.lng, p.lat);
+    const midZone = findZoneByPoint(midZoneData, p.lng, p.lat);
+    const highZone = findZoneByPoint(highZoneData, p.lng, p.lat);
+    const zoneRow = (label, value, color) => value
+      ? `<tr><td style="color:${color};padding:3px 8px 3px 0;width:70px;font-weight:500">${label}</td><td>${value}</td></tr>` : '';
     return `<div class="kakao-popup-wrap" style="position:relative;min-width:240px">
       <button class="kakao-popup-close" onclick="window._closeInfoWindow()">&times;</button>
       <div style="padding:14px 16px">
@@ -1659,6 +2184,14 @@
         </table>
         ${p.school_elem ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
           <table style="font-size:12px;width:100%"><tr><td style="color:#059669;font-weight:500;width:70px">초등학교</td><td>${p.school_elem}</td></tr></table>
+        </div>` : ''}
+        ${(elemZone || midZone || highZone) ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
+          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">이 위치의 학구</div>
+          <table style="font-size:12px;width:100%;border-collapse:collapse">
+            ${zoneRow('초등 통학구역', elemZone, '#059669')}
+            ${zoneRow('중학구/학교군', midZone, '#2563EB')}
+            ${zoneRow('고등 학교군', highZone, '#EA580C')}
+          </table>
         </div>` : ''}
       </div>
     </div>`;
@@ -1741,27 +2274,234 @@
   }
 
   // === 전체 통학구역 토글 ===
-  function toggleAllZones() {
-    showAllZones = !showAllZones;
-    const btn = document.getElementById('zoneToggleBtn');
-    btn.classList.toggle('dev-active', showAllZones);
+  // 초/중/고 zone은 서로 배타적. 하나 켜면 나머지 둘은 자동 꺼짐.
+  function clearAllZoneLayers() {
+    // 초등
+    allZonePolygons.forEach(p => p.setMap(null));
+    allZonePolygons = [];
+    showAllZones = false;
+    document.getElementById('zoneToggleBtn').classList.remove('dev-active');
+    // 중학
+    midZonePolygons.forEach(p => p.setMap(null));
+    midZonePolygons = [];
+    midZoneLabels.forEach(l => l.setMap(null));
+    midZoneLabels = [];
+    showMidZones = false;
+    document.getElementById('midZoneToggleBtn').classList.remove('dev-active');
+    // 고등
+    highZonePolygons.forEach(p => p.setMap(null));
+    highZonePolygons = [];
+    highZoneLabels.forEach(l => l.setMap(null));
+    highZoneLabels = [];
+    showHighZones = false;
+    document.getElementById('highZoneToggleBtn').classList.remove('dev-active');
+    closeZoneInfo();
+  }
 
-    if (showAllZones) {
-      clearSchoolZone();
-      if (!schoolZoneData) return;
-      schoolZoneData.features.forEach(f => {
-        const polys = geoJsonToKakaoPolygons(f, {
-          color: '#059669', weight: 2, fillColor: '#059669', fillOpacity: 0.15
+  // 학구 레이어 색상 — 학교 마커 색상과 통일
+  const ZONE_COLOR_ELEM = '#059669';   // 초등 녹색
+  const ZONE_COLOR_MID  = '#2563EB';   // 중학 파랑
+  const ZONE_COLOR_HIGH = '#EA580C';   // 고등 주황
+  const ZONE_COLOR_GONGDONG = '#D97706'; // 공동학구 주황 점선
+
+  // GeoJSON feature의 중심 좌표 계산
+  function featureCenter(feature) {
+    const geom = feature.geometry;
+    let sumLat = 0, sumLng = 0, n = 0;
+    function accumRing(ring) { ring.forEach(c => { sumLng += c[0]; sumLat += c[1]; n++; }); }
+    if (geom.type === 'Polygon') geom.coordinates.forEach(accumRing);
+    else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(poly => poly.forEach(accumRing));
+    if (n === 0) return null;
+    return new kakao.maps.LatLng(sumLat / n, sumLng / n);
+  }
+
+  // 중/고 zone 공통 그리기 함수 — 해당 학교급 색상으로 통일
+  // polygon/label 요소에 feature를 .__feature로 부착 → 선택 강조 시 참조
+  function drawZoneLayer(data, polygonsArr, labelsArr, baseColor, onClickHandler) {
+    const features = data.features;
+    features.forEach((f) => {
+      const p = f.properties;
+      const isGongdong = p.gb === '1';
+      const style = isGongdong
+        ? { color: ZONE_COLOR_GONGDONG, weight: 3, fillColor: ZONE_COLOR_GONGDONG, fillOpacity: 0.18, dashArray: true }
+        : { color: baseColor, weight: 2, fillColor: baseColor, fillOpacity: 0.12 };
+      const polys = geoJsonToKakaoPolygons(f, style);
+      polys.forEach(poly => {
+        poly.setMap(map);
+        poly.__feature = f;
+        poly.__baseColor = isGongdong ? ZONE_COLOR_GONGDONG : baseColor;
+        poly.__isGongdong = isGongdong;
+        kakao.maps.event.addListener(poly, 'click', function(mouseEvent) {
+          onClickHandler(f, mouseEvent);
         });
-        polys.forEach(p => p.setMap(map));
-        allZonePolygons.push(...polys);
       });
-    } else {
-      allZonePolygons.forEach(p => p.setMap(null));
-      allZonePolygons = [];
-    }
+      polygonsArr.push(...polys);
+
+      // 중심 라벨
+      const center = featureCenter(f);
+      if (center) {
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'zone-layer-label';
+        labelDiv.style.color = isGongdong ? ZONE_COLOR_GONGDONG : baseColor;
+        labelDiv.textContent = p.name;
+        const label = new kakao.maps.CustomOverlay({
+          position: center,
+          content: labelDiv,
+          yAnchor: 0.5,
+          xAnchor: 0.5,
+          zIndex: 3
+        });
+        label.setMap(map);
+        label.__feature = f;
+        labelsArr.push(label);
+      }
+    });
+  }
+
+  function toggleAllZones() {
+    const wasOn = showAllZones;
+    clearAllZoneLayers();
+    if (wasOn) return;
+
+    if (!schoolZoneData) return;
+    schoolZoneData.features.forEach((f, idx) => {
+      const isGongdong = f.properties.gb === '1';
+      const style = isGongdong
+        ? { color: '#D97706', weight: 3, fillColor: '#D97706', fillOpacity: 0.18, dashArray: true }
+        : { color: ZONE_COLOR_ELEM, weight: 2, fillColor: ZONE_COLOR_ELEM, fillOpacity: 0.15 };
+      const polys = geoJsonToKakaoPolygons(f, style);
+      polys.forEach(poly => {
+        poly.setMap(map);
+        poly.__feature = f;
+        poly.__baseColor = isGongdong ? ZONE_COLOR_GONGDONG : ZONE_COLOR_ELEM;
+        poly.__isGongdong = isGongdong;
+        kakao.maps.event.addListener(poly, 'click', function(me) { showZoneInfoPopup(f, 'elem', me); });
+      });
+      allZonePolygons.push(...polys);
+    });
+    showAllZones = true;
+    document.getElementById('zoneToggleBtn').classList.add('dev-active');
+    setTimeout(() => map.relayout(), 0);
   }
   window._toggleAllZones = toggleAllZones;
+
+  function toggleMidZones() {
+    const wasOn = showMidZones;
+    clearAllZoneLayers();
+    if (wasOn) return;
+    if (!midZoneData) return;
+    drawZoneLayer(midZoneData, midZonePolygons, midZoneLabels, ZONE_COLOR_MID, function(f, me) { showZoneInfoPopup(f, 'middle', me); });
+    showMidZones = true;
+    document.getElementById('midZoneToggleBtn').classList.add('dev-active');
+    setTimeout(() => map.relayout(), 0);
+  }
+  window._toggleMidZones = toggleMidZones;
+
+  function toggleHighZones() {
+    const wasOn = showHighZones;
+    clearAllZoneLayers();
+    if (wasOn) return;
+    if (!highZoneData) return;
+    drawZoneLayer(highZoneData, highZonePolygons, highZoneLabels, ZONE_COLOR_HIGH, function(f, me) { showZoneInfoPopup(f, 'high', me); });
+    showHighZones = true;
+    document.getElementById('highZoneToggleBtn').classList.add('dev-active');
+    setTimeout(() => map.relayout(), 0);
+  }
+  window._toggleHighZones = toggleHighZones;
+
+  // 팝업 제거 호환용 stub
+  function closeZoneInfo() {
+    if (zoneInfoPopupEl) { zoneInfoPopupEl.remove(); zoneInfoPopupEl = null; }
+  }
+  window._closeZoneInfo = closeZoneInfo;
+
+  // 학구 폴리곤 클릭 → 사이드바 필터 + 시각적 강조 (팝업 없음)
+  function showZoneInfoPopup(feature, kind, mouseEvent) {
+    applyZoneFilter(feature, kind);
+  }
+
+  // 폴리곤·라벨 강조: 선택된 것만 진하게, 나머지는 원래 그대로
+  function highlightSelectedZone(selectedFeature) {
+    // 이전 선택 원복 후 새 선택 강조
+    clearZoneHighlight();
+
+    const allPolys = [...allZonePolygons, ...midZonePolygons, ...highZonePolygons];
+    const allLabels = [...midZoneLabels, ...highZoneLabels];
+
+    allPolys.forEach(poly => {
+      if (poly.__feature === selectedFeature) {
+        poly.setOptions({
+          strokeWeight: 4,
+          strokeOpacity: 1.0,
+          fillOpacity: poly.__isGongdong ? 0.35 : 0.32
+        });
+        poly.setZIndex && poly.setZIndex(20);
+      }
+    });
+
+    allLabels.forEach(label => {
+      if (label.__feature !== selectedFeature) return;
+      const content = label.getContent();
+      const el = typeof content === 'string' ? null : content;
+      if (el) el.classList.add('zone-label-selected');
+    });
+  }
+
+  // 원복: 모든 폴리곤·라벨을 기본값으로
+  function clearZoneHighlight() {
+    const allPolys = [...allZonePolygons, ...midZonePolygons, ...highZonePolygons];
+    const allLabels = [...midZoneLabels, ...highZoneLabels];
+    allPolys.forEach(poly => {
+      poly.setOptions({
+        strokeWeight: poly.__isGongdong ? 3 : 2,
+        strokeOpacity: 0.8,
+        fillOpacity: poly.__isGongdong ? 0.18 : 0.12
+      });
+    });
+    allLabels.forEach(label => {
+      const content = label.getContent();
+      const el = typeof content === 'string' ? null : content;
+      if (el) el.classList.remove('zone-label-selected');
+    });
+  }
+
+  // 학구 필터 — 사이드바에 해당 학구 학교만 표시 + 폴리곤 강조
+  function applyZoneFilter(feature, kind) {
+    const p = feature.properties;
+    const schoolNames = new Set([
+      ...(p.elementary_schools || []),
+      ...(p.middle_schools || []),
+      ...(p.high_schools || [])
+    ]);
+    if (schoolNames.size === 0) return;
+
+    const isGongdong = p.gb === '1';
+    zoneFilter = { kind: kind, name: p.name, schoolNames: schoolNames, gongdong: isGongdong };
+
+    // 안내 바 표시
+    const bar = document.getElementById('zoneFilterBar');
+    bar.className = 'zone-filter-bar active ' + (isGongdong ? 'gongdong' : kind);
+    const kindLabel = { elem: '초등 통학구역', middle: '중학구/학교군', high: '고등 학교군' }[kind] || '학구';
+    document.getElementById('zfLabel').textContent = kindLabel;
+    document.getElementById('zfName').textContent = p.name;
+
+    // 시각적 강조
+    highlightSelectedZone(feature);
+
+    applyFilters(true);
+    // 사이드바 최상단 스크롤
+    const list = document.getElementById('schoolList');
+    if (list) list.scrollTop = 0;
+  }
+
+  function clearZoneFilter() {
+    zoneFilter = null;
+    document.getElementById('zoneFilterBar').classList.remove('active');
+    closeZoneInfo();
+    clearZoneHighlight();
+    applyFilters(true);
+  }
+  window._clearZoneFilter = clearZoneFilter;
 
   function toggleDevProjects() {
     devShowProjects = !devShowProjects;
@@ -1770,6 +2510,335 @@
     renderDevMarkers();
   }
   window._toggleDevProjects = toggleDevProjects;
+
+  // ===========================================
+  // 내 주변 학교 + URL 공유 기능
+  // ===========================================
+
+  // 토스트 알림
+  let toastTimer = null;
+  function showToast(msg, duration) {
+    duration = duration || 2000;
+    let toast = document.getElementById('toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { toast.classList.remove('show'); }, duration);
+  }
+
+  // Haversine 거리 (km)
+  function haversineDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  // 기준 학교 조회
+  function getBaseSchool() {
+    if (baseSchoolId == null) return null;
+    return allSchools.find(function(s) { return s.id === baseSchoolId; }) || null;
+  }
+
+  // 반경 원 그리기 (기준 학교 중심)
+  function drawRadiusCircle() {
+    if (radiusCircle) { radiusCircle.setMap(null); radiusCircle = null; }
+    const base = getBaseSchool();
+    if (!base) return;
+    radiusCircle = new kakao.maps.Circle({
+      center: new kakao.maps.LatLng(base.lat, base.lng),
+      radius: nearbyRadiusKm * 1000,
+      strokeWeight: 2,
+      strokeColor: '#2563EB',
+      strokeOpacity: 0.65,
+      strokeStyle: 'shortdash',
+      fillColor: '#2563EB',
+      fillOpacity: 0.08
+    });
+    radiusCircle.setMap(map);
+  }
+
+  // 기준 학교로부터 모든 학교까지의 거리 계산
+  function updateAllDistances() {
+    schoolDistances = {};
+    const base = getBaseSchool();
+    if (!base) return;
+    allSchools.forEach(function(s) {
+      schoolDistances[s.id] = haversineDistance(base.lat, base.lng, s.lat, s.lng);
+    });
+  }
+
+  // 반경별 고정 줌 레벨
+  const RADIUS_LEVEL = { 1: 4, 1.5: 5, 2: 5, 3: 6 };
+
+  function fitMapToRadius() {
+    const base = getBaseSchool();
+    if (!base || !nearbyRadiusKm) return;
+    map.setCenter(new kakao.maps.LatLng(base.lat, base.lng));
+    const lvl = RADIUS_LEVEL[nearbyRadiusKm] || 5;
+    map.setLevel(lvl);
+  }
+
+  // 반경 모드 활성화 (기준 학교 ID 지정)
+  function enableNearbyMode(schoolId, silent) {
+    const base = allSchools.find(function(s) { return s.id === schoolId; });
+    if (!base) { showToast('학교를 찾을 수 없습니다', 2000); return; }
+
+    // 학구 필터 자동 해제
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
+
+    baseSchoolId = schoolId;
+    nearbyMode = true;
+    // 첫 진입은 항상 1km (URL 복원 등 silent는 저장된 값 유지)
+    if (!silent) nearbyRadiusKm = 1;
+    updateAllDistances();
+
+    // 헤더 버튼/반경 드롭다운 표시
+    const btn = document.getElementById('nearbyBtn');
+    btn.style.display = 'inline-block';
+    btn.classList.add('nearby-active');
+    const radSel = document.getElementById('nearbyRadius');
+    radSel.style.display = 'inline-block';
+    radSel.value = String(nearbyRadiusKm);
+
+    // 사이드바 상단 안내 바
+    const bar = document.getElementById('nearbyInfoBar');
+    bar.classList.add('active');
+    document.getElementById('nbSchoolName').textContent = base.name;
+    document.getElementById('nbRadiusText').textContent = nearbyRadiusKm + 'km';
+
+    // 유형이 null이면 전체로 설정
+    if (currentType === null) {
+      currentType = 'all';
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.filter-btn[data-type="all"]').forEach(function(b) { b.classList.add('active'); });
+    }
+
+    // 거리순 자동 전환
+    currentSort = 'distance';
+
+    // 1) 줌 확정 → 2) 원 그리기 순서 (역순이면 원이 깨짐)
+    fitMapToRadius();
+    drawRadiusCircle();
+
+    applyFilters(true);
+
+    // 사이드바 최상단으로 스크롤 (기준 학교가 거리 0 → 최상단)
+    const list = document.getElementById('schoolList');
+    if (list) list.scrollTop = 0;
+
+    const count = Object.values(schoolDistances).filter(function(d) { return d <= nearbyRadiusKm && d > 0; }).length;
+    if (!silent) {
+      showToast(base.name + ' 기준 ' + nearbyRadiusKm + 'km 내 학교 ' + count + '개', 2200);
+    }
+    updateURLState();
+  }
+
+  function disableNearbyMode() {
+    const prevBaseId = baseSchoolId;
+    nearbyMode = false;
+    baseSchoolId = null;
+    schoolDistances = {};
+    if (radiusCircle) { radiusCircle.setMap(null); radiusCircle = null; }
+    const btn = document.getElementById('nearbyBtn');
+    btn.style.display = 'none';
+    btn.classList.remove('nearby-active');
+    document.getElementById('nearbyRadius').style.display = 'none';
+    document.getElementById('nearbyInfoBar').classList.remove('active');
+    if (currentSort === 'distance') {
+      currentSort = 'name';
+      document.getElementById('sortSelect').value = 'name';
+    }
+    // 줌/중심 유지 — skipFitBounds=true
+    applyFilters(true);
+    updateURLState();
+
+    // 사이드바: 기준 학교를 최상단으로 스크롤
+    if (prevBaseId != null) {
+      setTimeout(function() {
+        const item = document.querySelector('.school-item[data-id="' + prevBaseId + '"]');
+        const list = document.getElementById('schoolList');
+        if (item && list) {
+          list.scrollTop = item.offsetTop - list.offsetTop;
+        }
+      }, 50);
+    }
+  }
+  window._clearNearby = disableNearbyMode;
+
+  // 팝업/바텀시트 액션 버튼용 — 현재 선택된 학교 기준으로 토글
+  window._toggleNearbyForSchool = function(schoolId) {
+    try {
+      console.log('[반경] 클릭:', schoolId, 'nearbyMode=', nearbyMode, 'baseSchoolId=', baseSchoolId);
+      if (nearbyMode && baseSchoolId === schoolId) {
+        disableNearbyMode();
+      } else {
+        enableNearbyMode(schoolId, false);
+      }
+    } catch(err) {
+      console.error('[반경] 에러:', err);
+      showToast('⚠ 오류: ' + (err.message || err), 3500);
+    }
+  };
+
+  // 반경 변경
+  document.getElementById('nearbyRadius').addEventListener('change', function() {
+    nearbyRadiusKm = parseFloat(this.value);
+    if (nearbyMode) {
+      fitMapToRadius();
+      drawRadiusCircle();
+      document.getElementById('nbRadiusText').textContent = nearbyRadiusKm + 'km';
+      applyFilters(true);
+      const count = Object.values(schoolDistances).filter(function(d) { return d <= nearbyRadiusKm && d > 0; }).length;
+      showToast('반경 ' + nearbyRadiusKm + 'km 내 학교 ' + count + '개', 1500);
+      updateURLState();
+    }
+  });
+
+  // URL 상태 저장 (hash)
+  function buildURLParams() {
+    const params = new URLSearchParams();
+    if (currentType && currentType !== 'all') params.set('type', currentType);
+    if (currentType === 'all') params.set('type', 'all');
+    if (currentDistrict !== 'all') params.set('district', currentDistrict);
+    if (currentSearch) params.set('q', currentSearch);
+    if (currentSort && currentSort !== 'name') params.set('sort', currentSort);
+    if (activeMarker) params.set('school', String(activeMarker));
+    if (nearbyMode && baseSchoolId != null) {
+      params.set('nearschool', String(baseSchoolId));
+      params.set('r', String(nearbyRadiusKm));
+    }
+    if (showAllZones) params.set('zones', '1');
+    if (devShowProjects) params.set('dev', '1');
+    const center = map.getCenter();
+    params.set('lat', center.getLat().toFixed(5));
+    params.set('lng', center.getLng().toFixed(5));
+    params.set('z', String(map.getLevel()));
+    return params;
+  }
+
+  let urlUpdateTimer = null;
+  function updateURLState() {
+    if (urlUpdateTimer) clearTimeout(urlUpdateTimer);
+    urlUpdateTimer = setTimeout(function() {
+      const hash = buildURLParams().toString();
+      try {
+        history.replaceState(null, '', hash ? '#' + hash : location.pathname + location.search);
+      } catch(e) {}
+    }, 300);
+  }
+
+  // URL 상태 파싱
+  function parseURLState() {
+    const hash = location.hash.replace(/^#/, '');
+    if (!hash) return null;
+    const p = new URLSearchParams(hash);
+    return {
+      type: p.get('type'),
+      district: p.get('district'),
+      q: p.get('q'),
+      sort: p.get('sort'),
+      school: p.get('school') ? parseInt(p.get('school'), 10) : null,
+      nearschool: p.get('nearschool') ? parseInt(p.get('nearschool'), 10) : null,
+      r: p.get('r') ? parseFloat(p.get('r')) : null,
+      zones: p.get('zones') === '1',
+      dev: p.get('dev') === '1',
+      lat: p.get('lat') ? parseFloat(p.get('lat')) : null,
+      lng: p.get('lng') ? parseFloat(p.get('lng')) : null,
+      z: p.get('z') ? parseInt(p.get('z'), 10) : null
+    };
+  }
+
+  // 데이터 로드 완료 후 URL 상태 복원
+  function tryRestoreURLState() {
+    if (!urlRestorePending) return;
+    if (dataLoadedCount < 2) return; // schools + districts 최소
+    const st = urlRestorePending;
+    urlRestorePending = null;
+
+    if (st.type) {
+      currentType = st.type;
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.filter-btn[data-type="' + st.type + '"]').forEach(function(b) { b.classList.add('active'); });
+    }
+    if (st.district) {
+      currentDistrict = st.district;
+      document.getElementById('districtSelect').value = st.district;
+      showDistrictBoundary(st.district);
+    }
+    if (st.q) {
+      currentSearch = st.q;
+      document.getElementById('searchInput').value = st.q;
+    }
+    if (st.sort) {
+      currentSort = st.sort;
+      if (st.sort !== 'distance') {
+        document.getElementById('sortSelect').value = st.sort;
+      }
+    }
+    if (st.nearschool != null) {
+      if (st.r) nearbyRadiusKm = st.r;
+      enableNearbyMode(st.nearschool, true);
+    } else {
+      applyFilters(true);
+    }
+
+    // 지도 위치/줌 복원
+    if (st.lat && st.lng && st.z) {
+      map.setCenter(new kakao.maps.LatLng(st.lat, st.lng));
+      map.setLevel(st.z);
+    }
+
+    // 선택 학교 복원
+    if (st.school) {
+      setTimeout(function() {
+        const s = allSchools.find(function(x) { return x.id === st.school; });
+        if (s) selectSchool(st.school, true);
+      }, 100);
+    }
+
+    // 레이어 복원
+    if (st.zones) toggleAllZones();
+    if (st.dev) toggleDevProjects();
+  }
+
+  // 공유 링크 복사
+  async function copyShareLink() {
+    const url = location.origin + location.pathname + '#' + buildURLParams().toString();
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('✓ 링크가 복사되었습니다', 1800);
+    } catch(e) {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('✓ 링크가 복사되었습니다', 1800);
+      } catch(_) {
+        showToast('⚠ 복사 실패 - 수동으로 복사해주세요', 2500);
+      }
+      document.body.removeChild(ta);
+    }
+  }
+  window._copyShareLink = copyShareLink;
+
+  // 지도 이동/줌 시 URL 업데이트
+  kakao.maps.event.addListener(map, 'dragend', updateURLState);
+  kakao.maps.event.addListener(map, 'zoom_changed', updateURLState);
 
   // 지도 클릭 시 인포윈도우 닫기
   kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
