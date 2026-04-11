@@ -60,6 +60,10 @@ data/
   ulsan_districts.json    — 5개 구/군 행정구역 경계 GeoJSON
   ulsan_school_zones.json — 126개 초등학교 통학구역 GeoJSON (공식 SHP 변환)
   ulsan_dev_projects.json — 개발사업 125건 데이터
+  shp/                    — 학구 원본 SHP 세트 (각 .cpg/.dbf/.prj/.qmd/.shp/.shx)
+    초등학교통학구역.*    — 전국 초등학교 통학구역 (EPSG:5186, EUC-KR)
+    중학교학교군.*        — 전국 중학교 학구/학교군
+    고등학교학교군.*      — 전국 고등학교 학교군
 scripts/
   import_excel.py         — 엑셀 7개(xlsx) → ulsan_schools.json 통합 변환 (openpyxl)
   add_school.py           — 새 학교를 위치+연락처 엑셀에 동시 추가 (CLI)
@@ -81,7 +85,11 @@ deploy/                   — Cloudflare Workers 배포용 (index.html + data/ J
 | 각종학교현황.xlsx | 각종학교 현황 (3개교). 학년 체계: 1/2/3학년 |
 | 울산학교주소위도경도.xlsx | 주소, 위도, 경도 ⚠️ 위도/경도는 공식 원본이 아니라 210건 이상이 보정된 값. 원본은 git 히스토리(커밋 a66f2ea의 .xls) 참고. 보정 경위는 커밋 742c105, d528a44 참고 |
 | 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx | 개교일, 우편번호, 전화, 팩스, 홈페이지 (252개 + 기타) |
-| 초등학교통학구역.shp (+cpg,dbf,prj,qmd,shx) | 전국 초등학교 통학구역 SHP (EPSG:5186, EUC-KR) |
+
+학구 SHP 원본 3세트(각 cpg/dbf/prj/qmd/shp/shx)는 **`data/shp/`** 에 있음:
+- `data/shp/초등학교통학구역.*` — 전국 초등학교 통학구역 (EPSG:5186, EUC-KR)
+- `data/shp/중학교학교군.*` — 전국 중학교 학교군
+- `data/shp/고등학교학교군.*` — 전국 고등학교 학교군
 
 ## 데이터 파이프라인
 
@@ -113,7 +121,7 @@ deploy/                   — Cloudflare Workers 배포용 (index.html + data/ J
 GitHub vuski/admdongkor (2025년 1월) → 울산 55개 행정동 추출 → shapely unary_union으로 5개 구/군 합침 → `data/ulsan_districts.json`
 
 ### 통학구역
-초등학교통학구역.shp (전국 7123개) → pyshp+pyproj로 울산(SD_CD=31) 126개 필터링 + EPSG:5186→WGS84 변환 → `data/ulsan_school_zones.json`
+`data/shp/초등학교통학구역.shp` (전국 7123개) → pyshp+pyproj로 울산(SD_CD=31) 126개 필터링 + EPSG:5186→WGS84 변환 → `data/ulsan_school_zones.json`. 중·고등은 `data/shp/중학교학교군.shp`, `data/shp/고등학교학교군.shp` 에서 동일 파이프라인(`scripts/convert_school_zones.py`)으로 생성.
 
 ## 주요 기능
 
