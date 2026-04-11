@@ -20,8 +20,9 @@ from pathlib import Path
 import openpyxl
 
 BASE = Path(__file__).parent.parent
-LOC_XLSX = BASE / "울산학교주소위도경도.xlsx"
-CONTACT_XLSX = BASE / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx"
+XLSX_DIR = BASE / "data" / "xlsx"
+LOC_XLSX = XLSX_DIR / "울산학교주소위도경도.xlsx"
+CONTACT_XLSX = XLSX_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx"
 
 
 def remove_from(path, name_col, target):

@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 
 BASE = Path(__file__).parent.parent
+XLSX_DIR = BASE / "data" / "xlsx"
 
 REQUIRED_EXCELS = [
     "초등학교현황.xlsx",
@@ -99,17 +100,17 @@ def check_cloudflare_token():
 def check_excels():
     missing = []
     for f in REQUIRED_EXCELS:
-        if not (BASE / f).exists():
+        if not (XLSX_DIR / f).exists():
             missing.append(f)
     if missing:
-        return False, f"누락 {len(missing)}개: {missing}"
-    return True, f"{len(REQUIRED_EXCELS)}개 모두 존재"
+        return False, f"누락 {len(missing)}개: {missing} (위치: {XLSX_DIR})"
+    return True, f"{len(REQUIRED_EXCELS)}개 모두 존재 ({XLSX_DIR})"
 
 
 def check_locks():
     """'~$' 로 시작하는 엑셀 잠금 파일이 있으면 경고."""
-    locks = sorted(p.name for p in BASE.glob("~$*.xlsx")) + sorted(
-        p.name for p in BASE.glob("~$*.xls")
+    locks = sorted(p.name for p in XLSX_DIR.glob("~$*.xlsx")) + sorted(
+        p.name for p in XLSX_DIR.glob("~$*.xls")
     )
     if locks:
         return False, (

@@ -15,6 +15,7 @@ from pathlib import Path
 import openpyxl
 
 BASE_DIR = Path(__file__).parent.parent
+XLSX_DIR = BASE_DIR / "data" / "xlsx"
 DATA_PATH = BASE_DIR / "data" / "ulsan_schools.json"
 
 
@@ -263,11 +264,11 @@ def calc_stats(s):
 
 def main():
     # 1) 현황 엑셀 → 학교 기본 데이터
-    elem = read_elementary(BASE_DIR / "초등학교현황.xlsx")
-    mid = read_middle(BASE_DIR / "중학교현황.xlsx")
-    high = read_high(BASE_DIR / "고등학교현황.xlsx")
-    special = read_special(BASE_DIR / "특수학교현황.xlsx")
-    alt = read_alternative(BASE_DIR / "각종학교현황.xlsx")
+    elem = read_elementary(XLSX_DIR / "초등학교현황.xlsx")
+    mid = read_middle(XLSX_DIR / "중학교현황.xlsx")
+    high = read_high(XLSX_DIR / "고등학교현황.xlsx")
+    special = read_special(XLSX_DIR / "특수학교현황.xlsx")
+    alt = read_alternative(XLSX_DIR / "각종학교현황.xlsx")
     all_schools = elem + mid + high + special + alt
     print(
         f"현황 엑셀: {len(all_schools)}개 "
@@ -275,7 +276,7 @@ def main():
     )
 
     # 2) 위치 엑셀 → 주소/위도/경도
-    loc = read_location(BASE_DIR / "울산학교주소위도경도.xlsx")
+    loc = read_location(XLSX_DIR / "울산학교주소위도경도.xlsx")
     print(f"위치 데이터: {len(loc)}개")
 
     loc_ok, loc_miss = 0, []
@@ -300,7 +301,7 @@ def main():
         print(f"  [신규 학교 의심] 현황에 있지만 위치 엑셀에 없음: {loc_miss}")
 
     # 3) 연락처 엑셀 → 개교일/우편번호/전화/팩스/홈페이지
-    contact = read_contact(BASE_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx")
+    contact = read_contact(XLSX_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx")
     print(f"연락처 데이터: {len(contact)}개")
 
     ct_ok, ct_miss = 0, []
