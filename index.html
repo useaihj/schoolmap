@@ -462,6 +462,21 @@
     .zone-layer-label.zone-label-dimmed {
       opacity: 0.35;
     }
+    .zone-label-gongdong-always {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(217,119,6,0.35);
+      font-size: 10px;
+      padding: 2px 7px;
+      color: #D97706;
+    }
+    .zone-label-gongdong-always.zone-label-selected {
+      background: #D97706;
+      color: #fff;
+      border-color: #D97706;
+      font-size: 12px;
+      padding: 3px 10px;
+      box-shadow: 0 2px 8px rgba(217,119,6,0.4);
+    }
 
     /* 학구 정보 팝업 (지도 컨테이너 내부 absolute) */
     .zone-info-popup {
@@ -898,7 +913,9 @@
   let schoolZonePolygons = [];
   let schoolZoneLabels = [];
   let allZonePolygons = [];
+  let allZoneLabels = [];
   let showAllZones = false;
+  let gongdongAlwaysLabels = new Map(); // zoneName → {overlay, dom}
 
   // 중/고 학구 데이터 및 상태
   let midZoneData = null;
@@ -1092,7 +1109,7 @@
 
   fetch('data/ulsan_school_zones.json')
     .then(r => r.json())
-    .then(data => { schoolZoneData = data; });
+    .then(data => { schoolZoneData = data; drawGongdongAlwaysLabels(); });
 
   fetch('data/ulsan_middle_school_zones.json')
     .then(r => r.json())
@@ -1602,33 +1619,10 @@
       const polys = geoJsonToKakaoPolygons(feature, style);
       polys.forEach(p => p.setMap(map));
       schoolZonePolygons.push(...polys);
-      // 공동통학구역 라벨 표시
+      // 공동통학구역: 상시 라벨에 선택 강조 클래스 추가 (별도 라벨 생성 안 함)
       if (isShared) {
-        const zoneName = feature.properties.name;
-        // 학교 이름들 추출 (예: "대현초장생포초공동..." → "대현초 · 장생포초")
-        const beforeGongdong = zoneName.split('공동')[0];
-        const schoolNames = beforeGongdong.match(/.+?초/g) || [];
-        // 원본에 (일방) 없는 공동통학구역은 순서 반전
-        if (!zoneName.includes('(일방)') && schoolNames.length >= 2) {
-          schoolNames.reverse();
-        }
-        const labelText = schoolNames[0] + '→' + schoolNames.slice(1).join('·') + ' 공동(일방)통학구역';
-        // 폴리곤 중심점 계산
-        const coords = feature.geometry.type === 'MultiPolygon'
-          ? feature.geometry.coordinates[0][0]
-          : feature.geometry.coordinates[0];
-        let sumLat = 0, sumLng = 0;
-        coords.forEach(c => { sumLng += c[0]; sumLat += c[1]; });
-        const centerLat = sumLat / coords.length;
-        const centerLng = sumLng / coords.length;
-        const label = new kakao.maps.CustomOverlay({
-          position: new kakao.maps.LatLng(centerLat, centerLng),
-          content: '<div style="background:#D97706;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.2)">' + labelText + '</div>',
-          yAnchor: 0.5,
-          zIndex: 900
-        });
-        label.setMap(map);
-        schoolZoneLabels.push(label);
+        const entry = gongdongAlwaysLabels.get(feature.properties.name);
+        if (entry) entry.dom.classList.add('zone-label-selected');
       }
     });
   }
@@ -1637,6 +1631,8 @@
     schoolZonePolygons = [];
     schoolZoneLabels.forEach(l => l.setMap(null));
     schoolZoneLabels = [];
+    // 공동통학구역 상시 라벨 선택 강조 해제
+    gongdongAlwaysLabels.forEach(v => v.dom.classList.remove('zone-label-selected'));
     // 학교 선택용 중/고 폴리곤도 함께 제거
     selectedMidZonePolygons.forEach(p => p.setMap(null));
     selectedMidZonePolygons = [];
@@ -1939,8 +1935,7 @@
       }
     }
     showSchoolZone(school);
-    if (school.type === '중학교') showMidZoneForSchool(school);
-    else if (school.type === '고등학교') showHighZoneForSchool(school);
+    // 중·고 학교 선택 시 학교군 폴리곤 자동 표시 안 함 (사용자 요청)
 
     document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
     const item = document.querySelector(`.school-item[data-id="${id}"]`);
@@ -2319,9 +2314,14 @@
   // === 전체 통학구역 토글 ===
   // 초/중/고 zone은 서로 배타적. 하나 켜면 나머지 둘은 자동 꺼짐.
   function clearAllZoneLayers() {
+    // 학교 선택 시 자동 표시된 개별 학교 통학구역도 함께 제거
+    // (초등 학교 선택 → 통학구역 표시 상태에서 중/고 토글 시 겹침 방지)
+    clearSchoolZone();
     // 초등
     allZonePolygons.forEach(p => p.setMap(null));
     allZonePolygons = [];
+    allZoneLabels.forEach(l => l.setMap(null));
+    allZoneLabels = [];
     showAllZones = false;
     document.getElementById('zoneToggleBtn').classList.remove('dev-active');
     // 중학
@@ -2356,6 +2356,39 @@
     else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(poly => poly.forEach(accumRing));
     if (n === 0) return null;
     return new kakao.maps.LatLng(sumLat / n, sumLng / n);
+  }
+
+  // 공동통학구역 라벨 텍스트 포맷
+  function formatGongdongLabel(zoneName) {
+    const beforeGongdong = zoneName.split('공동')[0];
+    const schools = beforeGongdong.match(/.+?초/g) || [];
+    if (schools.length < 2) return zoneName;
+    if (!zoneName.includes('(일방)') && schools.length >= 2) schools.reverse();
+    return schools[0] + '→' + schools.slice(1).join('·') + ' 공동(일방)';
+  }
+
+  // 공동통학구역 상시 라벨 그리기
+  function drawGongdongAlwaysLabels() {
+    if (!schoolZoneData) return;
+    gongdongAlwaysLabels.forEach(v => v.overlay.setMap(null));
+    gongdongAlwaysLabels.clear();
+    schoolZoneData.features.forEach(f => {
+      if (f.properties.gb !== '1') return;
+      const center = featureCenter(f);
+      if (!center) return;
+      const div = document.createElement('div');
+      div.className = 'zone-layer-label zone-label-gongdong-always';
+      div.textContent = formatGongdongLabel(f.properties.name);
+      const overlay = new kakao.maps.CustomOverlay({
+        position: center,
+        content: div,
+        yAnchor: 0.5,
+        xAnchor: 0.5,
+        zIndex: 2
+      });
+      overlay.setMap(map);
+      gongdongAlwaysLabels.set(f.properties.name, { overlay, dom: div });
+    });
   }
 
   // 중/고 zone 공통 그리기 함수 — 해당 학교급 색상으로 통일
@@ -2421,6 +2454,7 @@
         kakao.maps.event.addListener(poly, 'click', function(me) { showZoneInfoPopup(f, 'elem', me); });
       });
       allZonePolygons.push(...polys);
+      // 공동통학구역 라벨은 상시 레이어(gongdongAlwaysLabels)에서 이미 표시
     });
     showAllZones = true;
     document.getElementById('zoneToggleBtn').classList.add('dev-active');
@@ -2469,7 +2503,7 @@
     clearZoneHighlight();
 
     const allPolys = [...allZonePolygons, ...midZonePolygons, ...highZonePolygons];
-    const allLabels = [...midZoneLabels, ...highZoneLabels];
+    const allLabels = [...allZoneLabels, ...midZoneLabels, ...highZoneLabels];
 
     allPolys.forEach(poly => {
       if (poly.__feature === selectedFeature) {
@@ -2493,7 +2527,7 @@
   // 원복: 모든 폴리곤·라벨을 기본값으로
   function clearZoneHighlight() {
     const allPolys = [...allZonePolygons, ...midZonePolygons, ...highZonePolygons];
-    const allLabels = [...midZoneLabels, ...highZoneLabels];
+    const allLabels = [...allZoneLabels, ...midZoneLabels, ...highZoneLabels];
     allPolys.forEach(poly => {
       poly.setOptions({
         strokeWeight: poly.__isGongdong ? 3 : 2,
@@ -2516,6 +2550,22 @@
       ...(p.middle_schools || []),
       ...(p.high_schools || [])
     ]);
+
+    // 공동통학구역: 이름에서 학교 약칭 파싱 → 풀네임 매칭
+    // 예) "대현초장생포초공동통학구역" → ["대현초","장생포초"] → "대현초등학교","장생포초등학교"
+    if (kind === 'elem' && p.gb === '1') {
+      const prefix = (p.name || '').split('공동')[0];
+      const shortNames = prefix.match(/.+?초/g) || [];
+      shortNames.forEach(short => {
+        // 정확 매칭 우선 (예: "상북초" → "상북초등학교", NOT "상북초등학교소호분교장")
+        const exact = allSchools.find(s => s.type === '초등학교' && s.name === short + '등학교');
+        if (exact) { schoolNames.add(exact.name); return; }
+        // 접두사 매칭 (분교장 등)
+        const partial = allSchools.find(s => s.type === '초등학교' && s.name.startsWith(short));
+        if (partial) schoolNames.add(partial.name);
+      });
+    }
+
     if (schoolNames.size === 0) return;
 
     const isGongdong = p.gb === '1';

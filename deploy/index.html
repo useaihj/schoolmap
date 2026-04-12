@@ -338,8 +338,11 @@
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-      overflow: hidden;
+      overflow-y: auto;
+      max-height: calc(100% - 24px);
     }
+    .kakao-popup-wrap::-webkit-scrollbar { width: 6px; }
+    .kakao-popup-wrap::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
     .kakao-popup-close {
       position: absolute;
       top: 14px;
@@ -1358,7 +1361,12 @@
   // 인포윈도우 닫기
   function closeInfoWindow() {
     if (currentInfoWindow) {
-      currentInfoWindow.setMap(null);
+      // HTMLElement(새 방식) 또는 Kakao CustomOverlay(개발사업 팝업 등) 모두 호환
+      if (typeof currentInfoWindow.remove === 'function' && currentInfoWindow.nodeType) {
+        currentInfoWindow.remove();
+      } else if (typeof currentInfoWindow.setMap === 'function') {
+        currentInfoWindow.setMap(null);
+      }
       currentInfoWindow = null;
     }
   }
@@ -1841,58 +1849,93 @@
     rebindOverlayEvents(id, school);
 
     map.setLevel(3);
-
-    if (openPopup) {
-      // 팝업이 잘리지 않도록 학교 위치를 지도 아래쪽에 배치
-      const proj = map.getProjection();
-      const point = proj.pointFromCoords(new kakao.maps.LatLng(school.lat, school.lng));
-      const mapHeight = document.getElementById('map').offsetHeight;
-      point.y -= mapHeight * 0.3;
-      const shifted = proj.coordsFromPoint(point);
-      map.setCenter(shifted);
-    } else {
-      map.setCenter(new kakao.maps.LatLng(school.lat, school.lng));
-    }
+    // 지도 중심은 학교 위치로 (이동 shift 없음)
+    map.setCenter(new kakao.maps.LatLng(school.lat, school.lng));
 
     if (openPopup) {
       if (isMobile()) {
         openBottomSheet(school);
       } else {
         closeInfoWindow();
+        // HTML absolute 요소로 팝업 생성 (지도 컨테이너에 직접 append)
         const iwContent = document.createElement('div');
         iwContent.innerHTML = createPopupHtml(school);
+        const popupEl = iwContent.firstElementChild; // .kakao-popup-wrap
+        popupEl.style.position = 'absolute';
+        popupEl.style.zIndex = '2000';
 
-        // 팝업 전체에서 클릭 이벤트가 맵으로 새나가지 않도록 차단
-        // ⚠ 반드시 bubble phase (third arg: false/생략) — capture phase면 하위 버튼 클릭이 차단됨
-        iwContent.addEventListener('click', function(e) { e.stopPropagation(); });
-        iwContent.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+        // 이벤트 전파 차단
+        popupEl.addEventListener('click', function(e) { e.stopPropagation(); });
+        popupEl.addEventListener('mousedown', function(e) { e.stopPropagation(); });
 
         // 반경 버튼 직접 바인딩
-        const nearbyBtn = iwContent.querySelector('.nearby-action-btn');
-        console.log('[팝업] 반경 버튼 찾음:', !!nearbyBtn, '학교:', school.name, 'id:', school.id);
+        const nearbyBtn = popupEl.querySelector('.nearby-action-btn');
         if (nearbyBtn) {
           nearbyBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             e.preventDefault();
-            console.log('[버튼] 반경 버튼 클릭 감지됨!');
             window._toggleNearbyForSchool(school.id);
           });
         }
-        const closeBtn = iwContent.querySelector('.kakao-popup-close');
+        const closeBtn = popupEl.querySelector('.kakao-popup-close');
         if (closeBtn) {
           closeBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             closeInfoWindow();
           });
         }
-        currentInfoWindow = new kakao.maps.CustomOverlay({
-          position: new kakao.maps.LatLng(school.lat, school.lng),
-          content: iwContent,
-          yAnchor: 1.05,
-          zIndex: 2000
+
+        // 지도 컨테이너에 append
+        const mapEl = document.getElementById('map');
+        mapEl.appendChild(popupEl);
+        currentInfoWindow = popupEl;
+
+        // 배치 계산: 마커 오른쪽 우선, 안 되면 왼쪽, 그것도 안 되면 위/아래
+        requestAnimationFrame(function() {
+          const proj = map.getProjection();
+          const pt = proj.containerPointFromCoords(new kakao.maps.LatLng(school.lat, school.lng));
+          const popupW = popupEl.offsetWidth;
+          const popupH = popupEl.offsetHeight;
+          const mapW = mapEl.offsetWidth;
+          const mapH = mapEl.offsetHeight;
+          const margin = 12;
+          const markerHalfW = 35;  // pill 마커 절반 너비
+          const markerHalfH = 16;  // pill 마커 절반 높이
+          const gap = 15;
+
+          let left, top;
+
+          // 1. 오른쪽 시도
+          const rightLeft = pt.x + markerHalfW + gap;
+          const leftLeft  = pt.x - markerHalfW - gap - popupW;
+
+          if (rightLeft + popupW <= mapW - margin) {
+            // 오른쪽 배치
+            left = rightLeft;
+            top  = pt.y - popupH / 2;  // 마커 y 중심 정렬
+          } else if (leftLeft >= margin) {
+            // 왼쪽 배치
+            left = leftLeft;
+            top  = pt.y - popupH / 2;
+          } else {
+            // 폴백: 좌우 둘 다 안 됨 → 마커 위/아래
+            left = pt.x - popupW / 2;
+            if (pt.y + markerHalfH + gap + popupH <= mapH - margin) {
+              top = pt.y + markerHalfH + gap;
+            } else if (pt.y - markerHalfH - gap - popupH >= margin) {
+              top = pt.y - markerHalfH - gap - popupH;
+            } else {
+              top = margin;
+            }
+          }
+
+          // 최종 clamp
+          left = Math.max(margin, Math.min(left, mapW - popupW - margin));
+          top  = Math.max(margin, Math.min(top,  mapH - popupH - margin));
+
+          popupEl.style.left = left + 'px';
+          popupEl.style.top  = top  + 'px';
         });
-        currentInfoWindow.setMap(map);
-        console.log('[팝업] 표시 완료:', school.name);
       }
     }
     showSchoolZone(school);
@@ -2578,7 +2621,7 @@
   }
 
   // 반경별 고정 줌 레벨
-  const RADIUS_LEVEL = { 1: 4, 1.5: 5, 2: 5, 3: 6 };
+  const RADIUS_LEVEL = { 1: 5, 1.5: 5, 2: 6, 3: 6 };
 
   function fitMapToRadius() {
     const base = getBaseSchool();
