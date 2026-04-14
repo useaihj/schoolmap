@@ -245,10 +245,10 @@
     }
     /* 큰 pill: 학교 약칭 표시 (줌 1~4) */
     .marker-pill.size-large {
-      padding: 4px 11px;
-      font-size: 12px;
-      min-width: 40px;
-      border-radius: 13px;
+      padding: 5px 13px;
+      font-size: 14px;
+      min-width: 44px;
+      border-radius: 14px;
     }
     /* 중간 pill: 단일 글자 (줌 5~7) */
     .marker-pill.size-medium {
@@ -369,10 +369,10 @@
       text-align: center; line-height: 1.2; font-family: 'Inter', -apple-system, sans-serif;
       cursor: pointer;
     }
-    .dev-marker .dev-name { font-size: 10px; font-weight: 700; }
-    .dev-marker .dev-units { font-size: 8px; opacity: 0.85; }
+    .dev-marker .dev-name { font-size: 12px; font-weight: 700; }
+    .dev-marker .dev-units { font-size: 10px; opacity: 0.85; }
     .dev-marker.dev-small { padding: 3px 6px; }
-    .dev-marker.dev-large { padding: 5px 8px; }
+    .dev-marker.dev-large { padding: 6px 10px; }
 
     /* 비교 체크박스 */
     .compare-cb {
@@ -691,12 +691,13 @@
       .filters { display: none; }
       .header .search-box { max-width: none; }
       .header .header-btn { padding: 7px 10px; font-size: 12px; }
-      #shareBtn, #zoneToggleBtn, #devToggleBtn {
+      #shareBtn, #zoneToggleBtn, #devToggleBtn, #helpBtn {
         font-size: 0; padding: 7px 9px;
       }
       #shareBtn::before { content: "🔗"; font-size: 14px; }
       #zoneToggleBtn::before { content: "🏘"; font-size: 14px; }
       #devToggleBtn::before { content: "🏗"; font-size: 14px; }
+      #helpBtn::before { content: "❓"; font-size: 14px; }
       #nearbyBtn { padding: 7px 10px; font-size: 11px; }
       .nearby-radius-select { padding: 6px 6px; font-size: 12px; }
       .filter-bar { padding: 0 14px; overflow-x: auto; gap: 8px; }
@@ -817,6 +818,7 @@
   <button class="header-btn" id="highZoneToggleBtn" onclick="window._toggleHighZones()">고등 학교군</button>
   <button class="header-btn" id="devToggleBtn" onclick="window._toggleDevProjects()">🏗 개발사업</button>
   <button class="header-btn" id="shareBtn" onclick="window._copyShareLink()" title="링크 복사">🔗 공유</button>
+  <button class="header-btn" id="helpBtn" onclick="window._openHelp()" title="도움말">❓ 도움말</button>
 </div>
 
 <div class="filter-bar">
@@ -891,6 +893,62 @@
   </div>
 </div>
 
+<!-- 도움말 모달 -->
+<div class="modal-overlay" id="guideModal" onclick="if(event.target===this)window._closeHelp()">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2>울산 학교 찾기 안내</h2>
+      <button class="modal-close" onclick="window._closeHelp()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:14px;padding:16px;border-radius:12px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:10px">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#DBEAFE">🏫</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">학교 정보 조회</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#6B7280">지도나 목록에서 학교를 선택하면 학생수, 학급수, 연락처 등 상세 정보를 한눈에 볼 수 있어요.</div>
+          <div style="display:inline-block;margin-top:5px;font-size:11px;color:#3B82F6;background:#EFF6FF;padding:2px 8px;border-radius:4px;font-weight:500">📍 주변 1~3km 학교도 함께 확인해 보세요.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;padding:16px;border-radius:12px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:10px">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#D1FAE5">🗂️</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">학교급별 필터</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#6B7280">초·중·고 버튼으로 원하는 학교만 지도에 표시하고, 구/군 필터로 우리 동네만 골라 볼 수 있어요.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;padding:16px;border-radius:12px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:10px">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#FEF3C7">📐</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">통학구역·학교군</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#6B7280">초등학교 통학구역, 중·고등학교 학교군 경계를 지도 위에 표시해 드려요. 구역을 누르면 소속 학교 목록이 나와요.</div>
+          <div style="display:inline-block;margin-top:5px;font-size:11px;color:#3B82F6;background:#EFF6FF;padding:2px 8px;border-radius:4px;font-weight:500">🎒 우리 아이 배정 학교가 어딘지 확인해 보세요.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;padding:16px;border-radius:12px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:10px">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#FEE2E2">🏗️</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">개발사업(아파트) 조회</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#6B7280">신규 아파트·개발사업 위치와 세대수, 배정 학교군 정보를 확인할 수 있어요.</div>
+          <div style="display:inline-block;margin-top:5px;font-size:11px;color:#3B82F6;background:#EFF6FF;padding:2px 8px;border-radius:4px;font-weight:500">🏠 입주 예정 단지의 학군이 궁금할 때 유용해요.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;padding:16px;border-radius:12px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:0">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#EDE9FE">⚖️</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">학교 비교</div>
+          <div style="font-size:12.5px;line-height:1.6;color:#6B7280">관심 학교 2~3개를 체크하면 학생수, 학급수, 학급당 학생수를 나란히 비교할 수 있어요.</div>
+          <div style="display:inline-block;margin-top:5px;font-size:11px;color:#3B82F6;background:#EFF6FF;padding:2px 8px;border-radius:4px;font-weight:500">☑️ 목록에서 체크박스를 눌러 보세요.</div>
+        </div>
+      </div>
+
+      <button onclick="window._closeHelp()" style="display:block;width:100%;margin-top:18px;padding:13px;background:#2563EB;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">시작하기</button>
+      <div style="text-align:center;margin-top:10px;font-size:12px;color:#9CA3AF">
+        <label><input type="checkbox" id="guideNoShow" style="margin-right:4px;vertical-align:middle"> 다시 표시하지 않기</label>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c02938e22add44191c77fb63b7a5b3d&libraries=clusterer"></script>
 <script>
 (function() {
@@ -912,6 +970,7 @@
   let schoolZoneData = null;
   let schoolZonePolygons = [];
   let schoolZoneLabels = [];
+  let selectedZoneFeatures = [];
   let allZonePolygons = [];
   let allZoneLabels = [];
   let showAllZones = false;
@@ -1109,7 +1168,7 @@
 
   fetch('data/ulsan_school_zones.json')
     .then(r => r.json())
-    .then(data => { schoolZoneData = data; drawGongdongAlwaysLabels(); });
+    .then(data => { schoolZoneData = data; });
 
   fetch('data/ulsan_middle_school_zones.json')
     .then(r => r.json())
@@ -1179,7 +1238,21 @@
     if (zoneFilter) {
       // 학구 모드: 초→중→고→특수→각종 순, 같은 타입 내 이름순
       const TYPE_ORDER = {'초등학교':0, '중학교':1, '고등학교':2, '특수학교':3, '각종학교':4};
+      // 공동통학구역: 이름 첫 번째 학교를 목록 최상단 고정, 나머지 가나다순
+      let gongdongFirstName = null;
+      if (zoneFilter.gongdong && zoneFilter.name) {
+        const prefix = zoneFilter.name.split('공동')[0];
+        const shorts = prefix.match(/.+?초/g) || [];
+        if (shorts.length >= 1) {
+          const first = allSchools.find(s => s.type === '초등학교' && s.name === shorts[0] + '등학교');
+          if (first) gongdongFirstName = first.name;
+        }
+      }
       filteredSchools.sort((a, b) => {
+        if (gongdongFirstName) {
+          if (a.name === gongdongFirstName) return -1;
+          if (b.name === gongdongFirstName) return 1;
+        }
         const to = (TYPE_ORDER[a.type] ?? 9) - (TYPE_ORDER[b.type] ?? 9);
         if (to !== 0) return to;
         return a.name.localeCompare(b.name, 'ko');
@@ -1625,6 +1698,8 @@
         if (entry) entry.dom.classList.add('zone-label-selected');
       }
     });
+    selectedZoneFeatures = matchingFeatures;
+    if (devShowProjects) renderDevMarkers();
   }
   function clearSchoolZone() {
     schoolZonePolygons.forEach(p => p.setMap(null));
@@ -1638,6 +1713,9 @@
     selectedMidZonePolygons = [];
     selectedHighZonePolygons.forEach(p => p.setMap(null));
     selectedHighZonePolygons = [];
+    const hadZoneFilter = selectedZoneFeatures.length > 0;
+    selectedZoneFeatures = [];
+    if (hadZoneFilter && devShowProjects) renderDevMarkers();
   }
 
   // 중학교 선택 시 자기 속한 중학구 폴리곤 표시
@@ -1984,7 +2062,7 @@
   // 이벤트: 검색
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
-    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
     applyFilters();
     updateURLState();
   });
@@ -1993,7 +2071,7 @@
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       // 학구 필터 자동 해제
-      if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
+      if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
       const type = this.dataset.type;
       // 이미 활성 상태면 토글 해제 → 빈 지도 안내 (현재 줌/위치 유지)
       if (currentType === type) {
@@ -2046,7 +2124,7 @@
   };
 
   document.getElementById('districtSelect').addEventListener('change', function() {
-    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
     currentDistrict = this.value;
     clearSchoolZone();
     // 고정 레벨/중심 먼저 적용 (맵 안정화 후 폴리곤 그리기)
@@ -2136,6 +2214,24 @@
     document.getElementById('compareModal').classList.remove('open');
   }
   window._closeCompare = closeCompare;
+
+  // 도움말 모달
+  function openHelp() {
+    document.getElementById('guideModal').classList.add('open');
+  }
+  function closeHelp() {
+    document.getElementById('guideModal').classList.remove('open');
+    if (document.getElementById('guideNoShow').checked) {
+      localStorage.setItem('ulsanschool_guide_dismissed', '1');
+    }
+  }
+  window._openHelp = openHelp;
+  window._closeHelp = closeHelp;
+
+  // 첫 방문 시 자동 표시
+  if (!localStorage.getItem('ulsanschool_guide_dismissed')) {
+    setTimeout(() => openHelp(), 500);
+  }
 
   // 이벤트: 정렬
   document.getElementById('sortSelect').addEventListener('change', function() {
@@ -2267,9 +2363,16 @@
 
     if (!devShowProjects || devProjects.length === 0) return;
 
-    const filtered = currentDistrict === 'all'
-      ? devProjects
-      : devProjects.filter(p => p.district === currentDistrict);
+    let filtered;
+    if (selectedZoneFeatures.length > 0) {
+      filtered = devProjects.filter(p =>
+        selectedZoneFeatures.some(f => pointInFeature(p.lng, p.lat, f))
+      );
+    } else {
+      filtered = currentDistrict === 'all'
+        ? devProjects
+        : devProjects.filter(p => p.district === currentDistrict);
+    }
 
     filtered.forEach(p => {
       const position = new kakao.maps.LatLng(p.lat, p.lng);
@@ -2323,6 +2426,8 @@
     allZoneLabels.forEach(l => l.setMap(null));
     allZoneLabels = [];
     showAllZones = false;
+    gongdongAlwaysLabels.forEach(v => v.overlay.setMap(null));
+    gongdongAlwaysLabels.clear();
     document.getElementById('zoneToggleBtn').classList.remove('dev-active');
     // 중학
     midZonePolygons.forEach(p => p.setMap(null));
@@ -2457,6 +2562,7 @@
       // 공동통학구역 라벨은 상시 레이어(gongdongAlwaysLabels)에서 이미 표시
     });
     showAllZones = true;
+    drawGongdongAlwaysLabels();
     document.getElementById('zoneToggleBtn').classList.add('dev-active');
     setTimeout(() => map.relayout(), 0);
   }
@@ -2581,6 +2687,10 @@
     // 시각적 강조
     highlightSelectedZone(feature);
 
+    // 개발사업도 해당 학구 내로 제한
+    selectedZoneFeatures = [feature];
+    if (devShowProjects) renderDevMarkers();
+
     applyFilters(true);
     // 사이드바 최상단 스크롤
     const list = document.getElementById('schoolList');
@@ -2592,6 +2702,9 @@
     document.getElementById('zoneFilterBar').classList.remove('active');
     closeZoneInfo();
     clearZoneHighlight();
+    const hadZoneFilter = selectedZoneFeatures.length > 0;
+    selectedZoneFeatures = [];
+    if (hadZoneFilter && devShowProjects) renderDevMarkers();
     applyFilters(true);
   }
   window._clearZoneFilter = clearZoneFilter;
@@ -2687,7 +2800,7 @@
     if (!base) { showToast('학교를 찾을 수 없습니다', 2000); return; }
 
     // 학구 필터 자동 해제
-    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); }
+    if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
 
     baseSchoolId = schoolId;
     nearbyMode = true;

@@ -1554,7 +1554,7 @@
     "method": "address"
   },
   {
-    "name": "중구 복산동 650-1아파트(1단지)",
+    "name": "복산동 650-1",
     "district": "중구",
     "location": "중구 복산동 650-1 일원",
     "units": 441,
@@ -1568,7 +1568,7 @@
     "method": "address"
   },
   {
-    "name": "중구 복산동 지역주택조합 아파트(2단지)",
+    "name": "복산동 658-4",
     "district": "중구",
     "location": "중구 복산동 658-4 일원",
     "units": 439,
@@ -1596,7 +1596,7 @@
     "method": "address"
   },
   {
-    "name": "옥교동 224 일원 주거복합",
+    "name": "옥교동 224",
     "district": "중구",
     "location": "중구 옥교동 224 일원",
     "units": 300,
@@ -1708,9 +1708,9 @@
     "method": "address"
   },
   {
-    "name": "번영로롯데캐슬센트럴스카이",
+    "name": "학성동 167-4",
     "district": "중구",
-    "location": "중구 학산동 167-4번지 일원",
+    "location": "중구 학성동 167-4번지 일원",
     "units": 676,
     "period": "2028.11.",
     "construction": "착공",
