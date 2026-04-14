@@ -540,6 +540,76 @@
       padding: 0; flex-shrink: 0;
     }
     .zone-filter-bar .zf-close:hover { background: rgba(255,255,255,0.7); }
+
+    /* 내가 찍은 학교 안내 바 */
+    .pinned-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      margin: 6px 6px 2px;
+      border-radius: 10px;
+      font-size: 12px;
+      background: linear-gradient(90deg, #FEF3C7, #FFFBEB);
+      border: 1px solid #FCD34D;
+      color: #92400E;
+      flex-wrap: wrap;
+    }
+    .pinned-bar.active { display: flex; }
+    .pinned-bar .pb-label { font-weight: 700; flex-shrink: 0; }
+    .pinned-bar .pb-names { font-weight: 500; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pinned-bar .pb-toggle {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 12px;
+      background: #fff; border: 1px solid #FCD34D;
+      cursor: pointer; font-weight: 600; font-size: 11px;
+      flex-shrink: 0;
+    }
+    .pinned-bar .pb-toggle input { margin: 0; accent-color: #D97706; }
+    .pinned-bar .pb-close {
+      background: #fff; border: 1px solid currentColor;
+      width: 22px; height: 22px; border-radius: 50%;
+      cursor: pointer; color: inherit; font-size: 14px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0; flex-shrink: 0;
+    }
+    .pinned-bar .pb-close:hover { background: rgba(255,255,255,0.7); }
+
+    /* 카드 내 핀 버튼 */
+    .pin-btn {
+      background: transparent; border: none; cursor: pointer;
+      font-size: 16px; line-height: 1; padding: 0 2px;
+      color: #D1D5DB; flex-shrink: 0; margin-left: auto;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .pin-btn:hover { color: #F59E0B; transform: scale(1.15); }
+    .pin-btn.pinned { color: #F59E0B; }
+
+    /* 찍은 학교 마커 강조 */
+    .marker-pill.pinned {
+      outline: 3px solid #F59E0B;
+      outline-offset: 2px;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5), 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 500;
+    }
+    .marker-pill.pinned.size-large {
+      padding: 7px 16px;
+      font-size: 16px;
+      min-width: 52px;
+      font-weight: 700;
+    }
+    .marker-pill.pinned.size-medium {
+      padding: 4px 10px;
+      font-size: 12px;
+      min-width: 28px;
+      font-weight: 700;
+    }
+    .marker-pill.pinned.size-small .dot-inner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid #F59E0B;
+      box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(245, 158, 11, 0.6);
+    }
     .header-btn.nearby-active {
       background: #2563EB; color: #fff; border-color: #2563EB;
     }
@@ -863,6 +933,15 @@
       <span class="zf-name" id="zfName"></span>
       <button class="zf-close" onclick="window._clearZoneFilter()" title="학구 필터 해제">&times;</button>
     </div>
+    <div class="pinned-bar" id="pinnedBar">
+      <span class="pb-label">⭐ <span id="pinnedCount">0</span>개</span>
+      <span class="pb-names" id="pinnedNames"></span>
+      <label class="pb-toggle" title="찍은 학교만 지도에 표시">
+        <input type="checkbox" id="pinnedOnlyChk" onchange="window._togglePinnedOnly()">
+        찍은 것만
+      </label>
+      <button class="pb-close" onclick="window._clearAllPinned()" title="모두 해제">&times;</button>
+    </div>
     <div class="school-list" id="schoolList"></div>
   </div>
   <div id="map"></div>
@@ -958,11 +1037,15 @@
   let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
-  let currentType = 'all';
+  // 다중 선택 가능: 'all' 또는 개별 유형들. 'all'과 개별은 상호 배타.
+  // size 0 = 초기 상태 (아무것도 선택 안 함)
+  let currentTypes = new Set(['all']);
   let currentDistrict = 'all';
   let currentSearch = '';
   let currentSort = 'name';
   let compareList = [];
+  let pinnedSchoolIds = new Set();
+  let pinnedOnlyMode = false;
   let districtGeoData = null;
   let districtPolygons = [];
   let initialBoundaryPolygons = [];
@@ -1100,7 +1183,8 @@
   function createPillHtml(type, state, school) {
     const color = COLORS[type] || COLORS['기타'];
     const zoom = map.getLevel();
-    const cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
+    let cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
+    if (pinnedSchoolIds.has(school.id)) cls += ' pinned';
 
     if (zoom <= 4) {
       // 큰 pill + 학교 약칭
@@ -1159,8 +1243,8 @@
     .then(data => {
       districtGeoData = data;
       dataLoadedCount++;
-      // 초기 상태(currentType === null)이면 구/군 경계 표시
-      if (!urlRestorePending && currentType === null && !currentSearch) {
+      // 초기 상태(아무 유형 미선택)이면 구/군 경계 표시
+      if (!urlRestorePending && currentTypes.size === 0 && !currentSearch) {
         showAllDistrictBoundaries();
       }
       if (urlRestorePending) tryRestoreURLState();
@@ -1187,8 +1271,9 @@
     closeBottomSheet();
     closeInfoWindow();
 
-    // 초기 상태: currentType === null 이고 검색어 없음 → 빈 지도 + 안내
-    if (currentType === null && !currentSearch && !zoneFilter) {
+    // 초기 상태: 유형 미선택이고 검색어 없음 → 빈 지도 + 안내
+    // 단, "찍은 것만" 모드거나 찍은 학교가 있으면 초기화면으로 돌아가지 않음
+    if (currentTypes.size === 0 && !currentSearch && !zoneFilter && !pinnedOnlyMode && pinnedSchoolIds.size === 0) {
       clearAllMarkers();
       filteredSchools = [];
       activeMarker = null;
@@ -1202,7 +1287,15 @@
     // 특수·각종학교는 '전체' 모드에서도 초·중·고와 함께 노출됨.
     // (하단 정렬 분기에서 EXTRA_TYPES가 정렬 순서 규칙에 사용됨)
     const EXTRA_TYPES = new Set(['특수학교', '각종학교']);
+    // 찍은 학교만 보이는 상황:
+    // (a) "찍은 것만" 토글 켜진 경우
+    // (b) 다른 필터(유형/검색/학구) 없이 찍은 학교만 있는 경우
+    const pinOnlyActive = pinnedSchoolIds.size > 0 &&
+      (pinnedOnlyMode || (currentTypes.size === 0 && !currentSearch && !zoneFilter));
     filteredSchools = allSchools.filter(s => {
+      if (pinOnlyActive) {
+        return pinnedSchoolIds.has(s.id);
+      }
       // 학구 필터: 해당 학구 학교만 (다른 필터 무시)
       if (zoneFilter) {
         return zoneFilter.schoolNames.has(s.name);
@@ -1210,7 +1303,7 @@
       // 반경 모드: 기준 학교는 유형·구군 필터 무시하고 무조건 포함
       const isBase = nearbyMode && baseSchoolId === s.id;
       if (!isBase) {
-        if (currentType !== null && currentType !== 'all' && s.type !== currentType) return false;
+        if (currentTypes.size > 0 && !currentTypes.has('all') && !currentTypes.has(s.type)) return false;
         if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
         if (currentSearch && !s.name.includes(currentSearch)) return false;
       }
@@ -1272,12 +1365,12 @@
     activeMarker = null;
     updateStats();
 
-    if (currentType === null && !zoneFilter) {
+    if (currentTypes.size === 0 && !zoneFilter && !pinOnlyActive) {
       // 검색어만 있는 경우: 초기 안내 경계는 유지, 마커는 표시 안 함, 사이드바 목록만
       clearAllMarkers();
       renderList();
     } else {
-      // 유형 선택됨 또는 학구 필터: 초기 안내 경계 제거, 마커 표시
+      // 유형 선택됨 또는 학구 필터 또는 찍은 학교 모드: 초기 안내 경계 제거, 마커 표시
       clearInitialBoundaries();
       renderMarkers(skipFitBounds);
       renderList();
@@ -1614,6 +1707,9 @@
             <span class="badge ${badge}">${s.type}</span>
             <span class="district-tag">${s.district}</span>
             ${rightHtml}
+            <button class="pin-btn${pinnedSchoolIds.has(s.id) ? ' pinned' : ''}"
+                    onclick="event.stopPropagation();window._togglePin(${s.id})"
+                    title="내가 찍은 학교">★</button>
           </div>
           <div class="name">${highlightSearch(s.name)}</div>
           <div class="meta">${metaParts.join('<span class="sep">&middot;</span>')}</div>
@@ -2035,7 +2131,7 @@
 
   // 필터 초기화 → 초기 안내 화면으로 복귀
   function resetFilters() {
-    currentType = null;
+    currentTypes.clear();
     currentDistrict = 'all';
     currentSearch = '';
     currentSort = 'name';
@@ -2067,32 +2163,37 @@
     updateURLState();
   });
 
-  // 이벤트: 유형 필터 (토글 지원)
+  // 이벤트: 유형 필터 (다중 선택, '전체'는 mutex)
+  function syncTypeButtons() {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', currentTypes.has(b.dataset.type));
+    });
+  }
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       // 학구 필터 자동 해제
       if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
       const type = this.dataset.type;
-      // 이미 활성 상태면 토글 해제 → 빈 지도 안내 (현재 줌/위치 유지)
-      if (currentType === type) {
-        currentType = null;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        clearSchoolZone();
-        applyFilters(true);
-        updateURLState();
-        const list1 = document.getElementById('schoolList');
-        if (list1) list1.scrollTop = 0;
-        return;
+      if (type === 'all') {
+        // 전체: 이미 켜져있으면 토글 해제 → 초기 상태. 아니면 전체만 남김.
+        if (currentTypes.has('all')) {
+          currentTypes.clear();
+        } else {
+          currentTypes.clear();
+          currentTypes.add('all');
+        }
+      } else {
+        // 개별 유형: '전체' 해제 후 해당 유형 토글
+        currentTypes.delete('all');
+        if (currentTypes.has(type)) currentTypes.delete(type);
+        else currentTypes.add(type);
       }
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll(`.filter-btn[data-type="${type}"]`).forEach(b => b.classList.add('active'));
-      currentType = type;
+      syncTypeButtons();
       clearSchoolZone();
       applyFilters(true);
       updateURLState();
-      // 사이드바 최상단으로 스크롤
-      const list2 = document.getElementById('schoolList');
-      if (list2) list2.scrollTop = 0;
+      const list = document.getElementById('schoolList');
+      if (list) list.scrollTop = 0;
     });
   });
 
@@ -2143,6 +2244,50 @@
     renderDevMarkers();
     updateURLState();
   });
+
+  // === 내가 찍은 학교 ===
+  function togglePin(id) {
+    if (pinnedSchoolIds.has(id)) pinnedSchoolIds.delete(id);
+    else pinnedSchoolIds.add(id);
+    if (pinnedSchoolIds.size === 0) pinnedOnlyMode = false;
+    updatePinnedBar();
+    // 필터 재적용 (찍은 것만 모드거나 해제 후 복귀)
+    applyFilters(true);
+  }
+  window._togglePin = togglePin;
+
+  function togglePinnedOnly() {
+    pinnedOnlyMode = document.getElementById('pinnedOnlyChk').checked;
+    applyFilters(true);
+  }
+  window._togglePinnedOnly = togglePinnedOnly;
+
+  function clearAllPinned() {
+    pinnedSchoolIds.clear();
+    pinnedOnlyMode = false;
+    updatePinnedBar();
+    applyFilters(true);
+  }
+  window._clearAllPinned = clearAllPinned;
+
+  function updatePinnedBar() {
+    const bar = document.getElementById('pinnedBar');
+    const count = pinnedSchoolIds.size;
+    if (count === 0) {
+      bar.classList.remove('active');
+      const chk = document.getElementById('pinnedOnlyChk');
+      if (chk) chk.checked = false;
+      return;
+    }
+    bar.classList.add('active');
+    document.getElementById('pinnedCount').textContent = String(count);
+    const names = [...pinnedSchoolIds]
+      .map(id => allSchools.find(s => s.id === id))
+      .filter(Boolean)
+      .map(s => shortName(s.name, s.type));
+    document.getElementById('pinnedNames').textContent = names.join(', ');
+    document.getElementById('pinnedOnlyChk').checked = pinnedOnlyMode;
+  }
 
   // === 학교 비교 ===
   function toggleCompare(id) {
@@ -2822,11 +2967,10 @@
     document.getElementById('nbSchoolName').textContent = base.name;
     document.getElementById('nbRadiusText').textContent = nearbyRadiusKm + 'km';
 
-    // 유형이 null이면 전체로 설정
-    if (currentType === null) {
-      currentType = 'all';
-      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelectorAll('.filter-btn[data-type="all"]').forEach(function(b) { b.classList.add('active'); });
+    // 유형이 없으면 전체로 설정
+    if (currentTypes.size === 0) {
+      currentTypes.add('all');
+      syncTypeButtons();
     }
 
     // 거리순 자동 전환
@@ -2913,8 +3057,7 @@
   // URL 상태 저장 (hash)
   function buildURLParams() {
     const params = new URLSearchParams();
-    if (currentType && currentType !== 'all') params.set('type', currentType);
-    if (currentType === 'all') params.set('type', 'all');
+    if (currentTypes.size > 0) params.set('type', [...currentTypes].join(','));
     if (currentDistrict !== 'all') params.set('district', currentDistrict);
     if (currentSearch) params.set('q', currentSearch);
     if (currentSort && currentSort !== 'name') params.set('sort', currentSort);
@@ -2972,9 +3115,11 @@
     urlRestorePending = null;
 
     if (st.type) {
-      currentType = st.type;
-      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelectorAll('.filter-btn[data-type="' + st.type + '"]').forEach(function(b) { b.classList.add('active'); });
+      currentTypes = new Set(st.type.split(',').filter(Boolean));
+      syncTypeButtons();
+    } else {
+      currentTypes.clear();
+      syncTypeButtons();
     }
     if (st.district) {
       currentDistrict = st.district;
