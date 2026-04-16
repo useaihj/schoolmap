@@ -373,6 +373,9 @@
     .dev-marker .dev-units { font-size: 10px; opacity: 0.85; }
     .dev-marker.dev-small { padding: 3px 6px; }
     .dev-marker.dev-large { padding: 6px 10px; }
+    .dev-marker.dev-cancelled { background: #9CA3AF; border-color: #D1D5DB; opacity: 0.75; }
+    .dev-marker.dev-cancelled .dev-name { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.7); }
+    .dev-marker.dev-cancelled .dev-units { text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.5); }
 
     /* 비교 체크박스 */
     .compare-cb {
@@ -2397,9 +2400,10 @@
     const zoom = map.getLevel();
     const name = zoom <= 4 ? devShortName(project.name) : '';
     const cls = zoom <= 4 ? 'dev-large' : 'dev-small';
+    const cancelled = project.construction === '취소' ? ' dev-cancelled' : '';
     return zoom <= 4
-      ? `<div class="dev-marker ${cls}"><div class="dev-name">${name}</div><div class="dev-units">${project.units}세대</div></div>`
-      : `<div class="dev-marker ${cls}"><div class="dev-units" style="font-size:9px;font-weight:700;opacity:1">${project.units}</div></div>`;
+      ? `<div class="dev-marker ${cls}${cancelled}"><div class="dev-name">${name}</div><div class="dev-units">${project.units}세대</div></div>`
+      : `<div class="dev-marker ${cls}${cancelled}"><div class="dev-units" style="font-size:9px;font-weight:700;opacity:1${cancelled ? ';text-decoration:line-through;text-decoration-color:rgba(255,255,255,0.5)' : ''}">${project.units}</div></div>`;
   }
 
   // Point-in-polygon (ray-casting, ring은 [[lng,lat],...])
@@ -2435,8 +2439,10 @@
   }
 
   function createDevPopupHtml(p) {
+    const isCancelled = p.construction === '취소';
     const consBadge = p.construction
       ? `<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;${
+          isCancelled ? 'background:#DC2626;color:#fff' :
           p.construction === '미착공' ? 'background:#FEE2E2;color:#991B1B' :
           p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
           'background:#DCFCE7;color:#166534'
@@ -2446,7 +2452,8 @@
     const highZone = findZoneByPoint(highZoneData, p.lng, p.lat);
     const zoneRow = (label, value, color) => value
       ? `<tr><td style="color:${color};padding:3px 8px 3px 0;width:70px;font-weight:500">${label}</td><td>${value}</td></tr>` : '';
-    return `<div class="kakao-popup-wrap" style="position:relative;min-width:240px">
+    const cStyle = isCancelled ? 'color:#9CA3AF;text-decoration:line-through;text-decoration-color:#D1D5DB;' : '';
+    return `<div class="kakao-popup-wrap" style="position:relative;min-width:240px${isCancelled ? ';border:1px solid #FECACA' : ''}">
       <button class="kakao-popup-close" onclick="window._closeInfoWindow()">&times;</button>
       <div style="padding:14px 16px">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">
@@ -2454,15 +2461,16 @@
           ${consBadge}
           <span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
         </div>
-        <div style="font-size:15px;font-weight:700;margin-bottom:8px">${p.name}</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:8px;${cStyle}">${p.name}</div>
         <table style="font-size:12px;width:100%;border-collapse:collapse">
           <tr><td style="color:#6B7280;padding:3px 8px 3px 0;width:70px">위치</td><td>${p.location}</td></tr>
-          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">세대수</td><td><b>${p.units.toLocaleString()}세대</b></td></tr>
-          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">사업기간</td><td>${p.period || '-'}</td></tr>
-          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">착공여부</td><td>${p.construction || '-'}</td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">세대수</td><td style="${isCancelled ? 'color:#9CA3AF;text-decoration:line-through' : ''}"><b>${p.units.toLocaleString()}세대</b></td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">사업기간</td><td style="${isCancelled ? 'color:#9CA3AF;text-decoration:line-through' : ''}">${p.period || '-'}</td></tr>
+          <tr><td style="color:#6B7280;padding:3px 8px 3px 0">착공여부</td><td style="${isCancelled ? 'color:#DC2626;font-weight:600' : ''}">${p.construction || '-'}</td></tr>
         </table>
+        ${isCancelled ? `<div style="margin-top:10px;padding:8px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;font-size:11px;color:#991B1B;line-height:1.5"><b>이 사업은 취소되었습니다.</b><br>학생 배정 계획에 반영되지 않습니다.</div>` : ''}
         ${p.school_elem ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
-          <table style="font-size:12px;width:100%"><tr><td style="color:#059669;font-weight:500;width:70px">초등학교</td><td>${p.school_elem}</td></tr></table>
+          <table style="font-size:12px;width:100%"><tr><td style="${isCancelled ? 'color:#D1D5DB' : 'color:#059669'};font-weight:500;width:70px">초등학교</td><td style="${isCancelled ? 'color:#D1D5DB;text-decoration:line-through' : ''}">${p.school_elem}</td></tr></table>
         </div>` : ''}
         ${(elemZone || midZone || highZone) ? `<div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px">
           <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">이 위치의 학구</div>
@@ -2477,26 +2485,30 @@
   }
 
   function createDevSheetContent(p) {
+    const isCancelled = p.construction === '취소';
     const consBadge = p.construction
       ? `<span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;${
+          isCancelled ? 'background:#DC2626;color:#fff' :
           p.construction === '미착공' ? 'background:#FEE2E2;color:#991B1B' :
           p.construction.includes('중지') ? 'background:#FEF9C3;color:#854D0E' :
           'background:#DCFCE7;color:#166534'
         }">${p.construction}</span>` : '';
+    const cStyle = isCancelled ? 'color:#9CA3AF;text-decoration:line-through;text-decoration-color:#D1D5DB;' : '';
     const headerHtml = `
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
         <span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#FEF3C7;color:#92400E">개발사업</span>
         ${consBadge}
         <span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#E0E7FF;color:#3730A3">${p.district}</span>
       </div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:2px">${p.name}</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:2px;${cStyle}">${p.name}</div>
       <div style="font-size:13px;color:#6B7280">${p.location}</div>`;
     const scrollHtml = `
+      ${isCancelled ? `<div style="margin-bottom:12px;padding:10px 14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;font-size:13px;color:#991B1B;line-height:1.5"><b>이 사업은 취소되었습니다.</b><br>학생 배정 계획에 반영되지 않습니다.</div>` : ''}
       <table style="width:100%;font-size:14px;border-collapse:collapse">
-        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6;width:90px">세대수</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6;font-weight:600">${p.units.toLocaleString()}세대</td></tr>
-        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">사업기간</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6">${p.period || '-'}</td></tr>
-        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">착공여부</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6">${p.construction || '-'}</td></tr>
-        ${p.school_elem ? `<tr><td style="color:#059669;padding:10px 10px 10px 0;font-weight:500">초등학교</td><td style="padding:10px 0">${p.school_elem}</td></tr>` : ''}
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6;width:90px">세대수</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6;font-weight:600;${isCancelled ? 'color:#9CA3AF;text-decoration:line-through' : ''}">${p.units.toLocaleString()}세대</td></tr>
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">사업기간</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6;${isCancelled ? 'color:#9CA3AF;text-decoration:line-through' : ''}">${p.period || '-'}</td></tr>
+        <tr><td style="color:#6B7280;padding:10px 10px 10px 0;border-bottom:1px solid #F3F4F6">착공여부</td><td style="padding:10px 0;border-bottom:1px solid #F3F4F6;${isCancelled ? 'color:#DC2626;font-weight:600' : ''}">${p.construction || '-'}</td></tr>
+        ${p.school_elem ? `<tr><td style="${isCancelled ? 'color:#D1D5DB' : 'color:#059669'};padding:10px 10px 10px 0;font-weight:500">초등학교</td><td style="padding:10px 0;${isCancelled ? 'color:#D1D5DB;text-decoration:line-through' : ''}">${p.school_elem}</td></tr>` : ''}
       </table>`;
     return { headerHtml, scrollHtml };
   }
