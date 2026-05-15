@@ -2180,8 +2180,14 @@
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
     if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
-    // 검색은 줌/맞춤 이동을 발생시키지 않음 (renderList에서 매칭 카드를 최상단으로 스크롤)
+    // 검색은 학교 목록/마커를 줄이지 않고, 매칭 카드를 강조 + 첫 매칭을 사이드바 최상단으로 스크롤
     applyFilters(true);
+    // 매칭이 있으면 첫 매칭 학교를 마커 클릭과 동일하게 선택
+    // (레벨 3 확대 + 중심 이동 + 정보창 + 통학구역/학교군 강조)
+    if (currentSearch) {
+      const firstMatch = filteredSchools.find(s => s.name.includes(currentSearch));
+      if (firstMatch) selectSchool(firstMatch.id, true);
+    }
     updateURLState();
   });
 
