@@ -1608,7 +1608,7 @@
       </div>` : '';
 
     const isBase = (nearbyMode && baseSchoolId === s.id);
-    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교 보기';
     const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
 
     return `
@@ -1855,7 +1855,7 @@
     }
 
     const isBase = (nearbyMode && baseSchoolId === s.id);
-    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교 보기';
     const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
 
     let headerHtml = `
