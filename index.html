@@ -1777,6 +1777,10 @@
   // 통학구역 표시
   function showSchoolZone(school) {
     clearSchoolZone();
+    if (school.type === '중학교') {
+      showMidZoneForSchool(school);
+      return;
+    }
     if (!schoolZoneData || school.type !== '초등학교') return;
     const baseName = school.name.replace('초등학교', '초');
     // 전용 통학구역 + 공동 통학구역 모두 찾기
@@ -2114,7 +2118,7 @@
       }
     }
     showSchoolZone(school);
-    // 중·고 학교 선택 시 학교군 폴리곤 자동 표시 안 함 (사용자 요청)
+    // 고등학교 선택 시 학교군 폴리곤 자동 표시 안 함 (사용자 요청)
 
     document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
     const item = document.querySelector(`.school-item[data-id="${id}"]`);
