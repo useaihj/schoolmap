@@ -165,7 +165,8 @@
       border-color: #2563EB;
       background: #F0F7FF;
     }
-    .school-item.hovered {
+    .school-item.hovered,
+    .school-item.search-match {
       border-color: #2563EB;
       background: #EFF6FF;
       box-shadow: 0 0 0 1px #2563EB;
@@ -1308,7 +1309,7 @@
       if (!isBase) {
         if (currentTypes.size > 0 && !currentTypes.has('all') && !currentTypes.has(s.type)) return false;
         if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
-        if (currentSearch && !s.name.includes(currentSearch)) return false;
+        // 검색은 더 이상 학교를 필터링하지 않음 (renderList에서 매칭 강조 + 스크롤로 처리)
       }
       // 반경 모드: 기준 학교 제외한 나머지는 반경 내만
       if (nearbyMode && baseSchoolId != null && !isBase) {
@@ -1683,6 +1684,7 @@
       return;
     }
 
+    let firstMatchId = null;
     list.innerHTML = filteredSchools.map(s => {
       const badge = getBadgeClass(s.type);
       const metaParts = [];
@@ -1691,6 +1693,8 @@
 
       const checked = compareList.includes(s.id) ? 'checked' : '';
       const isBase = (nearbyMode && baseSchoolId === s.id);
+      const isMatch = currentSearch && s.name.includes(currentSearch);
+      if (isMatch && firstMatchId == null) firstMatchId = s.id;
       let rightHtml = '';
       if (isBase) {
         rightHtml = `<span class="base-badge">기준</span>`;
@@ -1699,7 +1703,9 @@
         const dStr = d < 1 ? Math.round(d * 1000) + 'm' : d.toFixed(1) + 'km';
         rightHtml = `<span class="distance-badge">📍 ${dStr}</span>`;
       }
-      const itemCls = 'school-item' + (isBase ? ' base-school' : '');
+      const itemCls = 'school-item'
+        + (isBase ? ' base-school' : '')
+        + (isMatch ? ' search-match' : '');
       return `
         <div class="${itemCls}" data-id="${s.id}"
              onclick="window._selectSchool(${s.id})"
@@ -1720,6 +1726,12 @@
           <div class="meta">${metaParts.join('<span class="sep">&middot;</span>')}</div>
         </div>`;
     }).join('');
+
+    // 검색 매칭: 첫 매칭 카드를 사이드바 최상단으로 스크롤 (마커 hover 효과와 동일)
+    if (firstMatchId != null) {
+      const el = list.querySelector(`.school-item[data-id="${firstMatchId}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function highlightSearch(name) {
@@ -2168,7 +2180,8 @@
   document.getElementById('searchInput').addEventListener('input', function() {
     currentSearch = this.value.trim();
     if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
-    applyFilters();
+    // 검색은 줌/맞춤 이동을 발생시키지 않음 (renderList에서 매칭 카드를 최상단으로 스크롤)
+    applyFilters(true);
     updateURLState();
   });
 
