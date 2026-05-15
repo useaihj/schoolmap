@@ -165,7 +165,8 @@
       border-color: #2563EB;
       background: #F0F7FF;
     }
-    .school-item.hovered {
+    .school-item.hovered,
+    .school-item.search-match {
       border-color: #2563EB;
       background: #EFF6FF;
       box-shadow: 0 0 0 1px #2563EB;
@@ -869,7 +870,7 @@
   <h1 onclick="window._resetToHome()" title="처음 화면으로">울산 학교 찾기</h1>
   <div class="search-box">
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-    <input type="text" id="searchInput" placeholder="학교 이름으로 검색...">
+    <input type="text" id="searchInput" placeholder="학교 이름 입력 후 Enter">
   </div>
   <div class="filters">
     <button class="filter-btn active" data-type="all">전체</button>
@@ -1040,6 +1041,8 @@
   let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
+  // 검색 다중 매칭 시 호버 상태로 강조한 학교 id 목록 (다음 검색·해제 때 원상복구용)
+  let searchHighlightIds = [];
   // 다중 선택 가능: 'all' 또는 개별 유형들. 'all'과 개별은 상호 배타.
   // size 0 = 초기 상태 (아무것도 선택 안 함)
   let currentTypes = new Set(['all']);
@@ -1186,11 +1189,16 @@
   function createPillHtml(type, state, school) {
     const color = COLORS[type] || COLORS['기타'];
     const zoom = map.getLevel();
+    // 검색 다중 매칭으로 강조된 학교: 줌과 무관하게 size-large(학교 약칭) 유지 +
+    // 액티브 상태가 아니면 호버 비주얼(살짝 확대) 유지
+    const isSearchHighlight = searchHighlightIds.includes(school.id);
+    if (isSearchHighlight && state !== 'active') state = 'hovered';
+
     let cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
     if (pinnedSchoolIds.has(school.id)) cls += ' pinned';
 
-    if (zoom <= 4) {
-      // 큰 pill + 학교 약칭
+    if (isSearchHighlight || zoom <= 4) {
+      // 큰 pill + 학교 약칭 (줌 ≤4 또는 검색 강조)
       const label = shortName(school.name, type);
       return `<div class="marker-pill size-large${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
     } else if (zoom <= 7) {
@@ -1308,7 +1316,7 @@
       if (!isBase) {
         if (currentTypes.size > 0 && !currentTypes.has('all') && !currentTypes.has(s.type)) return false;
         if (currentDistrict !== 'all' && s.district !== currentDistrict) return false;
-        if (currentSearch && !s.name.includes(currentSearch)) return false;
+        // 검색은 더 이상 학교를 필터링하지 않음 (renderList에서 매칭 강조 + 스크롤로 처리)
       }
       // 반경 모드: 기준 학교 제외한 나머지는 반경 내만
       if (nearbyMode && baseSchoolId != null && !isBase) {
@@ -1555,6 +1563,8 @@
       }
       currentInfoWindow = null;
     }
+    // 선택 학교의 통학구역 진한 강조 해제 (전체 학구 토글 레이어는 별도라 영향 없음)
+    clearSchoolZone();
   }
 
   // 팝업 콘텐츠 생성
@@ -1608,7 +1618,7 @@
       </div>` : '';
 
     const isBase = (nearbyMode && baseSchoolId === s.id);
-    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교 보기';
     const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
 
     return `
@@ -1623,7 +1633,7 @@
           <button class="${nearbyBtnCls}" data-nearby-btn="1">${nearbyBtnLabel}</button>
         </div>
         <div style="padding:0 20px 14px;border-bottom:1px solid #F3F4F6">
-          <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
+          <div style="font-size:12px;font-weight:700;color:#1F2937;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
           ${infoRow('설립', s.founding_type)}
           ${infoRow('공학', s.coedu)}
           ${infoRow('고교유형', s.hs_category)}
@@ -1645,8 +1655,8 @@
         ${tableHtml ? `
         <div style="padding:14px 20px 16px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
-            <span style="font-size:10px;color:#D1D5DB">2026년 2월 기준</span>
+            <span style="font-size:12px;font-weight:700;color:#1F2937;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
+            <span style="font-size:11px;font-weight:700;color:#374151;background:#F3F4F6;padding:2px 8px;border-radius:10px">2026년 3월 기준</span>
           </div>
           ${tableHtml}
         </div>` : ''}
@@ -1681,6 +1691,7 @@
       return;
     }
 
+    let firstMatchId = null;
     list.innerHTML = filteredSchools.map(s => {
       const badge = getBadgeClass(s.type);
       const metaParts = [];
@@ -1689,6 +1700,8 @@
 
       const checked = compareList.includes(s.id) ? 'checked' : '';
       const isBase = (nearbyMode && baseSchoolId === s.id);
+      const isMatch = currentSearch && s.name.includes(currentSearch);
+      if (isMatch && firstMatchId == null) firstMatchId = s.id;
       let rightHtml = '';
       if (isBase) {
         rightHtml = `<span class="base-badge">기준</span>`;
@@ -1697,7 +1710,9 @@
         const dStr = d < 1 ? Math.round(d * 1000) + 'm' : d.toFixed(1) + 'km';
         rightHtml = `<span class="distance-badge">📍 ${dStr}</span>`;
       }
-      const itemCls = 'school-item' + (isBase ? ' base-school' : '');
+      const itemCls = 'school-item'
+        + (isBase ? ' base-school' : '')
+        + (isMatch ? ' search-match' : '');
       return `
         <div class="${itemCls}" data-id="${s.id}"
              onclick="window._selectSchool(${s.id})"
@@ -1718,6 +1733,12 @@
           <div class="meta">${metaParts.join('<span class="sep">&middot;</span>')}</div>
         </div>`;
     }).join('');
+
+    // 검색 매칭: 첫 매칭 카드를 사이드바 최상단으로 스크롤 (마커 hover 효과와 동일)
+    if (firstMatchId != null) {
+      const el = list.querySelector(`.school-item[data-id="${firstMatchId}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function highlightSearch(name) {
@@ -1775,6 +1796,10 @@
   // 통학구역 표시
   function showSchoolZone(school) {
     clearSchoolZone();
+    if (school.type === '중학교') {
+      showMidZoneForSchool(school);
+      return;
+    }
     if (!schoolZoneData || school.type !== '초등학교') return;
     const baseName = school.name.replace('초등학교', '초');
     // 전용 통학구역 + 공동 통학구역 모두 찾기
@@ -1855,7 +1880,7 @@
     }
 
     const isBase = (nearbyMode && baseSchoolId === s.id);
-    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교';
+    const nearbyBtnLabel = isBase ? '✕ 반경 해제' : '📍 반경 내 학교 보기';
     const nearbyBtnCls = isBase ? 'nearby-action-btn active' : 'nearby-action-btn';
 
     let headerHtml = `
@@ -1879,7 +1904,7 @@
 
     let scrollHtml = `
       <div style="margin-bottom:16px">
-        <div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
+        <div style="font-size:12px;font-weight:700;color:#1F2937;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">기본 정보</div>
         ${infoRow('설립', s.founding_type)}
         ${infoRow('공학', s.coedu)}
         ${infoRow('고교유형', s.hs_category)}
@@ -1921,8 +1946,8 @@
       scrollHtml += `
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
-            <span style="font-size:10px;color:#D1D5DB">2026년 2월 기준</span>
+            <span style="font-size:12px;font-weight:700;color:#1F2937;text-transform:uppercase;letter-spacing:0.5px">학생/학급 현황</span>
+            <span style="font-size:11px;font-weight:700;color:#374151;background:#F3F4F6;padding:2px 8px;border-radius:10px">2026년 3월 기준</span>
           </div>
           <table style="width:100%;font-size:12px;border-collapse:collapse;color:#6B7280;margin-top:4px">
             <tr style="font-weight:600;color:#9CA3AF;font-size:11px">
@@ -2112,7 +2137,7 @@
       }
     }
     showSchoolZone(school);
-    // 중·고 학교 선택 시 학교군 폴리곤 자동 표시 안 함 (사용자 요청)
+    // 고등학교 선택 시 학교군 폴리곤 자동 표시 안 함 (사용자 요청)
 
     document.querySelectorAll('.school-item').forEach(el => el.classList.remove('active'));
     const item = document.querySelector(`.school-item[data-id="${id}"]`);
@@ -2158,11 +2183,65 @@
     location.reload();
   };
 
-  // 이벤트: 검색
-  document.getElementById('searchInput').addEventListener('input', function() {
+  // 검색 다중 매칭 시 적용한 호버 강조 해제
+  function clearSearchHighlights() {
+    // 먼저 비워야 createPillHtml이 size-large 강제 분기를 타지 않고 줌에 맞춰 정상 복원됨
+    const ids = searchHighlightIds;
+    searchHighlightIds = [];
+    ids.forEach(id => {
+      if (!overlays[id] || activeMarker === id) return;
+      const school = allSchools.find(s => s.id === id);
+      if (!school) return;
+      overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'normal', school);
+      overlays[id].overlay.setZIndex(10);
+      rebindOverlayEvents(id, school);
+    });
+  }
+
+  // 이벤트: 검색 (Enter 키로만 트리거 — 단순 입력으로는 동작 안 함)
+  document.getElementById('searchInput').addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
     currentSearch = this.value.trim();
     if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
-    applyFilters();
+    // 이전 검색의 다중 매칭 호버 강조 해제
+    clearSearchHighlights();
+    // 검색은 학교 목록/마커를 줄이지 않고, 매칭 카드를 강조 + 첫 매칭을 사이드바 최상단으로 스크롤
+    applyFilters(true);
+
+    if (currentSearch) {
+      const matches = filteredSchools.filter(s => s.name.includes(currentSearch));
+      if (matches.length === 1) {
+        // 단일 매칭: 마커 클릭과 동일 (레벨 3 확대 + 정보창 + 통학구역/학교군 강조)
+        selectSchool(matches[0].id, true);
+      } else if (matches.length >= 2) {
+        // 다중 매칭: 팝업·통학구역 없이 모든 매칭 학교를 한 화면에 담음 + 마커 호버 효과
+        closeInfoWindow();
+        // 이전 active 마커 해제
+        if (activeMarker && overlays[activeMarker]) {
+          const prev = allSchools.find(s => s.id === activeMarker);
+          if (prev) {
+            overlays[activeMarker].overlay.getContent().innerHTML = createPillHtml(prev.type, 'normal', prev);
+            overlays[activeMarker].overlay.setZIndex(10);
+            rebindOverlayEvents(activeMarker, prev);
+          }
+          activeMarker = null;
+        }
+        // searchHighlightIds 를 먼저 채워야 createPillHtml 이 size-large 분기를 탐
+        matches.forEach(s => searchHighlightIds.push(s.id));
+        // 매칭 학교 마커 생성(없으면) + 호버 상태 강조 + bounds 누적
+        const bounds = new kakao.maps.LatLngBounds();
+        matches.forEach(s => {
+          if (!overlays[s.id]) createOverlayForSchool(s);
+          overlays[s.id].overlay.getContent().innerHTML = createPillHtml(s.type, 'hovered', s);
+          overlays[s.id].overlay.setZIndex(500);
+          rebindOverlayEvents(s.id, s);
+          bounds.extend(new kakao.maps.LatLng(s.lat, s.lng));
+        });
+        map.setBounds(bounds, 80, 80, 80, 80);
+      }
+      // matches.length === 0 → 아무 동작 안 함
+    }
     updateURLState();
   });
 
