@@ -1189,11 +1189,16 @@
   function createPillHtml(type, state, school) {
     const color = COLORS[type] || COLORS['기타'];
     const zoom = map.getLevel();
+    // 검색 다중 매칭으로 강조된 학교: 줌과 무관하게 size-large(학교 약칭) 유지 +
+    // 액티브 상태가 아니면 호버 비주얼(살짝 확대) 유지
+    const isSearchHighlight = searchHighlightIds.includes(school.id);
+    if (isSearchHighlight && state !== 'active') state = 'hovered';
+
     let cls = state === 'active' ? ' active' : state === 'hovered' ? ' hovered' : '';
     if (pinnedSchoolIds.has(school.id)) cls += ' pinned';
 
-    if (zoom <= 4) {
-      // 큰 pill + 학교 약칭
+    if (isSearchHighlight || zoom <= 4) {
+      // 큰 pill + 학교 약칭 (줌 ≤4 또는 검색 강조)
       const label = shortName(school.name, type);
       return `<div class="marker-pill size-large${cls}" style="background:${color}" data-id="${school.id}">${label}</div>`;
     } else if (zoom <= 7) {
@@ -2180,7 +2185,10 @@
 
   // 검색 다중 매칭 시 적용한 호버 강조 해제
   function clearSearchHighlights() {
-    searchHighlightIds.forEach(id => {
+    // 먼저 비워야 createPillHtml이 size-large 강제 분기를 타지 않고 줌에 맞춰 정상 복원됨
+    const ids = searchHighlightIds;
+    searchHighlightIds = [];
+    ids.forEach(id => {
       if (!overlays[id] || activeMarker === id) return;
       const school = allSchools.find(s => s.id === id);
       if (!school) return;
@@ -2188,7 +2196,6 @@
       overlays[id].overlay.setZIndex(10);
       rebindOverlayEvents(id, school);
     });
-    searchHighlightIds = [];
   }
 
   // 이벤트: 검색 (Enter 키로만 트리거 — 단순 입력으로는 동작 안 함)
@@ -2220,6 +2227,8 @@
           }
           activeMarker = null;
         }
+        // searchHighlightIds 를 먼저 채워야 createPillHtml 이 size-large 분기를 탐
+        matches.forEach(s => searchHighlightIds.push(s.id));
         // 매칭 학교 마커 생성(없으면) + 호버 상태 강조 + bounds 누적
         const bounds = new kakao.maps.LatLngBounds();
         matches.forEach(s => {
@@ -2228,7 +2237,6 @@
           overlays[s.id].overlay.setZIndex(500);
           rebindOverlayEvents(s.id, s);
           bounds.extend(new kakao.maps.LatLng(s.lat, s.lng));
-          searchHighlightIds.push(s.id);
         });
         map.setBounds(bounds, 80, 80, 80, 80);
       }
