@@ -147,6 +147,7 @@
       "phone": "052 -901 -7010",
       "fax": "052 -901 -7098",
       "homepage": "http://gang-dong.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 24.3,
       "avg_students_per_class_by_grade": {
         "1": 25.2,
@@ -182,6 +183,7 @@
       "phone": "052 -965 -7009",
       "fax": "052 -236 -0786",
       "homepage": "http://school.use.go.kr/nammok-h",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 27.3,
       "avg_students_per_class_by_grade": {
         "1": 28.9,
@@ -217,6 +219,7 @@
       "phone": "052 -238 -3412",
       "fax": "052 -238 -3414",
       "homepage": "http://namchang.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 27.6,
       "avg_students_per_class_by_grade": {
         "1": 26.9,
@@ -252,6 +255,7 @@
       "phone": "052 -710 -5400",
       "fax": "052 -249 -5700",
       "homepage": "http://www.daun.hs.kr/",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 24.9,
       "avg_students_per_class_by_grade": {
         "1": 26.8,
@@ -287,6 +291,7 @@
       "phone": "052 -707 -7011",
       "fax": "052 -281 -7018",
       "homepage": "http://dalcheon.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 28.9,
       "avg_students_per_class_by_grade": {
         "1": 27.9,
@@ -322,6 +327,7 @@
       "phone": "052 -236 -2920",
       "fax": "052 -236 -4892",
       "homepage": "http://www.daesong.hs.kr",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 28.3,
       "avg_students_per_class_by_grade": {
         "1": 29.6,
@@ -357,6 +363,7 @@
       "phone": "052 -271 -8954",
       "fax": "052 -269 -2253",
       "homepage": "http://daehyun.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 27.0,
       "avg_students_per_class_by_grade": {
         "1": 25.8,
@@ -392,6 +399,7 @@
       "phone": "052 -290 -5910",
       "fax": "052 -296 -4422",
       "homepage": "http://www.maegok.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 29.2,
       "avg_students_per_class_by_grade": {
         "1": 28.7,
@@ -427,6 +435,7 @@
       "phone": "052 -277 -9135",
       "fax": "052 -277 -9228",
       "homepage": "http://www.mugeo.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 23.8,
       "avg_students_per_class_by_grade": {
         "1": 23.3,
@@ -462,6 +471,7 @@
       "phone": "052 -920 -3300",
       "fax": "052 -289 -0260",
       "homepage": "http://muryong.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 27.7,
       "avg_students_per_class_by_grade": {
         "1": 28.2,
@@ -497,6 +507,7 @@
       "phone": "052 -277 -0041",
       "fax": "052 -277 -0042",
       "homepage": "http://munsu.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 24.4,
       "avg_students_per_class_by_grade": {
         "1": 24.8,
@@ -532,6 +543,7 @@
       "phone": "052 -201 -6901",
       "fax": "052 -201 -6903",
       "homepage": "http://www.mun-hyun.hs.kr",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 26.8,
       "avg_students_per_class_by_grade": {
         "1": 26.6,
@@ -567,6 +579,7 @@
       "phone": "052 -230 -3100",
       "fax": "052 -252 -3660",
       "homepage": "http://www.bangeojin.hs.kr",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 27.5,
       "avg_students_per_class_by_grade": {
         "1": 28.6,
@@ -602,6 +615,7 @@
       "phone": "052 -711 -2500",
       "fax": "052 -243 -3800",
       "homepage": "http://school.use.go.kr/beomseo-h",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 32.2,
       "avg_students_per_class_by_grade": {
         "1": 32.8,
@@ -637,6 +651,7 @@
       "phone": "052 -271 -9939",
       "fax": "052 -271 -9940",
       "homepage": "http://ussamsan.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 27.9,
       "avg_students_per_class_by_grade": {
         "1": 27.4,
@@ -672,6 +687,7 @@
       "phone": "052 -277 -3171",
       "fax": "052 -277 -2891",
       "homepage": "http://sungkwang.hs.kr/",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 20.3,
       "avg_students_per_class_by_grade": {
         "1": 19.4,
@@ -707,6 +723,7 @@
       "phone": "052 -298 -0882",
       "fax": "052 -292 -0940",
       "homepage": "https://school.use.go.kr/sungshin-h",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 26.3,
       "avg_students_per_class_by_grade": {
         "1": 27.4,
@@ -742,6 +759,7 @@
       "phone": "052 -256 -9891",
       "fax": "052 -256 -9896",
       "homepage": "http://shinsun.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 27.7,
       "avg_students_per_class_by_grade": {
         "1": 27.8,
@@ -777,6 +795,7 @@
       "phone": "052 -258 -1801",
       "fax": "052 -258 -1809",
       "homepage": "http://www.shinjung-us.hs.kr/",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 25.8,
       "avg_students_per_class_by_grade": {
         "1": 23.0,
@@ -812,6 +831,7 @@
       "phone": "052 -290 -5800",
       "fax": "052 -290 -5809",
       "homepage": "http://www.yaksa.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 27.1,
       "avg_students_per_class_by_grade": {
         "1": 27.8,
@@ -847,6 +867,7 @@
       "phone": "052 -263 -2022",
       "fax": "052 -263 -2019",
       "homepage": "https://school.use.go.kr/eonyang-h",
+      "high_zone": "언양특수학교군",
       "avg_students_per_class": 24.4,
       "avg_students_per_class_by_grade": {
         "1": 27.2,
@@ -882,6 +903,7 @@
       "phone": "052 -716 -4050",
       "fax": "052 -716 -4051",
       "homepage": "http://onsan.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 24.4,
       "avg_students_per_class_by_grade": {
         "1": 25.4,
@@ -917,6 +939,7 @@
       "phone": "052 -277 -4901",
       "fax": "052 -277 -6826",
       "homepage": "http://www.woo-shin.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 22.8,
       "avg_students_per_class_by_grade": {
         "1": 20.4,
@@ -952,6 +975,7 @@
       "phone": "052 -290 -6600",
       "fax": "052 -290 -6607",
       "homepage": "https://school.use.go.kr/nanwon-h",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 24.7,
       "avg_students_per_class_by_grade": {
         "1": 27.8,
@@ -987,6 +1011,7 @@
       "phone": "052 -279 -2508",
       "fax": "052 -279 -2509",
       "homepage": "http://ugn.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 27.2,
       "avg_students_per_class_by_grade": {
         "1": 27.2,
@@ -1022,6 +1047,7 @@
       "phone": "052 -226 -6112",
       "fax": "052 -226 -6161",
       "homepage": "http://gyeongui.hs.kr",
+      "high_zone": "언양특수학교군",
       "avg_students_per_class": 22.6,
       "avg_students_per_class_by_grade": {
         "1": 24.2,
@@ -1057,6 +1083,7 @@
       "phone": "052 -297 -7701",
       "fax": "052 -298 -5502",
       "homepage": "http://www.ulsan-hs.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 24.7,
       "avg_students_per_class_by_grade": {
         "1": 26.4,
@@ -1092,6 +1119,7 @@
       "phone": "052 -261 -4051",
       "fax": "052 -267 -9963",
       "homepage": "http://ust.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 22.3,
@@ -1127,6 +1155,7 @@
       "phone": "052 -263 -3182",
       "fax": "052 -263 -3189",
       "homepage": "http://www.ushs.hs.kr",
+      "high_zone": "언양특수학교군",
       "avg_students_per_class": 17.1,
       "avg_students_per_class_by_grade": {
         "1": 18.8,
@@ -1162,6 +1191,7 @@
       "phone": "052 -237 -4000",
       "fax": "052 -238 -4455",
       "homepage": "http://www.ue.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 15.3,
       "avg_students_per_class_by_grade": {
         "1": 17.4,
@@ -1197,6 +1227,7 @@
       "phone": "052 -286 -3191",
       "fax": "052 -286 -3193",
       "homepage": "http://www.usdc.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 28.2,
       "avg_students_per_class_by_grade": {
         "1": 27.1,
@@ -1232,6 +1263,7 @@
       "phone": "052 -702 -2012",
       "fax": "052 -288 -1714",
       "homepage": "https://school.use.go.kr/ulsanmeister-h/M01/",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 16.9,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -1267,6 +1299,7 @@
       "phone": "052 -259 -9554",
       "fax": "052 -225 -6663",
       "homepage": "http://uba.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 18.0,
       "avg_students_per_class_by_grade": {
         "1": 20.7,
@@ -1302,6 +1335,7 @@
       "phone": "052 -262 -0171",
       "fax": "052 -254 -1925",
       "homepage": "http://www.usup.hs.kr",
+      "high_zone": "언양특수학교군",
       "avg_students_per_class": 19.3,
       "avg_students_per_class_by_grade": {
         "1": 20.4,
@@ -1337,6 +1371,7 @@
       "phone": "052 -271 -6889",
       "fax": "052 -276 -4417",
       "homepage": "http://www.samil-us.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 0,
       "avg_students_per_class_by_grade": {
         "1": 0,
@@ -1372,6 +1407,7 @@
       "phone": "052 -277 -1812",
       "fax": "052 -224 -1441",
       "homepage": "https://school.use.go.kr/ulsan-h/M01",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 17.1,
       "avg_students_per_class_by_grade": {
         "1": 19.1,
@@ -1407,6 +1443,7 @@
       "phone": "052 -235 -9661",
       "fax": "052 -236 -9123",
       "homepage": "http://www.uvhe.hs.kr",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 22.7,
       "avg_students_per_class_by_grade": {
         "1": 23.0,
@@ -1442,6 +1479,7 @@
       "phone": "070 -4559-9425",
       "fax": "070 -8255-5034",
       "homepage": "http://www.ussmh.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 22.2,
       "avg_students_per_class_by_grade": {
         "1": 27.7,
@@ -1477,6 +1515,7 @@
       "phone": "052 -248 -4030",
       "fax": "052 -248 -4034",
       "homepage": "http://www.anione.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 22.6,
       "avg_students_per_class_by_grade": {
         "1": 23.0,
@@ -1512,6 +1551,7 @@
       "phone": "052 -288 -8256",
       "fax": "052 -289 -4199",
       "homepage": "http://www.usenergy.hs.kr/",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 17.4,
       "avg_students_per_class_by_grade": {
         "1": 18.3,
@@ -1547,6 +1587,7 @@
       "phone": "052 -258 -4236",
       "fax": "052 -258 -4238",
       "homepage": "http://ulsan-gh.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 26.4,
       "avg_students_per_class_by_grade": {
         "1": 25.7,
@@ -1582,6 +1623,7 @@
       "phone": "052 -925 -3734",
       "fax": "052 -257 -2335",
       "homepage": "http://www.ulsangch.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 17.9,
       "avg_students_per_class_by_grade": {
         "1": 19.1,
@@ -1617,6 +1659,7 @@
       "phone": "052 -221 -6266",
       "fax": "052 -221 -6270",
       "homepage": "http://ulsanart.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 20.3,
       "avg_students_per_class_by_grade": {
         "1": 20.8,
@@ -1652,6 +1695,7 @@
       "phone": "052 -711 -7101",
       "fax": "052 -294 -7401",
       "homepage": "http://www.ufl.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 22.8,
       "avg_students_per_class_by_grade": {
         "1": 25.3,
@@ -1687,6 +1731,7 @@
       "phone": "052 -277 -3176",
       "fax": "052 -277 -3974",
       "homepage": "http://www.ulsanjeil.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 20.1,
       "avg_students_per_class_by_grade": {
         "1": 20.2,
@@ -1722,6 +1767,7 @@
       "phone": "052 -247 -0892",
       "fax": "052 -247 -9737",
       "homepage": "http://usja.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 27.4,
       "avg_students_per_class_by_grade": {
         "1": 28.7,
@@ -1757,6 +1803,7 @@
       "phone": "052 -998 -8600",
       "fax": "052 -998 -8670",
       "homepage": "http://cheonsang.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 30.7,
       "avg_students_per_class_by_grade": {
         "1": 34.6,
@@ -1792,6 +1839,7 @@
       "phone": "052 -257 -2071",
       "fax": "052 -257 -2079",
       "homepage": "http://www.haksung.hs.kr",
+      "high_zone": "남부학교군",
       "avg_students_per_class": 24.1,
       "avg_students_per_class_by_grade": {
         "1": 21.5,
@@ -1827,6 +1875,7 @@
       "phone": "052 -293 -4828",
       "fax": "052 -281 -5163",
       "homepage": "http://www.hakseong-g.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 24.7,
       "avg_students_per_class_by_grade": {
         "1": 26.0,
@@ -1862,6 +1911,7 @@
       "phone": "052 -210 -6610",
       "fax": "052 -248 -6602",
       "homepage": "http://hamwol.hs.kr",
+      "high_zone": "중부학교군",
       "avg_students_per_class": 26.8,
       "avg_students_per_class_by_grade": {
         "1": 28.4,
@@ -1897,6 +1947,7 @@
       "phone": "052 -936 -7800",
       "fax": "052 -936 -7908",
       "homepage": "http://www.hdhs.or.kr/",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 27.1,
       "avg_students_per_class_by_grade": {
         "1": 28.8,
@@ -1932,6 +1983,7 @@
       "phone": "052 -250 -0324",
       "fax": "052 -252 -6792",
       "homepage": "http://hit.hs.kr",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 17.3,
       "avg_students_per_class_by_grade": {
         "1": 17.8,
@@ -1967,6 +2019,7 @@
       "phone": "052 -230 -7771",
       "fax": "052 -230 -7780",
       "homepage": "https://school.use.go.kr/hcu-h",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 26.4,
       "avg_students_per_class_by_grade": {
         "1": 30.5,
@@ -2002,6 +2055,7 @@
       "phone": "052 -219 -0600",
       "fax": "052 -282 -9043",
       "homepage": "http://hogye.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 28.9,
       "avg_students_per_class_by_grade": {
         "1": 28.2,
@@ -2037,6 +2091,7 @@
       "phone": "052 -283 -3515",
       "fax": "052 -283 -3516",
       "homepage": "http://www.hwabong.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 27.8,
       "avg_students_per_class_by_grade": {
         "1": 27.6,
@@ -2072,6 +2127,7 @@
       "phone": "052 -230 -3710",
       "fax": "052 -201 -6323",
       "homepage": "https://school.use.go.kr/hwaam-h",
+      "high_zone": "동부학교군",
       "avg_students_per_class": 23.6,
       "avg_students_per_class_by_grade": {
         "1": 23.6,
@@ -2107,6 +2163,7 @@
       "phone": "052 -288 -6922",
       "fax": "052 -288 -6926",
       "homepage": "http://www.hyojung.hs.kr",
+      "high_zone": "북부학교군",
       "avg_students_per_class": 24.3,
       "avg_students_per_class_by_grade": {
         "1": 23.8,
@@ -2141,6 +2198,7 @@
       "phone": "052 -294 -5340",
       "fax": "052 -292 -2584",
       "homepage": "http://usgm.ms.kr/",
+      "middle_zone": "복산병영학교군",
       "avg_students_per_class": 24.1,
       "avg_students_per_class_by_grade": {
         "1": 21.0,
@@ -2175,6 +2233,7 @@
       "phone": "052 -295 -0010",
       "fax": "052 -295 -5675",
       "homepage": "http://kangdong.ms.kr",
+      "middle_zone": "강동중학구",
       "avg_students_per_class": 25.6,
       "avg_students_per_class_by_grade": {
         "1": 25.6,
@@ -2209,6 +2268,7 @@
       "phone": "052 -901 -8010",
       "fax": "052 -901 -8099",
       "homepage": "http://school.use.go.kr/goheon-m/M01/",
+      "middle_zone": "송정화봉학교군",
       "avg_students_per_class": 27.0,
       "avg_students_per_class_by_grade": {
         "1": 27.6,
@@ -2243,6 +2303,7 @@
       "phone": "052 -711 -2400",
       "fax": "052 -245 -6644",
       "homepage": "http://guyeong.ms.kr",
+      "middle_zone": "구영학교군",
       "avg_students_per_class": 28.4,
       "avg_students_per_class_by_grade": {
         "1": 28.2,
@@ -2277,6 +2338,7 @@
       "phone": "052 -710 -4081",
       "fax": "052 -708 -7081",
       "homepage": "http://nammok.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 27.2,
       "avg_students_per_class_by_grade": {
         "1": 26.3,
@@ -2311,6 +2373,7 @@
       "phone": "052 -710 -4100",
       "fax": "052 -707 -2505",
       "homepage": "http://school.use.go.kr/namoe-m",
+      "middle_zone": "남외중학구",
       "avg_students_per_class": 26.5,
       "avg_students_per_class_by_grade": {
         "1": 26.8,
@@ -2345,6 +2408,7 @@
       "phone": "052 -239 -0625",
       "fax": "052 -239 -0626",
       "homepage": "http://namchang.ms.kr",
+      "middle_zone": "남창중학구",
       "avg_students_per_class": 26.0,
       "avg_students_per_class_by_grade": {
         "1": 25.3,
@@ -2379,6 +2443,7 @@
       "phone": "052 -295 -5011",
       "fax": "052 -295 -5285",
       "homepage": "http://school.use.go.kr/nongso-m/",
+      "middle_zone": "호계중산학교군",
       "avg_students_per_class": 26.7,
       "avg_students_per_class_by_grade": {
         "1": 26.6,
@@ -2413,6 +2478,7 @@
       "phone": "052 -710 -3024",
       "fax": "052 -225 -3060",
       "homepage": "http://daun.ms.kr",
+      "middle_zone": "태화다운학교군",
       "avg_students_per_class": 22.4,
       "avg_students_per_class_by_grade": {
         "1": 19.7,
@@ -2447,6 +2513,7 @@
       "phone": "052 -710 -4900",
       "fax": "052 -294 -3230",
       "homepage": "http://dalchun.ms.kr",
+      "middle_zone": "달천천곡학교군",
       "avg_students_per_class": 27.4,
       "avg_students_per_class_by_grade": {
         "1": 27.1,
@@ -2481,6 +2548,7 @@
       "phone": "052 -236 -3740",
       "fax": "052 -236 -3743",
       "homepage": "http://daesong-us.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 24.9,
       "avg_students_per_class_by_grade": {
         "1": 25.7,
@@ -2515,6 +2583,7 @@
       "phone": "052 -267 -7725",
       "fax": "052 -265 -5912",
       "homepage": "http://www.daihyun.ms.kr",
+      "middle_zone": "삼산학교군",
       "avg_students_per_class": 27.5,
       "avg_students_per_class_by_grade": {
         "1": 26.6,
@@ -2549,6 +2618,7 @@
       "phone": "052 -272 -7924",
       "fax": "052 -269 -6715",
       "homepage": "http://www.dp.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 27.0,
       "avg_students_per_class_by_grade": {
         "1": 26.8,
@@ -2583,6 +2653,7 @@
       "phone": "052 -264 -6012",
       "fax": "052 -262 -6986",
       "homepage": "http://www.dukwang.ms.kr/",
+      "middle_zone": "두광중학구",
       "avg_students_per_class": 8.7,
       "avg_students_per_class_by_grade": {
         "1": 11.0,
@@ -2617,6 +2688,7 @@
       "phone": "052 -286 -5644",
       "fax": "052 -282 -6050",
       "homepage": "http://maegok.ms.kr",
+      "middle_zone": "호계중산학교군",
       "avg_students_per_class": 29.5,
       "avg_students_per_class_by_grade": {
         "1": 27.5,
@@ -2651,6 +2723,7 @@
       "phone": "052 -252 -1637",
       "fax": "052 -235 -7797",
       "homepage": "https://school.use.go.kr/myungduk-m",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 25.8,
       "avg_students_per_class_by_grade": {
         "1": 24.8,
@@ -2685,6 +2758,7 @@
       "phone": "052 -710 -5337",
       "fax": "052 -223 -0634",
       "homepage": "http://www.mugeo.ms.kr",
+      "middle_zone": "무거학교군",
       "avg_students_per_class": 23.7,
       "avg_students_per_class_by_grade": {
         "1": 24.0,
@@ -2719,6 +2793,7 @@
       "phone": "052 -293 -3824",
       "fax": "052 -292 -6812",
       "homepage": "https://school.use.go.kr/mr-m",
+      "middle_zone": "복산병영학교군",
       "avg_students_per_class": 25.9,
       "avg_students_per_class_by_grade": {
         "1": 24.4,
@@ -2753,6 +2828,7 @@
       "phone": "052 -277 -8701",
       "fax": "052 -277 -8703",
       "homepage": "http://usms.ms.kr/",
+      "middle_zone": "무거학교군",
       "avg_students_per_class": 25.3,
       "avg_students_per_class_by_grade": {
         "1": 22.2,
@@ -2787,6 +2863,7 @@
       "phone": "052 -235 -8553",
       "fax": "052 -251 -4095",
       "homepage": "https://school.use.go.kr/bangjung-m",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 27.2,
       "avg_students_per_class_by_grade": {
         "1": 26.6,
@@ -2821,6 +2898,7 @@
       "phone": "052 -946 -7293",
       "fax": "052 -946 -7297",
       "homepage": "http://www.beomseo.ms.kr",
+      "middle_zone": "구영학교군",
       "avg_students_per_class": 26.8,
       "avg_students_per_class_by_grade": {
         "1": 25.9,
@@ -2855,6 +2933,7 @@
       "phone": "052 -710 -4317",
       "fax": "052 -708 -7094",
       "homepage": "https://school.use.go.kr/isamnam-m",
+      "middle_zone": "삼남중학구",
       "avg_students_per_class": 20.0,
       "avg_students_per_class_by_grade": {
         "1": 19.0,
@@ -2889,6 +2968,7 @@
       "phone": "052 -277 -3687",
       "fax": "052 -224 -0096",
       "homepage": "http://samho-us.ms.kr",
+      "middle_zone": "무거학교군",
       "avg_students_per_class": 16.5,
       "avg_students_per_class_by_grade": {
         "1": 12.0,
@@ -2923,6 +3003,7 @@
       "phone": "052 -263 -0760",
       "fax": "052 -264 -4631",
       "homepage": "http://ulsan-sangbuk.ms.kr",
+      "middle_zone": "상북중학구",
       "avg_students_per_class": 20.3,
       "avg_students_per_class_by_grade": {
         "1": 19.0,
@@ -2957,6 +3038,7 @@
       "phone": "052 -291 -0792",
       "fax": "052 -291 -0798",
       "homepage": "http://www.sangan.ms.kr",
+      "middle_zone": "달천천곡학교군",
       "avg_students_per_class": 27.5,
       "avg_students_per_class_by_grade": {
         "1": 27.3,
@@ -2991,6 +3073,7 @@
       "phone": "052 -239 -5001",
       "fax": "052 -239 -4168",
       "homepage": "http://seosaeng.ms.kr",
+      "middle_zone": "서생중학구",
       "avg_students_per_class": 20.8,
       "avg_students_per_class_by_grade": {
         "1": 21.5,
@@ -3025,6 +3108,7 @@
       "phone": "052 -705 -2203",
       "fax": "052 -246 -6613",
       "homepage": "https://school.use.go.kr/seongan-m",
+      "middle_zone": "성안중학구",
       "avg_students_per_class": 26.2,
       "avg_students_per_class_by_grade": {
         "1": 25.4,
@@ -3059,6 +3143,7 @@
       "phone": "052 -703 -1211",
       "fax": "052 -703 -1210",
       "homepage": "http://www.sineon.ms.kr",
+      "middle_zone": "언양학교군상북중상남중공동(일방)학구",
       "avg_students_per_class": 26.4,
       "avg_students_per_class_by_grade": {
         "1": 25.9,
@@ -3093,6 +3178,7 @@
       "phone": "052 -275 -0741",
       "fax": "052 -268 -5047",
       "homepage": "http://www.usshinil.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 27.6,
       "avg_students_per_class_by_grade": {
         "1": 27.3,
@@ -3127,6 +3213,7 @@
       "phone": "052 -269 -2914",
       "fax": "052 -266 -9878",
       "homepage": "http://www.sinjeong.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 28.4,
       "avg_students_per_class_by_grade": {
         "1": 29.0,
@@ -3161,6 +3248,7 @@
       "phone": "052 -256 -6875",
       "fax": "052 -256 -6874",
       "homepage": "http://yaeum.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 28.7,
       "avg_students_per_class_by_grade": {
         "1": 28.6,
@@ -3195,6 +3283,7 @@
       "phone": "052 -290 -7500",
       "fax": "052 -281 -2287",
       "homepage": "http://www.yaksa.ms.kr",
+      "middle_zone": "복산병영학교군",
       "avg_students_per_class": 23.8,
       "avg_students_per_class_by_grade": {
         "1": 21.8,
@@ -3229,6 +3318,7 @@
       "phone": "052 -264 -6537",
       "fax": "052 -264 -6765",
       "homepage": "http://www.eonyang.ms.kr/",
+      "middle_zone": "언양학교군상북중상남중공동(일방)학구",
       "avg_students_per_class": 25.4,
       "avg_students_per_class_by_grade": {
         "1": 26.1,
@@ -3263,6 +3353,7 @@
       "phone": "052 -289 -6496",
       "fax": "052 -289 -6498",
       "homepage": "http://www.ya.ms.kr",
+      "middle_zone": "송정화봉학교군",
       "avg_students_per_class": 22.3,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -3297,6 +3388,7 @@
       "phone": "052 -240 -3663",
       "fax": "052 -269 -4791",
       "homepage": "http://www.okdong.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 29.2,
       "avg_students_per_class_by_grade": {
         "1": 29.2,
@@ -3331,6 +3423,7 @@
       "phone": "052 -222 -1805",
       "fax": "052 -222 -1795",
       "homepage": "http://www.okhyun.ms.kr",
+      "middle_zone": "무거학교군",
       "avg_students_per_class": 27.6,
       "avg_students_per_class_by_grade": {
         "1": 27.4,
@@ -3365,6 +3458,7 @@
       "phone": "052 -238 -4120",
       "fax": "052 -238 -4130",
       "homepage": "http://www.onsan.ms.kr",
+      "middle_zone": "온산중학구",
       "avg_students_per_class": 23.9,
       "avg_students_per_class_by_grade": {
         "1": 23.2,
@@ -3399,6 +3493,7 @@
       "phone": "052 -294 -2420",
       "fax": "052 -296 -9738",
       "homepage": "https://school.use.go.kr/oesol-m",
+      "middle_zone": "복산병영학교군",
       "avg_students_per_class": 25.5,
       "avg_students_per_class_by_grade": {
         "1": 24.6,
@@ -3433,6 +3528,7 @@
       "phone": "052 -273 -2570",
       "fax": "052 -265 -4921",
       "homepage": "http://www.ulsangangnam.ms.kr/",
+      "middle_zone": "삼산학교군",
       "avg_students_per_class": 27.4,
       "avg_students_per_class_by_grade": {
         "1": 25.3,
@@ -3467,6 +3563,7 @@
       "phone": "052 -267 -3181",
       "fax": "052 -269 -3970",
       "homepage": "http://www.ussg.ms.kr/",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 28.8,
       "avg_students_per_class_by_grade": {
         "1": 28.8,
@@ -3501,6 +3598,7 @@
       "phone": "070 -4559-9425",
       "fax": "070 -8255-5034",
       "homepage": "http://www.ussmh.hs.kr",
+      "middle_zone": "강동중학구",
       "avg_students_per_class": 18.0,
       "avg_students_per_class_by_grade": {
         "1": 19.5,
@@ -3535,6 +3633,7 @@
       "phone": "052 -247 -1801",
       "fax": "052 -224 -1456",
       "homepage": "http://www.ulsanjeil.ms.kr",
+      "middle_zone": "태화다운학교군",
       "avg_students_per_class": 26.6,
       "avg_students_per_class_by_grade": {
         "1": 25.6,
@@ -3569,6 +3668,7 @@
       "phone": "052 -269 -1747",
       "fax": "052 -273 -0083",
       "homepage": "http://usjm.ms.kr",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 27.2,
       "avg_students_per_class_by_grade": {
         "1": 27.1,
@@ -3603,6 +3703,7 @@
       "phone": "052 -244 -0613",
       "fax": "052 -244 -0617",
       "homepage": "http://ulsanms.ms.kr",
+      "middle_zone": "복산병영학교군",
       "avg_students_per_class": 26.1,
       "avg_students_per_class_by_grade": {
         "1": 26.3,
@@ -3637,6 +3738,7 @@
       "phone": "052 -225 -4767",
       "fax": "052 -225 -7550",
       "homepage": "https://school.use.go.kr/ungchon-m",
+      "middle_zone": "웅촌중학구",
       "avg_students_per_class": 22.0,
       "avg_students_per_class_by_grade": {
         "1": 23.0,
@@ -3671,6 +3773,7 @@
       "phone": "070 -7777-2672",
       "fax": "052 -273 -3491",
       "homepage": "https://school.use.go.kr/uswp-m/M01/",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 24.9,
       "avg_students_per_class_by_grade": {
         "1": 23.3,
@@ -3705,6 +3808,7 @@
       "phone": "052 -246 -9140",
       "fax": "052 -246 -9066",
       "homepage": "http://ukok.ms.kr",
+      "middle_zone": "태화다운학교군",
       "avg_students_per_class": 28.0,
       "avg_students_per_class_by_grade": {
         "1": 28.0,
@@ -3739,6 +3843,7 @@
       "phone": "052 -286 -4117",
       "fax": "052 -286 -3320",
       "homepage": "http://www.ihwa.ms.kr",
+      "middle_zone": "호계중산학교군",
       "avg_students_per_class": 24.0,
       "avg_students_per_class_by_grade": {
         "1": 20.0,
@@ -3773,6 +3878,7 @@
       "phone": "052 -251 -6862",
       "fax": "052 -232 -9115",
       "homepage": "http://ilsan-m.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 27.4,
       "avg_students_per_class_by_grade": {
         "1": 26.3,
@@ -3807,6 +3913,7 @@
       "phone": "052 -225 -9339",
       "fax": "052 -225 -9669",
       "homepage": "http://janggeom.ms.kr",
+      "middle_zone": "무거학교군",
       "avg_students_per_class": 28.4,
       "avg_students_per_class_by_grade": {
         "1": 27.7,
@@ -3841,6 +3948,7 @@
       "phone": "052 -289 -6481",
       "fax": "052 -289 -6484",
       "homepage": "https://school.use.go.kr/jinjang-m",
+      "middle_zone": "진장염포학교군",
       "avg_students_per_class": 24.8,
       "avg_students_per_class_by_grade": {
         "1": 26.8,
@@ -3875,6 +3983,7 @@
       "phone": "052 -286 -6109",
       "fax": "052 -286 -6096",
       "homepage": "http://cheongok.ms.kr",
+      "middle_zone": "달천천곡학교군",
       "avg_students_per_class": 23.5,
       "avg_students_per_class_by_grade": {
         "1": 26.0,
@@ -3909,6 +4018,7 @@
       "phone": "052 -248 -5101",
       "fax": "052 -248 -5110",
       "homepage": "http://cheonsang.ms.kr",
+      "middle_zone": "천상중학구",
       "avg_students_per_class": 27.1,
       "avg_students_per_class_by_grade": {
         "1": 27.9,
@@ -3943,6 +4053,7 @@
       "phone": "052 -988 -6789",
       "fax": "052 -988 -6797",
       "homepage": "http://www.cheongyang.ms.kr",
+      "middle_zone": "청량중학구",
       "avg_students_per_class": 25.4,
       "avg_students_per_class_by_grade": {
         "1": 26.3,
@@ -3977,6 +4088,7 @@
       "phone": "052 -220 -6400",
       "fax": "052 -274 -0527",
       "homepage": "http://taehwa.ms.kr",
+      "middle_zone": "삼산학교군",
       "avg_students_per_class": 24.0,
       "avg_students_per_class_by_grade": {
         "1": 20.0,
@@ -4011,6 +4123,7 @@
       "phone": "052 -247 -2384",
       "fax": "052 -224 -0678",
       "homepage": "http://www.haksunggirls.ms.kr",
+      "middle_zone": "태화다운학교군",
       "avg_students_per_class": 26.2,
       "avg_students_per_class_by_grade": {
         "1": 26.2,
@@ -4045,6 +4158,7 @@
       "phone": "052 -272 -7480",
       "fax": "052 -272 -7572",
       "homepage": "http://www.haksung.ms.kr/",
+      "middle_zone": "옥동야음학교군",
       "avg_students_per_class": 28.5,
       "avg_students_per_class_by_grade": {
         "1": 28.2,
@@ -4079,6 +4193,7 @@
       "phone": "052 -230 -7371",
       "fax": "052 -230 -7360",
       "homepage": "http://hd.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 28.2,
       "avg_students_per_class_by_grade": {
         "1": 28.0,
@@ -4113,6 +4228,7 @@
       "phone": "052 -230 -7600",
       "fax": "052 -230 -7676",
       "homepage": "http://hcu.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 28.1,
       "avg_students_per_class_by_grade": {
         "1": 27.5,
@@ -4147,6 +4263,7 @@
       "phone": "052 -286 -6921",
       "fax": "052 -286 -6910",
       "homepage": "http://www.ushogye.ms.kr",
+      "middle_zone": "호계중산학교군",
       "avg_students_per_class": 29.2,
       "avg_students_per_class_by_grade": {
         "1": 26.3,
@@ -4181,6 +4298,7 @@
       "phone": "052 -287 -6711",
       "fax": "052 -289 -0803",
       "homepage": "http://hwabong.ms.kr",
+      "middle_zone": "송정화봉학교군",
       "avg_students_per_class": 25.5,
       "avg_students_per_class_by_grade": {
         "1": 24.6,
@@ -4215,6 +4333,7 @@
       "phone": "052 -201 -9174",
       "fax": "052 -201 -9156",
       "homepage": "https://school.use.go.kr/hwaam-m/M01",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 26.2,
       "avg_students_per_class_by_grade": {
         "1": 23.8,
@@ -4249,6 +4368,7 @@
       "phone": "052 -251 -1754",
       "fax": "052 -235 -5363",
       "homepage": "http://www.hwajin.ms.kr",
+      "middle_zone": "동구학교군",
       "avg_students_per_class": 25.8,
       "avg_students_per_class_by_grade": {
         "1": 25.0,
@@ -4283,6 +4403,7 @@
       "phone": "052 -287 -0809",
       "fax": "052 -287 -4975",
       "homepage": "http://hyojung.ms.kr",
+      "middle_zone": "진장염포학교군",
       "avg_students_per_class": 25.8,
       "avg_students_per_class_by_grade": {
         "1": 24.6,
@@ -4322,6 +4443,7 @@
       "phone": "052 -220 -6300",
       "fax": "052 -268 -1814",
       "homepage": "http://www.kangnam.es.kr",
+      "elem_zone": "강남초통학구역",
       "avg_students_per_class": 18.2,
       "avg_students_per_class_by_grade": {
         "1": 15.7,
@@ -4364,6 +4486,7 @@
       "phone": "052 -295 -9939",
       "fax": "052 -295 -4782",
       "homepage": "http://kang-dong.es.kr",
+      "elem_zone": "강동초주전초공동(일방)통학구역",
       "avg_students_per_class": 22.8,
       "avg_students_per_class_by_grade": {
         "1": 18.1,
@@ -4406,6 +4529,7 @@
       "phone": "052 -240 -9700",
       "fax": "052 -257 -1784",
       "homepage": "http://www.gaeun-us.es.kr/",
+      "elem_zone": "개운초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 15.7,
@@ -4448,6 +4572,7 @@
       "phone": "052 -227 -5706",
       "fax": "052 -227 -5708",
       "homepage": "http://uskd.es.kr",
+      "elem_zone": "격동초통학구역",
       "avg_students_per_class": 23.0,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -4490,6 +4615,7 @@
       "phone": "052 -282 -0020",
       "fax": "052 -282 -7030",
       "homepage": "http://goheon.es.kr",
+      "elem_zone": "고헌초통학구역",
       "avg_students_per_class": 23.4,
       "avg_students_per_class_by_grade": {
         "1": 19.2,
@@ -4532,6 +4658,7 @@
       "phone": "052 -270 -3500",
       "fax": "052 -211 -8182",
       "homepage": "http://www.guyeong.es.kr/",
+      "elem_zone": "구영초통학구역",
       "avg_students_per_class": 23.8,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -4574,6 +4701,7 @@
       "phone": "052 -223 -3167",
       "fax": "052 -223 -3162",
       "homepage": "http://www.gulhwa.es.kr",
+      "elem_zone": "굴화초통학구역",
       "avg_students_per_class": 20.5,
       "avg_students_per_class_by_grade": {
         "1": 17.5,
@@ -4616,6 +4744,7 @@
       "phone": "052 -235 -7952",
       "fax": "052 -235 -3604",
       "homepage": "http://nammok.es.kr/",
+      "elem_zone": "남목초통학구역",
       "avg_students_per_class": 20.9,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -4658,6 +4787,7 @@
       "phone": "052 -267 -2267",
       "fax": "052 -267 -0660",
       "homepage": "http://uns.es.kr",
+      "elem_zone": "남산초통학구역",
       "avg_students_per_class": 20.7,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -4700,6 +4830,7 @@
       "phone": "052 -285 -5300",
       "fax": "052 -285 -5303",
       "homepage": "http://www.namoe.es.kr/",
+      "elem_zone": "남외초통학구역",
       "avg_students_per_class": 23.0,
       "avg_students_per_class_by_grade": {
         "1": 19.2,
@@ -4742,6 +4873,7 @@
       "phone": "052 -297 -6072",
       "fax": "052 -281 -0903",
       "homepage": "http://naehwang.es.kr",
+      "elem_zone": "내황초통학구역",
       "avg_students_per_class": 22.1,
       "avg_students_per_class_by_grade": {
         "1": 17.7,
@@ -4784,6 +4916,7 @@
       "phone": "052 -235 -6615",
       "fax": "052 -252 -4544",
       "homepage": "http://noksu.es.kr",
+      "elem_zone": "녹수초통학구역",
       "avg_students_per_class": 22.9,
       "avg_students_per_class_by_grade": {
         "1": 19.2,
@@ -4826,6 +4959,7 @@
       "phone": "052 -295 -5449",
       "fax": "052 -295 -1980",
       "homepage": "http://www.nongseo.es.kr",
+      "elem_zone": "농서초통학구역",
       "avg_students_per_class": 21.7,
       "avg_students_per_class_by_grade": {
         "1": 16.7,
@@ -4868,6 +5002,7 @@
       "phone": "052 -295 -4011",
       "fax": "052 -295 -5171",
       "homepage": "http://www.nongso.es.kr",
+      "elem_zone": "농소초통학구역",
       "avg_students_per_class": 17.5,
       "avg_students_per_class_by_grade": {
         "1": 14.0,
@@ -4910,6 +5045,7 @@
       "phone": "052 -224 -4023",
       "fax": "052 -224 -0741",
       "homepage": "http://www.daun.es.kr",
+      "elem_zone": "다운초통학구역",
       "avg_students_per_class": 16.3,
       "avg_students_per_class_by_grade": {
         "1": 14.5,
@@ -4952,6 +5088,7 @@
       "phone": "052 -710 -5773",
       "fax": "052 -249 -2292",
       "homepage": "https://school.use.go.kr/dajeon-e",
+      "elem_zone": "다전초통학구역",
       "avg_students_per_class": 14.8,
       "avg_students_per_class_by_grade": {
         "1": 9.0,
@@ -4994,6 +5131,7 @@
       "phone": "052 -220 -1500",
       "fax": "052 -220 -1578",
       "homepage": "http://daehyun.es.kr",
+      "elem_zone": "대현초장생포초공동(일방)통학구역",
       "avg_students_per_class": 22.6,
       "avg_students_per_class_by_grade": {
         "1": 17.8,
@@ -5036,6 +5174,7 @@
       "phone": "052 -238 -1294",
       "fax": "052 -238 -1690",
       "homepage": "http://www.duksin.es.kr",
+      "elem_zone": "덕신초삼평초공동(일방)통학구역",
       "avg_students_per_class": 20.4,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -5078,6 +5217,7 @@
       "phone": "052 -210 -1500",
       "fax": "052 -271 -2392",
       "homepage": "https://school.use.go.kr/ds-e",
+      "elem_zone": "도산초통학구역",
       "avg_students_per_class": 18.7,
       "avg_students_per_class_by_grade": {
         "1": 15.3,
@@ -5120,6 +5260,7 @@
       "phone": "052 -963 -5001",
       "fax": "052 -297 -7773",
       "homepage": "http://dongdae-us.es.kr",
+      "elem_zone": "동대초통학구역",
       "avg_students_per_class": 20.8,
       "avg_students_per_class_by_grade": {
         "1": 16.7,
@@ -5162,6 +5303,7 @@
       "phone": "052 -227 -6438",
       "fax": "052 -227 -6215",
       "homepage": "http://usdb.es.kr",
+      "elem_zone": "동백초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -5204,6 +5346,7 @@
       "phone": "052 -252 -0776",
       "fax": "052 -236 -4882",
       "homepage": "http://usdongbu.es.kr/",
+      "elem_zone": "동부초주전초공동(일방)통학구역",
       "avg_students_per_class": 21.5,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -5246,6 +5389,7 @@
       "phone": "052 -286 -2711",
       "fax": "052 -286 -4204",
       "homepage": "https://school.use.go.kr/dongchun-e/",
+      "elem_zone": "동천초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 16.7,
@@ -5288,6 +5432,7 @@
       "phone": "052 -261 -2371",
       "fax": "052 -261 -2375",
       "homepage": "http://www.dp.es.kr",
+      "elem_zone": "동평초통학구역",
       "avg_students_per_class": 14.9,
       "avg_students_per_class_by_grade": {
         "1": 11.0,
@@ -5330,6 +5475,7 @@
       "phone": "052 -283 -6400",
       "fax": "052 -262 -8559",
       "homepage": "http://dudong.es.kr",
+      "elem_zone": "두동초통학구역",
       "avg_students_per_class": 10.0,
       "avg_students_per_class_by_grade": {
         "1": 6.0,
@@ -5372,6 +5518,7 @@
       "phone": "052 -262 -6007",
       "fax": "052 -262 -6856",
       "homepage": "http://duseo.es.kr",
+      "elem_zone": "두서초통학구역",
       "avg_students_per_class": 2.7,
       "avg_students_per_class_by_grade": {
         "1": 1.0,
@@ -5414,6 +5561,7 @@
       "phone": "052 -915 -7200",
       "fax": "052 -915 -7230",
       "homepage": "http://duwang.es.kr",
+      "elem_zone": "두왕초통학구역",
       "avg_students_per_class": 16.1,
       "avg_students_per_class_by_grade": {
         "1": 14.3,
@@ -5456,6 +5604,7 @@
       "phone": "052 -710 -4474",
       "fax": "052 -282 -5068",
       "homepage": "http://www.umg.es.kr",
+      "elem_zone": "매곡초통학구역",
       "avg_students_per_class": 23.0,
       "avg_students_per_class_by_grade": {
         "1": 18.8,
@@ -5498,6 +5647,7 @@
       "phone": "052 -291 -9032",
       "fax": "052 -291 -9042",
       "homepage": "https://school.use.go.kr/maesan-e",
+      "elem_zone": "매산초통학구역",
       "avg_students_per_class": 22.6,
       "avg_students_per_class_by_grade": {
         "1": 16.4,
@@ -5540,6 +5690,7 @@
       "phone": "052 -252 -0124",
       "fax": "052 -235 -2990",
       "homepage": "http://myeongdeok-us.es.kr",
+      "elem_zone": "명덕초통학구역",
       "avg_students_per_class": 21.4,
       "avg_students_per_class_by_grade": {
         "1": 19.3,
@@ -5582,6 +5733,7 @@
       "phone": "052 -239 -6208",
       "fax": "052 -238 -2086",
       "homepage": "http://mes.es.kr/",
+      "elem_zone": "온남초명산초공동(일방)통학구역",
       "avg_students_per_class": 14.9,
       "avg_students_per_class_by_grade": {
         "1": 7.0,
@@ -5624,6 +5776,7 @@
       "phone": "052 -247 -1065",
       "fax": "052 -247 -1125",
       "homepage": "https://school.use.go.kr/mj-e/M01",
+      "elem_zone": "명정초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -5666,6 +5819,7 @@
       "phone": "052 -289 -9582",
       "fax": "052 -289 -9584",
       "homepage": "http://myeongchon.es.kr",
+      "elem_zone": "명촌초통학구역",
       "avg_students_per_class": 22.1,
       "avg_students_per_class_by_grade": {
         "1": 19.0,
@@ -5708,6 +5862,7 @@
       "phone": "052 -249 -8290",
       "fax": "052 -249 -8222",
       "homepage": "http://muge.es.kr",
+      "elem_zone": "무거초통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 18.2,
@@ -5750,6 +5905,7 @@
       "phone": "052 -292 -3141",
       "fax": "052 -292 -3147",
       "homepage": "https://school.use.go.kr/muryong-e",
+      "elem_zone": "무룡초통학구역",
       "avg_students_per_class": 20.8,
       "avg_students_per_class_by_grade": {
         "1": 17.0,
@@ -5792,6 +5948,7 @@
       "phone": "052 -249 -9319",
       "fax": "052 -224 -4724",
       "homepage": "https://school.use.go.kr/munsu-e/",
+      "elem_zone": "문수초통학구역",
       "avg_students_per_class": 15.5,
       "avg_students_per_class_by_grade": {
         "1": 9.0,
@@ -5834,6 +5991,7 @@
       "phone": "052 -233 -9844",
       "fax": "052 -233 -9858",
       "homepage": "http://www.munhyeon.es.kr/",
+      "elem_zone": "문현초통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 17.3,
@@ -5876,6 +6034,7 @@
       "phone": "052 -235 -6153",
       "fax": "052 -235 -4844",
       "homepage": "http://www.mipo.es.kr",
+      "elem_zone": "미포초통학구역",
       "avg_students_per_class": 22.7,
       "avg_students_per_class_by_grade": {
         "1": 20.5,
@@ -5918,6 +6077,7 @@
       "phone": "052 -263 -6162",
       "fax": "052 -264 -6711",
       "homepage": "https://school.use.go.kr/bangok-e",
+      "elem_zone": "반곡초통학구역",
       "avg_students_per_class": 4.8,
       "avg_students_per_class_by_grade": {
         "1": 5.0,
@@ -5960,6 +6120,7 @@
       "phone": "052 -264 -9422",
       "fax": "052 -264 -6693",
       "homepage": "http://banchon.es.kr",
+      "elem_zone": "반천초통학구역",
       "avg_students_per_class": 10.7,
       "avg_students_per_class_by_grade": {
         "1": 7.0,
@@ -6002,6 +6163,7 @@
       "phone": "052 -912 -2200",
       "fax": "055 -372 -1896",
       "homepage": "https://school.use.go.kr/bangkee-e/M01",
+      "elem_zone": "방기초통학구역",
       "avg_students_per_class": 6.0,
       "avg_students_per_class_by_grade": {
         "1": 7.0,
@@ -6044,6 +6206,7 @@
       "phone": "052 -251 -2052",
       "fax": "052 -235 -4513",
       "homepage": "https://school.use.go.kr/bangeojin-e/M01",
+      "elem_zone": "방어진초통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 16.8,
@@ -6086,6 +6249,7 @@
       "phone": "052 -210 -6000",
       "fax": "052 -201 -6199",
       "homepage": "https://school.use.go.kr/baekyang-e/M01/",
+      "elem_zone": "백양초통학구역",
       "avg_students_per_class": 22.7,
       "avg_students_per_class_by_grade": {
         "1": 19.7,
@@ -6128,6 +6292,7 @@
       "phone": "052 -228 -7900",
       "fax": "052 -228 -7909",
       "homepage": "http://www.paekhap.es.kr",
+      "elem_zone": "백합초통학구역",
       "avg_students_per_class": 21.0,
       "avg_students_per_class_by_grade": {
         "1": 15.7,
@@ -6170,6 +6335,7 @@
       "phone": "052 -211 -8044",
       "fax": "052 -248 -9825",
       "homepage": "http://www.beomseo.es.kr",
+      "elem_zone": "범서초통학구역",
       "avg_students_per_class": 22.2,
       "avg_students_per_class_by_grade": {
         "1": 18.5,
@@ -6212,6 +6378,7 @@
       "phone": "052 -292 -7398",
       "fax": "052 -297 -5422",
       "homepage": "http://www.by.es.kr",
+      "elem_zone": "병영초통학구역",
       "avg_students_per_class": 19.1,
       "avg_students_per_class_by_grade": {
         "1": 11.0,
@@ -6254,6 +6421,7 @@
       "phone": "052 -245 -1202",
       "fax": "052 -243 -0107",
       "homepage": "https://school.use.go.kr/boksan-e/M01",
+      "elem_zone": "복산초통학구역",
       "avg_students_per_class": 22.9,
       "avg_students_per_class_by_grade": {
         "1": 19.8,
@@ -6296,6 +6464,7 @@
       "phone": "052 -263 -5700",
       "fax": "052 -263 -5702",
       "homepage": "http://www.ussamnam.es.kr",
+      "elem_zone": "삼남초통학구역",
       "avg_students_per_class": 19.8,
       "avg_students_per_class_by_grade": {
         "1": 16.2,
@@ -6338,6 +6507,7 @@
       "phone": "052 -264 -1175",
       "fax": "052 -264 -3350",
       "homepage": "http://www.samdong-us.es.kr",
+      "elem_zone": "삼동초통학구역",
       "avg_students_per_class": 6.0,
       "avg_students_per_class_by_grade": {
         "1": 4.0,
@@ -6380,6 +6550,7 @@
       "phone": "052 -260 -3615",
       "fax": "052 -260 -4735",
       "homepage": "http://www.samsan.es.kr",
+      "elem_zone": "삼산초통학구역",
       "avg_students_per_class": 21.6,
       "avg_students_per_class_by_grade": {
         "1": 17.2,
@@ -6422,6 +6593,7 @@
       "phone": "052 -268 -1230",
       "fax": "052 -268 -1231",
       "homepage": "http://www.samshin.es.kr",
+      "elem_zone": "삼신초통학구역",
       "avg_students_per_class": 22.2,
       "avg_students_per_class_by_grade": {
         "1": 17.2,
@@ -6464,6 +6636,7 @@
       "phone": "052 -294 -0568",
       "fax": "052 -294 -0566",
       "homepage": "https://school.use.go.kr/samil-e",
+      "elem_zone": "삼일초통학구역",
       "avg_students_per_class": 18.4,
       "avg_students_per_class_by_grade": {
         "1": 14.5,
@@ -6506,6 +6679,7 @@
       "phone": "052 -277 -4254",
       "fax": "052 -277 -4257",
       "homepage": "http://samjeong.es.kr",
+      "elem_zone": "삼정초통학구역",
       "avg_students_per_class": 16.9,
       "avg_students_per_class_by_grade": {
         "1": 10.0,
@@ -6548,6 +6722,7 @@
       "phone": "052 -239 -4097",
       "fax": "052 -238 -0798",
       "homepage": "http://samp.es.kr/",
+      "elem_zone": "덕신초삼평초공동(일방)통학구역",
       "avg_students_per_class": 5.2,
       "avg_students_per_class_by_grade": {
         "1": 0,
@@ -6590,6 +6765,7 @@
       "phone": "052 -277 -1211",
       "fax": "052 -247 -7140",
       "homepage": "https://school.use.go.kr/samho-e",
+      "elem_zone": "삼호초통학구역",
       "avg_students_per_class": 17.0,
       "avg_students_per_class_by_grade": {
         "1": 15.5,
@@ -6632,6 +6808,7 @@
       "phone": "052 -254 -6543",
       "fax": "052 -254 -6556",
       "homepage": "https://school.use.go.kr/sangbuk-e",
+      "elem_zone": "상북초통학구역",
       "avg_students_per_class": 15.9,
       "avg_students_per_class_by_grade": {
         "1": 10.5,
@@ -6674,6 +6851,7 @@
       "phone": "052 -264 -1880",
       "fax": "052 -254 -0205",
       "homepage": "http://school.use.go.kr/soho-e",
+      "elem_zone": "상북초소호분교통학구역",
       "avg_students_per_class": 4.7,
       "avg_students_per_class_by_grade": {
         "1": 0,
@@ -6716,6 +6894,7 @@
       "phone": "052 -285 -5088",
       "fax": "052 -285 -5089",
       "homepage": "https://school.use.go.kr/sangan-e/",
+      "elem_zone": "상안초통학구역",
       "avg_students_per_class": 22.5,
       "avg_students_per_class_by_grade": {
         "1": 13.7,
@@ -6758,6 +6937,7 @@
       "phone": "052 -234 -7011",
       "fax": "052 -235 -9314",
       "homepage": "http://www.sangjin.es.kr",
+      "elem_zone": "상진초통학구역",
       "avg_students_per_class": 20.6,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -6800,6 +6980,7 @@
       "phone": "052 -235 -3964",
       "fax": "052 -236 -5895",
       "homepage": "http://www.seoboo.es.kr",
+      "elem_zone": "서부초통학구역",
       "avg_students_per_class": 23.4,
       "avg_students_per_class_by_grade": {
         "1": 19.3,
@@ -6884,6 +7065,7 @@
       "phone": "052 -710 -3406",
       "fax": "052 -239 -0921",
       "homepage": "http://seosaeng.es.kr",
+      "elem_zone": "서생초통학구역",
       "avg_students_per_class": 17.1,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -6926,6 +7108,7 @@
       "phone": "052 -268 -2048",
       "fax": "052 -275 -1160",
       "homepage": "http://sun-am.es.kr/",
+      "elem_zone": "선암초통학구역",
       "avg_students_per_class": 17.7,
       "avg_students_per_class_by_grade": {
         "1": 9.0,
@@ -6968,6 +7151,7 @@
       "phone": "052 -710 -3301",
       "fax": "052 -238 -1139",
       "homepage": "https://school.use.go.kr/sd-e/M01/",
+      "elem_zone": "성동초통학구역",
       "avg_students_per_class": 8.8,
       "avg_students_per_class_by_grade": {
         "1": 7.0,
@@ -7010,6 +7194,7 @@
       "phone": "070 -4881-3029",
       "fax": "052 -244 -2952",
       "homepage": "http://ul-seongan.es.kr",
+      "elem_zone": "성안초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 16.3,
@@ -7052,6 +7237,7 @@
       "phone": "052 -288 -4625",
       "fax": "052 -289 -5143",
       "homepage": "https://school.use.go.kr/songjung-e/",
+      "elem_zone": "송정초통학구역",
       "avg_students_per_class": 22.0,
       "avg_students_per_class_by_grade": {
         "1": 16.4,
@@ -7094,6 +7280,7 @@
       "phone": "052 -271 -7950",
       "fax": "052 -271 -7949",
       "homepage": "http://ulsan-suam.es.kr",
+      "elem_zone": "수암초통학구역",
       "avg_students_per_class": 21.2,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -7136,6 +7323,7 @@
       "phone": "052 -222 -6274",
       "fax": "052 -222 -6273",
       "homepage": "http://sinbok.es.kr",
+      "elem_zone": "신복초통학구역",
       "avg_students_per_class": 20.4,
       "avg_students_per_class_by_grade": {
         "1": 17.0,
@@ -7178,6 +7366,7 @@
       "phone": "052 -257 -8157",
       "fax": "052 -257 -8328",
       "homepage": "http://school.use.go.kr/usj-e/",
+      "elem_zone": "신정초통학구역",
       "avg_students_per_class": 26.9,
       "avg_students_per_class_by_grade": {
         "1": 20.4,
@@ -7220,6 +7409,7 @@
       "phone": "052 -291 -0953",
       "fax": "052 -291 -0959",
       "homepage": "http://www.us-sincheon.es.kr",
+      "elem_zone": "신천초통학구역",
       "avg_students_per_class": 20.5,
       "avg_students_per_class_by_grade": {
         "1": 19.0,
@@ -7262,6 +7452,7 @@
       "phone": "052 -265 -4988",
       "fax": "052 -269 -2051",
       "homepage": "http://yaum.es.kr/",
+      "elem_zone": "야음초통학구역",
       "avg_students_per_class": 19.5,
       "avg_students_per_class_by_grade": {
         "1": 15.0,
@@ -7304,6 +7495,7 @@
       "phone": "052 -292 -3406",
       "fax": "052 -293 -8616",
       "homepage": "http://www.yaksa.es.kr",
+      "elem_zone": "약사초통학구역",
       "avg_students_per_class": 21.6,
       "avg_students_per_class_by_grade": {
         "1": 16.6,
@@ -7346,6 +7538,7 @@
       "phone": "052 -282 -4530",
       "fax": "052 -295 -7791",
       "homepage": "http://yaksu-us.es.kr",
+      "elem_zone": "약수초통학구역",
       "avg_students_per_class": 21.0,
       "avg_students_per_class_by_grade": {
         "1": 16.8,
@@ -7388,6 +7581,7 @@
       "phone": "052 -244 -2292",
       "fax": "052 -244 -6195",
       "homepage": "http://yangsa-us.es.kr/",
+      "elem_zone": "양사초통학구역",
       "avg_students_per_class": 14.5,
       "avg_students_per_class_by_grade": {
         "1": 9.5,
@@ -7430,6 +7624,7 @@
       "phone": "052 -252 -9411",
       "fax": "052 -252 -9644",
       "homepage": "https://school.use.go.kr/usyj-e/M01",
+      "elem_zone": "양지초통학구역",
       "avg_students_per_class": 18.6,
       "avg_students_per_class_by_grade": {
         "1": 17.0,
@@ -7472,6 +7667,7 @@
       "phone": "052 -262 -0017",
       "fax": "052 -263 -2070",
       "homepage": "https://school.use.go.kr/eonyang-e",
+      "elem_zone": "언양초두서초반곡초공동(일방)통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 16.8,
@@ -7514,6 +7710,7 @@
       "phone": "052 -258 -4102",
       "fax": "052 -275 -7319",
       "homepage": "http://uyc.es.kr",
+      "elem_zone": "여천초통학구역",
       "avg_students_per_class": 19.7,
       "avg_students_per_class_by_grade": {
         "1": 13.0,
@@ -7556,6 +7753,7 @@
       "phone": "052 -288 -4244",
       "fax": "052 -288 -4247",
       "homepage": "http://yeonam.es.kr",
+      "elem_zone": "연암초통학구역",
       "avg_students_per_class": 19.4,
       "avg_students_per_class_by_grade": {
         "1": 13.3,
@@ -7598,6 +7796,7 @@
       "phone": "052 -287 -8153",
       "fax": "052 -288 -1816",
       "homepage": "https://school.use.go.kr/ympo-e/M01",
+      "elem_zone": "염포초통학구역",
       "avg_students_per_class": 20.2,
       "avg_students_per_class_by_grade": {
         "1": 13.7,
@@ -7640,6 +7839,7 @@
       "phone": "052 -255 -7500",
       "fax": "052 -255 -7591",
       "homepage": "http://www.yh2004.es.kr/",
+      "elem_zone": "영화초두서초공동(일방)통학구역",
       "avg_students_per_class": 21.3,
       "avg_students_per_class_by_grade": {
         "1": 16.8,
@@ -7682,6 +7882,7 @@
       "phone": "052 -269 -0915",
       "fax": "052 -267 -0387",
       "homepage": "http://okdong.es.kr/",
+      "elem_zone": "옥동초통학구역",
       "avg_students_per_class": 32.2,
       "avg_students_per_class_by_grade": {
         "1": 25.4,
@@ -7724,6 +7925,7 @@
       "phone": "052 -223 -5161",
       "fax": "052 -223 -5176",
       "homepage": "http://www.us-oksan.es.kr",
+      "elem_zone": "옥산초통학구역",
       "avg_students_per_class": 19.9,
       "avg_students_per_class_by_grade": {
         "1": 18.5,
@@ -7766,6 +7968,7 @@
       "phone": "052 -258 -4060",
       "fax": "052 -266 -9665",
       "homepage": "https://school.use.go.kr/okseo-e",
+      "elem_zone": "옥서초통학구역",
       "avg_students_per_class": 18.2,
       "avg_students_per_class_by_grade": {
         "1": 14.0,
@@ -7808,6 +8011,7 @@
       "phone": "052 -298 -5403",
       "fax": "052 -294 -0331",
       "homepage": "http://www.okseong-us.es.kr/",
+      "elem_zone": "옥성초통학구역",
       "avg_students_per_class": 15.7,
       "avg_students_per_class_by_grade": {
         "1": 12.5,
@@ -7850,6 +8054,7 @@
       "phone": "052 -247 -8744",
       "fax": "052 -247 -8746",
       "homepage": "http://www.okhyen.or.kr",
+      "elem_zone": "옥현초통학구역",
       "avg_students_per_class": 18.6,
       "avg_students_per_class_by_grade": {
         "1": 14.5,
@@ -7892,6 +8097,7 @@
       "phone": "052 -237 -1279",
       "fax": "052 -237 -1290",
       "homepage": "https://school.use.go.kr/onnam-e/M01",
+      "elem_zone": "온남초명산초공동(일방)통학구역",
       "avg_students_per_class": 22.2,
       "avg_students_per_class_by_grade": {
         "1": 17.4,
@@ -7934,6 +8140,7 @@
       "phone": "052 -237 -0198",
       "fax": "052 -237 -0269",
       "homepage": "https://school.use.go.kr/onsan-e",
+      "elem_zone": "온산초삼평초공동(일방)통학구역",
       "avg_students_per_class": 19.6,
       "avg_students_per_class_by_grade": {
         "1": 16.5,
@@ -7976,6 +8183,7 @@
       "phone": "052 -238 -3506",
       "fax": "052 -238 -0848",
       "homepage": "https://school.use.go.kr/onyang-e",
+      "elem_zone": "온양초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 18.7,
@@ -8018,6 +8226,7 @@
       "phone": "052 -290 -1083",
       "fax": "052 -296 -2288",
       "homepage": "http://www.oesol.es.kr/",
+      "elem_zone": "외솔초통학구역",
       "avg_students_per_class": 22.5,
       "avg_students_per_class_by_grade": {
         "1": 17.5,
@@ -8060,6 +8269,7 @@
       "phone": "052 -256 -8681",
       "fax": "052 -256 -8683",
       "homepage": "http://www.yong-yeon.es.kr",
+      "elem_zone": "용연초장생포초공동(일방)통학구역",
       "avg_students_per_class": 22.7,
       "avg_students_per_class_by_grade": {
         "1": 18.7,
@@ -8102,6 +8312,7 @@
       "phone": "052 -243 -9641",
       "fax": "052 -245 -5283",
       "homepage": "http://www.u-jeong.kr",
+      "elem_zone": "우정초통학구역",
       "avg_students_per_class": 21.4,
       "avg_students_per_class_by_grade": {
         "1": 15.4,
@@ -8144,6 +8355,7 @@
       "phone": "052 -273 -0546",
       "fax": "052 -261 -2844",
       "homepage": "http://ulsannambu.es.kr",
+      "elem_zone": "울산남부초통학구역",
       "avg_students_per_class": 20.5,
       "avg_students_per_class_by_grade": {
         "1": 16.0,
@@ -8186,6 +8398,7 @@
       "phone": "052 -289 -3170",
       "fax": "052 -287 -4349",
       "homepage": "http://uyj.es.kr",
+      "elem_zone": "울산양정초통학구역",
       "avg_students_per_class": 20.4,
       "avg_students_per_class_by_grade": {
         "1": 14.5,
@@ -8228,6 +8441,7 @@
       "phone": "052 -268 -2650",
       "fax": "052 -273 -9765",
       "homepage": "http://www.ulsan-jungang.es.kr",
+      "elem_zone": "울산중앙초통학구역",
       "avg_students_per_class": 15.5,
       "avg_students_per_class_by_grade": {
         "1": 11.0,
@@ -8270,6 +8484,7 @@
       "phone": "052 -244 -7679",
       "fax": "052 -244 -9291",
       "homepage": "http://www.ulsan.es.kr",
+      "elem_zone": "울산초통학구역",
       "avg_students_per_class": 22.4,
       "avg_students_per_class_by_grade": {
         "1": 18.4,
@@ -8312,6 +8527,7 @@
       "phone": "052 -289 -9123",
       "fax": "052 -289 -4299",
       "homepage": "https://school.use.go.kr/hyomoon-e/",
+      "elem_zone": "울산효문초통학구역",
       "avg_students_per_class": 20.9,
       "avg_students_per_class_by_grade": {
         "1": 16.8,
@@ -8354,6 +8570,7 @@
       "phone": "052 -711 -2301",
       "fax": "052 -212 -8811",
       "homepage": "https://school.use.go.kr/ujmj-e/",
+      "elem_zone": "울주명지초통학구역",
       "avg_students_per_class": 22.2,
       "avg_students_per_class_by_grade": {
         "1": 18.3,
@@ -8396,6 +8613,7 @@
       "phone": "052 -225 -0006",
       "fax": "052 -225 -0393",
       "homepage": "http://www.ungchon-us.es.kr",
+      "elem_zone": "웅촌초통학구역",
       "avg_students_per_class": 14.7,
       "avg_students_per_class_by_grade": {
         "1": 6.0,
@@ -8438,6 +8656,7 @@
       "phone": "052 -221 -6086",
       "fax": "052 -221 -6090",
       "homepage": "http://uswg.es.kr/",
+      "elem_zone": "월계초통학구역",
       "avg_students_per_class": 18.7,
       "avg_students_per_class_by_grade": {
         "1": 13.5,
@@ -8480,6 +8699,7 @@
       "phone": "052 -227 -4954",
       "fax": "052 -268 -7481",
       "homepage": "http://www.wolbong.es.kr",
+      "elem_zone": "월봉초통학구역",
       "avg_students_per_class": 21.6,
       "avg_students_per_class_by_grade": {
         "1": 17.4,
@@ -8522,6 +8742,7 @@
       "phone": "052 -275 -9422",
       "fax": "052 -268 -4291",
       "homepage": "http://www.wp.es.kr",
+      "elem_zone": "월평초통학구역",
       "avg_students_per_class": 14.1,
       "avg_students_per_class_by_grade": {
         "1": 11.0,
@@ -8564,6 +8785,7 @@
       "phone": "052 -286 -2241",
       "fax": "052 -286 -6632",
       "homepage": "http://eunwol.es.kr",
+      "elem_zone": "은월초통학구역",
       "avg_students_per_class": 22.8,
       "avg_students_per_class_by_grade": {
         "1": 19.7,
@@ -8606,6 +8828,7 @@
       "phone": "052 -281 -7451",
       "fax": "052 -281 -7449",
       "homepage": "https://school.use.go.kr/leehwa-e",
+      "elem_zone": "이화초통학구역",
       "avg_students_per_class": 17.4,
       "avg_students_per_class_by_grade": {
         "1": 13.0,
@@ -8648,6 +8871,7 @@
       "phone": "052 -235 -7850",
       "fax": "052 -252 -5948",
       "homepage": "http://is.es.kr/",
+      "elem_zone": "일산초통학구역",
       "avg_students_per_class": 17.1,
       "avg_students_per_class_by_grade": {
         "1": 19.0,
@@ -8690,6 +8914,7 @@
       "phone": "052 -268 -8882",
       "fax": "052 -265 -5304",
       "homepage": "http://jsp.es.kr",
+      "elem_zone": "대현초장생포초공동(일방)통학구역",
       "avg_students_per_class": 4.0,
       "avg_students_per_class_by_grade": {
         "1": 6.0,
@@ -8732,6 +8957,7 @@
       "phone": "052 -230 -7184",
       "fax": "052 -235 -5242",
       "homepage": "https://school.use.go.kr/jeonha-e",
+      "elem_zone": "전하초통학구역",
       "avg_students_per_class": 21.1,
       "avg_students_per_class_by_grade": {
         "1": 16.5,
@@ -8774,6 +9000,7 @@
       "phone": "052 -252 -1767",
       "fax": "052 -252 -9293",
       "homepage": "http://www.jujeon.es.kr",
+      "elem_zone": "주전초통학구역",
       "avg_students_per_class": 7.0,
       "avg_students_per_class_by_grade": {
         "1": 3.0,
@@ -8816,6 +9043,7 @@
       "phone": "052 -264 -8380",
       "fax": "052 -264 -2907",
       "homepage": "http://joongnam.es.kr",
+      "elem_zone": "중남초통학구역",
       "avg_students_per_class": 18.0,
       "avg_students_per_class_by_grade": {
         "1": 11.5,
@@ -8858,6 +9086,7 @@
       "phone": "052 -973 -5800",
       "fax": "052 -973 -5869",
       "homepage": "http://usjs.es.kr/",
+      "elem_zone": "중산초통학구역",
       "avg_students_per_class": 22.5,
       "avg_students_per_class_by_grade": {
         "1": 19.1,
@@ -8900,6 +9129,7 @@
       "phone": "052 -211 -8585",
       "fax": "052 -211 -8919",
       "homepage": "http://www.chukkwa.es.kr",
+      "elem_zone": "척과초통학구역",
       "avg_students_per_class": 6.0,
       "avg_students_per_class_by_grade": {
         "1": 6.0,
@@ -8942,6 +9172,7 @@
       "phone": "052 -285 -0005",
       "fax": "052 -285 -0850",
       "homepage": "https://school.use.go.kr/cheongok-e",
+      "elem_zone": "천곡초통학구역",
       "avg_students_per_class": 21.5,
       "avg_students_per_class_by_grade": {
         "1": 15.5,
@@ -8984,6 +9215,7 @@
       "phone": "052 -220 -3801",
       "fax": "052 -248 -5705",
       "homepage": "http://www.cheonsang.es.kr",
+      "elem_zone": "천상초통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 15.5,
@@ -9026,6 +9258,7 @@
       "phone": "052 -268 -6112",
       "fax": "052 -266 -0736",
       "homepage": "http://ucr.es.kr/",
+      "elem_zone": "청량초통학구역",
       "avg_students_per_class": 22.3,
       "avg_students_per_class_by_grade": {
         "1": 20.7,
@@ -9068,6 +9301,7 @@
       "phone": "052 -708 -8090",
       "fax": "052 -780 -8098",
       "homepage": "http://school.use.go.kr/cheongsol-e",
+      "elem_zone": "청솔초통학구역",
       "avg_students_per_class": 22.4,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -9110,6 +9344,7 @@
       "phone": "052 -246 -1501",
       "fax": "052 -246 -1503",
       "homepage": "https://school.use.go.kr/taehwa-e/M01/",
+      "elem_zone": "태화초통학구역",
       "avg_students_per_class": 21.9,
       "avg_students_per_class_by_grade": {
         "1": 17.2,
@@ -9152,6 +9387,7 @@
       "phone": "052 -293 -6354",
       "fax": "052 -296 -4780",
       "homepage": "http://www.ps.es.kr/",
+      "elem_zone": "평산초통학구역",
       "avg_students_per_class": 20.0,
       "avg_students_per_class_by_grade": {
         "1": 13.7,
@@ -9194,6 +9430,7 @@
       "phone": "052 -216 -7002",
       "fax": "052 -293 -9630",
       "homepage": "http://www.hakseong.es.kr",
+      "elem_zone": "학성초통학구역",
       "avg_students_per_class": 20.2,
       "avg_students_per_class_by_grade": {
         "1": 14.3,
@@ -9236,6 +9473,7 @@
       "phone": "052 -297 -1221",
       "fax": "052 -281 -2660",
       "homepage": "https://school.use.go.kr/hamwol-e",
+      "elem_zone": "함월초통학구역",
       "avg_students_per_class": 17.0,
       "avg_students_per_class_by_grade": {
         "1": 10.0,
@@ -9278,6 +9516,7 @@
       "phone": "052 -255 -7400",
       "fax": "052 -282 -6754",
       "homepage": "https://school.use.go.kr/hogye-e/M01/",
+      "elem_zone": "호계초통학구역",
       "avg_students_per_class": 14.1,
       "avg_students_per_class_by_grade": {
         "1": 8.0,
@@ -9320,6 +9559,7 @@
       "phone": "052 -710 -4500",
       "fax": "052 -707 -2394",
       "homepage": "https://school.use.go.kr/hoyeon-e",
+      "elem_zone": "호연초통학구역",
       "avg_students_per_class": 21.5,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -9362,6 +9602,7 @@
       "phone": "052 -965 -3014",
       "fax": "052 -283 -1686",
       "homepage": "http://www.us-hwabong.es.kr/index.jsp",
+      "elem_zone": "화봉초통학구역",
       "avg_students_per_class": 23.2,
       "avg_students_per_class_by_grade": {
         "1": 16.4,
@@ -9404,6 +9645,7 @@
       "phone": "052 -201 -9516",
       "fax": "052 -201 -9517",
       "homepage": "http://hwaam.es.kr",
+      "elem_zone": "화암초통학구역",
       "avg_students_per_class": 22.5,
       "avg_students_per_class_by_grade": {
         "1": 17.3,
@@ -9446,6 +9688,7 @@
       "phone": "052 -233 -4401",
       "fax": "052 -251 -7685",
       "homepage": "http://www.us-hwajung.es.kr",
+      "elem_zone": "화정초통학구역",
       "avg_students_per_class": 20.4,
       "avg_students_per_class_by_grade": {
         "1": 18.0,
@@ -9488,6 +9731,7 @@
       "phone": "052 -235 -7491",
       "fax": "052 -251 -5905",
       "homepage": "http://hwajin-us.es.kr",
+      "elem_zone": "화진초통학구역",
       "avg_students_per_class": 22.4,
       "avg_students_per_class_by_grade": {
         "1": 19.0,

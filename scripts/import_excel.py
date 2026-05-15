@@ -20,6 +20,12 @@ STATUS_XLSX = XLSX_DIR / "202603학교학생수학급수현황.xlsx"
 LOC_XLSX = XLSX_DIR / "울산학교주소위도경도.xlsx"
 CONTACT_XLSX = XLSX_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx"
 DATA_PATH = BASE_DIR / "data" / "ulsan_schools.json"
+# 학구 GeoJSON (convert_school_zones.py가 생성). 각 feature.properties 의
+# elementary_schools / middle_schools / high_schools 리스트를 역참조해
+# 학교별 elem_zone / middle_zone / high_zone 필드를 다시 채운다.
+ZONES_ELEM = BASE_DIR / "data" / "ulsan_school_zones.json"
+ZONES_MID = BASE_DIR / "data" / "ulsan_middle_school_zones.json"
+ZONES_HIGH = BASE_DIR / "data" / "ulsan_high_school_zones.json"
 
 
 # ── 1) 현황 엑셀 읽기 (단일 파일 · 5개 시트) ─────────────────────
@@ -259,6 +265,48 @@ def matched_key(name, lookup):
     return None
 
 
+# ── 4b) 학구 필드 채우기 (캐시된 GeoJSON 역참조) ─────────────────
+
+def _zone_lookup(geojson_path, school_list_key):
+    """학구 GeoJSON → {학교명: 학구이름} 매핑."""
+    if not geojson_path.exists():
+        return {}
+    with open(geojson_path, encoding="utf-8") as f:
+        gj = json.load(f)
+    mapping = {}
+    for feat in gj.get("features", []):
+        props = feat.get("properties", {})
+        zone_name = props.get("name")
+        for sn in props.get(school_list_key, []) or []:
+            mapping[sn] = zone_name
+    return mapping
+
+
+def apply_zone_fields(all_schools):
+    """학교 dict 에 elem_zone / middle_zone / high_zone 필드 채움.
+
+    convert_school_zones.py가 미리 생성한 GeoJSON 안에 학교 리스트가
+    캐시되어 있으므로 SHP/공간 라이브러리 없이도 매번 일관되게 복원 가능.
+    """
+    elem_map = _zone_lookup(ZONES_ELEM, "elementary_schools")
+    mid_map = _zone_lookup(ZONES_MID, "middle_schools")
+    high_map = _zone_lookup(ZONES_HIGH, "high_schools")
+
+    e_cnt = m_cnt = h_cnt = 0
+    for s in all_schools:
+        name = s["name"]
+        if s["type"] == "초등학교" and name in elem_map:
+            s["elem_zone"] = elem_map[name]
+            e_cnt += 1
+        if s["type"] in ("초등학교", "중학교") and name in mid_map:
+            s["middle_zone"] = mid_map[name]
+            m_cnt += 1
+        if s["type"] == "고등학교" and name in high_map:
+            s["high_zone"] = high_map[name]
+            h_cnt += 1
+    print(f"학구 매핑: elem_zone {e_cnt}, middle_zone {m_cnt}, high_zone {h_cnt}")
+
+
 # ── 5) 통계 계산 ───────────────────────────────────────────────
 
 def calc_stats(s):
@@ -362,7 +410,10 @@ def main():
     if dup_adjusted > 0:
         print(f"중복 좌표 오프셋: {dup_adjusted}건 (같은 부지 학교 마커 분리)")
 
-    # 4) 통계 계산
+    # 4) 학구 필드 채우기 (elem_zone/middle_zone/high_zone)
+    apply_zone_fields(all_schools)
+
+    # 5) 통계 계산
     for s in all_schools:
         calc_stats(s)
 
