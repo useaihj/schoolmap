@@ -5,7 +5,7 @@ schoolmap 개발 환경 진단 스크립트.
   1. Python 패키지 (openpyxl)
   2. Node.js / npx (deploy.sh가 wrangler를 호출하기 위해 필요)
   3. CLOUDFLARE_API_TOKEN (Windows 사용자 환경변수 또는 현재 셸 환경변수)
-  4. 필수 엑셀 파일 7개 존재 여부
+  4. 필수 엑셀 파일 3개 존재 여부
   5. 엑셀 파일 잠금 (~$) 여부 — 잠긴 파일은 스크립트 쓰기 작업 시 실패 원인
 
 사용 예:
@@ -26,11 +26,7 @@ BASE = Path(__file__).parent.parent
 XLSX_DIR = BASE / "data" / "xlsx"
 
 REQUIRED_EXCELS = [
-    "초등학교현황.xlsx",
-    "중학교현황.xlsx",
-    "고등학교현황.xlsx",
-    "특수학교현황.xlsx",
-    "각종학교현황.xlsx",
+    "202603학교학생수학급수현황.xlsx",
     "울산학교주소위도경도.xlsx",
     "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx",
 ]
@@ -129,7 +125,7 @@ def main():
         ("1. Python 패키지 (openpyxl)", check_openpyxl, True),
         ("2. Node.js / npx", check_node, True),
         ("3. Cloudflare API 토큰", check_cloudflare_token, True),
-        ("4. 필수 엑셀 7개", check_excels, True),
+        ("4. 필수 엑셀 3개", check_excels, True),
         ("5. 엑셀 잠금 파일 (~$)", check_locks, False),  # 경고만, 필수 아님
     ]
 

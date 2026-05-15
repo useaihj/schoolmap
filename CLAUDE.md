@@ -11,7 +11,7 @@
 
 아래 상황에서는 **해당 명령을 실행하기 직전에** `python scripts/check_env.py`를 먼저 돌려서 환경 요건이 갖춰져 있는지 확인할 것.
 
-- `python scripts/import_excel.py` 실행 예정 (openpyxl + 엑셀 파일 7개 + 잠금 없음 필요)
+- `python scripts/import_excel.py` 실행 예정 (openpyxl + 엑셀 파일 3개 + 잠금 없음 필요)
 - `python scripts/add_school.py` / `remove_school.py` 실행 예정 (엑셀 쓰기 작업)
 - `bash deploy.sh` 실행 예정 (Node.js + wrangler + CLOUDFLARE_API_TOKEN 필요)
 - 사용자가 "집에서 작업 시작했어", "다른 PC에서 처음 열었어" 같이 새 환경 신호를 주는 경우
@@ -26,7 +26,7 @@
 | 1. openpyxl 설치 | `pip install openpyxl` |
 | 2. Node.js / npx | https://nodejs.org 에서 Node.js 설치 |
 | 3. Cloudflare API 토큰 | Windows 사용자 환경변수 `CLOUDFLARE_API_TOKEN` 등록. 현재 셸에 토큰이 없고 Windows 환경변수에 있으면 `export CLOUDFLARE_API_TOKEN=$(powershell.exe -Command "[Environment]::GetEnvironmentVariable('CLOUDFLARE_API_TOKEN','User')" \| tr -d '\r\n')` 로 주입 |
-| 4. 필수 엑셀 7개 존재 | 누락 파일을 복구하거나 프로젝트 구조 확인 |
+| 4. 필수 엑셀 3개 존재 | 누락 파일을 복구하거나 프로젝트 구조 확인 |
 | 5. 엑셀 잠금 파일(~$) | **사용자에게 해당 엑셀 파일을 닫아달라고 요청할 것.** 잠긴 상태에서 import_excel.py나 쓰기 스크립트를 돌리면 `PermissionError`로 실패함 |
 
 ## 환경 이슈 처리 원칙
@@ -39,7 +39,7 @@
 
 울산광역시 252개 학교를 지도에 표시하는 인터랙티브 웹앱.
 유형: 초등 124, 중학 64, 고등 57, 특수학교 4, 각종학교 3.
-5개 구/군: 중구, 남구, 동구, 북구, 울주군. 데이터 기준: 2026년 2월.
+5개 구/군: 중구, 남구, 동구, 북구, 울주군. 데이터 기준: 2026년 3월.
 
 ## 기술 스택
 
@@ -61,7 +61,7 @@ data/
   ulsan_school_zones.json — 126개 초등학교 통학구역 GeoJSON (공식 SHP 변환)
   ulsan_dev_projects.json — 개발사업 125건 데이터
   xlsx/                   — 원본 엑셀 입력 파일 (import_excel.py·add/remove_school.py가 읽음)
-    초등/중/고/특수/각종학교현황.xlsx
+    202603학교학생수학급수현황.xlsx  — 5개 시트(초/중/고/특수/각종) 통합 현황
     울산학교주소위도경도.xlsx, 울산학교개교일우편번호...홈페이지.xlsx
     (2025.7.18.)개발사업 현황.xlsx
   shp/                    — 학구 원본 SHP 세트 (각 .cpg/.dbf/.prj/.qmd/.shp/.shx)
@@ -69,7 +69,7 @@ data/
     중학교학교군.*        — 전국 중학교 학구/학교군
     고등학교학교군.*      — 전국 고등학교 학교군
 scripts/
-  import_excel.py         — 엑셀 7개(xlsx) → ulsan_schools.json 통합 변환 (openpyxl)
+  import_excel.py         — 엑셀 3개(xlsx) → ulsan_schools.json 통합 변환 (openpyxl)
   add_school.py           — 새 학교를 위치+연락처 엑셀에 동시 추가 (CLI)
   remove_school.py        — 학교를 양쪽 엑셀에서 제거 (CLI)
   migrate_xls_to_xlsx.py  — 일회성 마이그레이션 (실행 완료, 참고용 보관)
@@ -82,11 +82,7 @@ deploy/                   — Cloudflare Workers 배포용 (index.html + data/ J
 
 | 파일 | 내용 |
 |------|------|
-| data/xlsx/초등학교현황.xlsx | 초등학교 학급/학생 현황 (124개교) |
-| data/xlsx/중학교현황.xlsx | 중학교 학급/학생 현황 (64개교) |
-| data/xlsx/고등학교현황.xlsx | 고등학교 학급/학생 현황 (57개교) |
-| data/xlsx/특수학교현황.xlsx | 특수학교 현황 (4개교). 학년 체계: 유치원/초등/중/고/전공과 5단계 |
-| data/xlsx/각종학교현황.xlsx | 각종학교 현황 (3개교). 학년 체계: 1/2/3학년 |
+| data/xlsx/202603학교학생수학급수현황.xlsx | 학년별 학급수·학생수 통합 파일. 5개 시트(초/중/고/특수/각종)로 구성. 학교명·자치구·설립구분·학년별 학급수·학년별 학생수 포함. 중·고는 주야구분·남녀공학구분 추가, 고는 고교유형(일반고/특목고 등) 추가. 특수학교 학년 체계: 유치원/초등학교/중학교/고등학교/전공과 5단계. ⚠️ 학교 코드·교직원수·특수학급수는 이 파일에 없음 |
 | data/xlsx/울산학교주소위도경도.xlsx | 주소, 위도, 경도 ⚠️ 위도/경도는 공식 원본이 아니라 210건 이상이 보정된 값. 원본은 git 히스토리(커밋 a66f2ea의 .xls) 참고. 보정 경위는 커밋 742c105, d528a44 참고 |
 | data/xlsx/울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx | 개교일, 우편번호, 전화, 팩스, 홈페이지 (252개 + 기타) |
 | data/xlsx/(2025.7.18.)개발사업 현황.xlsx | 개발사업 원본 (수동 변환해 `data/ulsan_dev_projects.json` 생성, 스크립트 미연결) |
@@ -99,11 +95,11 @@ deploy/                   — Cloudflare Workers 배포용 (index.html + data/ J
 ## 데이터 파이프라인
 
 ### 학교 데이터
-엑셀 7개 → `python scripts/import_excel.py` → `data/ulsan_schools.json`
+엑셀 3개 → `python scripts/import_excel.py` → `data/ulsan_schools.json`
 
-학교 유형별 reader: `read_elementary`, `read_middle`, `read_high`, `read_special`, `read_alternative`.
+현황 단일 파일(`202603학교학생수학급수현황.xlsx`)의 5개 시트별 reader: `read_elementary`(초), `read_middle`(중), `read_high`(고), `read_special`(특수), `read_alternative`(각종). 모두 `read_status()`에서 통합 호출.
 
-학교 필드: name, type, founding_type, district, hs_category(고등만), coedu(중·고만), total_classes, classes_by_grade, special_classes, total_students, students_by_grade, address, lat, lng, founded, zipcode, phone, fax, homepage, avg_students_per_class, avg_students_per_class_by_grade
+학교 필드: name, type, founding_type, district, hs_category(고등만), coedu(중·고만), total_classes, classes_by_grade, total_students, students_by_grade, address, lat, lng, founded, zipcode, phone, fax, homepage, avg_students_per_class, avg_students_per_class_by_grade
 
 `type`은 5종: `"초등학교"`, `"중학교"`, `"고등학교"`, `"특수학교"`, `"각종학교"`.
 

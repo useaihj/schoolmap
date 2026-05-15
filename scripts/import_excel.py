@@ -1,12 +1,12 @@
 """
-7개 엑셀 파일을 통합하여 ulsan_schools.json을 생성하는 스크립트.
+3개 엑셀 파일을 통합하여 ulsan_schools.json을 생성하는 스크립트.
 
 소스:
-  1. 초등학교현황.xlsx / 중학교현황.xlsx / 고등학교현황.xlsx → 정규 초중고 학급·학생 데이터
-  2. 특수학교현황.xlsx → 특수학교 4개 (유치원/초등/중/고/전공과 5단계 학년)
-  3. 각종학교현황.xlsx → 각종학교 3개 (1·2·3학년)
-  4. 울산학교주소위도경도.xlsx → 주소, 위도, 경도 (위도/경도는 보정된 값)
-  5. 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx → 개교일, 우편번호, 전화, 팩스, 홈페이지
+  1. 202603학교학생수학급수현황.xlsx (5개 시트: 초/중/고/특수/각종)
+       → 학년별 학급수·학생수
+  2. 울산학교주소위도경도.xlsx → 주소, 위도, 경도 (위도/경도는 보정된 값)
+  3. 울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx
+       → 개교일, 우편번호, 전화, 팩스, 홈페이지
 """
 
 import json
@@ -16,154 +16,169 @@ import openpyxl
 
 BASE_DIR = Path(__file__).parent.parent
 XLSX_DIR = BASE_DIR / "data" / "xlsx"
+STATUS_XLSX = XLSX_DIR / "202603학교학생수학급수현황.xlsx"
+LOC_XLSX = XLSX_DIR / "울산학교주소위도경도.xlsx"
+CONTACT_XLSX = XLSX_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx"
 DATA_PATH = BASE_DIR / "data" / "ulsan_schools.json"
 
 
-# ── 1) 현황 엑셀 읽기 ──────────────────────────────────────────
+# ── 1) 현황 엑셀 읽기 (단일 파일 · 5개 시트) ─────────────────────
 
-def read_elementary(path):
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
+def _to_int(v):
+    return int(v) if v not in (None, "") else 0
+
+
+def _strip(v):
+    return str(v).strip() if v not in (None, "") else ""
+
+
+def read_elementary(ws):
+    """[초] 시트 → 초등학교 리스트.
+
+    컬럼: 교육지원청, 설립구분, 학교, 자치구,
+          학급수_1~6학년, 학생수_1~6학년_계
+    """
     schools = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[4] or "").strip()
+        name = _strip(row[2])
         if not name:
             continue
-        cbg = {str(g): int(row[9 + g - 1] or 0) for g in range(1, 7)}
-        sbg = {str(g): int(row[17 + g - 1] or 0) for g in range(1, 7)}
-        sc = int(row[15] or 0)
+        cbg = {str(g): _to_int(row[4 + g - 1]) for g in range(1, 7)}
+        sbg = {str(g): _to_int(row[10 + g - 1]) for g in range(1, 7)}
         schools.append({
             "name": name,
             "type": "초등학교",
-            "founding_type": (row[3] or "").strip(),
-            "school_code": (row[5] or "").strip(),
-            "district": (row[6] or "").strip(),
-            "staff_count": int(row[7] or 0),
-            "total_classes": int(row[8] or 0),
+            "founding_type": _strip(row[1]),
+            "district": _strip(row[3]),
+            "total_classes": sum(cbg.values()),
             "classes_by_grade": cbg,
-            "special_classes": sc,
-            "total_students": int(row[16] or 0),
+            "total_students": sum(sbg.values()),
             "students_by_grade": sbg,
         })
     return schools
 
 
-def read_middle(path):
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
+def read_middle(ws):
+    """[중] 시트 → 중학교 리스트.
+
+    컬럼: 교육지원청, 설립구분, 학교, 자치구, 주야구분, 남녀공학구분,
+          학급수_1~3학년, 학생수_1~3학년_계
+    """
     schools = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[2] or "").strip()
+        name = _strip(row[2])
         if not name:
             continue
-        cbg = {str(g): int(row[6 + g - 1] or 0) for g in range(1, 4)}
-        sbg = {str(g): int(row[10 + g - 1] or 0) for g in range(1, 4)}
-        sc = int(row[9] or 0)
-        tc = sum(cbg.values()) + sc
-        ts = sum(sbg.values())
+        cbg = {str(g): _to_int(row[6 + g - 1]) for g in range(1, 4)}
+        sbg = {str(g): _to_int(row[9 + g - 1]) for g in range(1, 4)}
         schools.append({
             "name": name,
             "type": "중학교",
-            "founding_type": (row[1] or "").strip(),
-            "school_code": (row[3] or "").strip(),
-            "district": (row[4] or "").strip(),
-            "coedu": (row[5] or "").strip(),
-            "total_classes": tc,
+            "founding_type": _strip(row[1]),
+            "district": _strip(row[3]),
+            "coedu": _strip(row[5]),
+            "total_classes": sum(cbg.values()),
             "classes_by_grade": cbg,
-            "special_classes": sc,
-            "total_students": ts,
+            "total_students": sum(sbg.values()),
             "students_by_grade": sbg,
         })
     return schools
 
 
-def read_high(path):
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
+def read_high(ws):
+    """[고] 시트 → 고등학교 리스트.
+
+    컬럼: 교육지원청, 학교급, 설립구분, 학교, 자치구,
+          고교유형, 주야구분, 남녀공학구분,
+          학급수_계_1~3학년, 학생수_1~3학년_계
+    """
     schools = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[3] or "").strip()
+        name = _strip(row[3])
         if not name:
             continue
-        cbg = {str(g): int(row[7 + g - 1] or 0) for g in range(1, 4)}
-        sbg = {str(g): int(row[11 + g - 1] or 0) for g in range(1, 4)}
-        sc = int(row[10] or 0)
-        tc = sum(cbg.values()) + sc
-        ts = sum(sbg.values())
+        cbg = {str(g): _to_int(row[8 + g - 1]) for g in range(1, 4)}
+        sbg = {str(g): _to_int(row[11 + g - 1]) for g in range(1, 4)}
         schools.append({
             "name": name,
             "type": "고등학교",
-            "founding_type": (row[2] or "").strip(),
-            "district": (row[4] or "").strip(),
-            "hs_category": (row[5] or "").strip(),
-            "coedu": (row[6] or "").strip(),
-            "total_classes": tc,
+            "founding_type": _strip(row[2]),
+            "district": _strip(row[4]),
+            "hs_category": _strip(row[5]),
+            "coedu": _strip(row[7]),
+            "total_classes": sum(cbg.values()),
             "classes_by_grade": cbg,
-            "special_classes": sc,
-            "total_students": ts,
+            "total_students": sum(sbg.values()),
             "students_by_grade": sbg,
         })
     return schools
 
 
-def read_special(path):
-    """특수학교현황.xlsx → 특수학교 리스트.
+def read_special(ws):
+    """[특수] 시트 → 특수학교 리스트.
 
     컬럼: 교육지원청, 설립구분, 조직(학교명), 자치구,
-          학급수_유치원/초등/중/고/전공과, 학생수_유치원/초등/중/고/전공과 (계)
-    학년 라벨을 문자로 저장하므로 UI 렌더링에서 '학년' 접미사를 붙이면 안 된다.
+          학급수_유치원/초등학교/중학교/고등학교/전공과,
+          학생수_유치원/초등학교/중학교/고등학교/전공과_계
+    학년 키는 UI 호환을 위해 "유치원/초등/중/고/전공과" 로 유지.
     """
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
     stages = ["유치원", "초등", "중", "고", "전공과"]
     schools = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[2] or "").strip() if row[2] else ""
+        name = _strip(row[2])
         if not name:
             continue
-        cbg = {stages[i]: int(row[4 + i] or 0) for i in range(5)}
-        sbg = {stages[i]: int(row[9 + i] or 0) for i in range(5)}
+        cbg = {stages[i]: _to_int(row[4 + i]) for i in range(5)}
+        sbg = {stages[i]: _to_int(row[9 + i]) for i in range(5)}
         schools.append({
             "name": name,
             "type": "특수학교",
-            "founding_type": (row[1] or "").strip(),
-            "district": (row[3] or "").strip(),
+            "founding_type": _strip(row[1]),
+            "district": _strip(row[3]),
             "total_classes": sum(cbg.values()),
             "classes_by_grade": cbg,
-            "special_classes": 0,
             "total_students": sum(sbg.values()),
             "students_by_grade": sbg,
         })
     return schools
 
 
-def read_alternative(path):
-    """각종학교현황.xlsx → 각종학교 리스트.
+def read_alternative(ws):
+    """[각종] 시트 → 각종학교 리스트.
 
     컬럼: 교육지원청, 설립구분, 조직(학교명), 자치구,
-          학급수_1/2/3학년, 학생수_1/2/3학년 (계)
+          1학년학급수, 1학년학생수, 2학년학급수, 2학년학생수, 3학년학급수, 3학년학생수
+    (각종학교 시트는 학급수와 학생수가 교차 배치됨)
     """
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
     schools = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[2] or "").strip() if row[2] else ""
+        name = _strip(row[2])
         if not name:
             continue
-        cbg = {str(g): int(row[4 + g - 1] or 0) for g in range(1, 4)}
-        sbg = {str(g): int(row[7 + g - 1] or 0) for g in range(1, 4)}
+        cbg = {str(g): _to_int(row[4 + (g - 1) * 2]) for g in range(1, 4)}
+        sbg = {str(g): _to_int(row[5 + (g - 1) * 2]) for g in range(1, 4)}
         schools.append({
             "name": name,
             "type": "각종학교",
-            "founding_type": (row[1] or "").strip(),
-            "district": (row[3] or "").strip(),
+            "founding_type": _strip(row[1]),
+            "district": _strip(row[3]),
             "total_classes": sum(cbg.values()),
             "classes_by_grade": cbg,
-            "special_classes": 0,
             "total_students": sum(sbg.values()),
             "students_by_grade": sbg,
         })
     return schools
+
+
+def read_status(path):
+    """현황 단일 워크북에서 5개 시트를 읽어 학교 리스트를 합쳐 반환."""
+    wb = openpyxl.load_workbook(path, data_only=True)
+    elem = read_elementary(wb["초"])
+    mid = read_middle(wb["중"])
+    high = read_high(wb["고"])
+    special = read_special(wb["특수"])
+    alt = read_alternative(wb["각종"])
+    return elem, mid, high, special, alt
 
 
 # ── 2) 위치 엑셀 읽기 ──────────────────────────────────────────
@@ -174,14 +189,14 @@ def read_location(path):
     ws = wb.active
     loc = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[0] or "").strip() if row[0] else ""
+        name = _strip(row[0])
         if not name:
             continue
         addr_val = row[7] if len(row) > 7 else ""
         lat_val = row[8] if len(row) > 8 else 0
         lng_val = row[9] if len(row) > 9 else 0
         loc[name] = {
-            "address": str(addr_val).strip() if addr_val else "",
+            "address": _strip(addr_val),
             "lat": float(lat_val) if lat_val not in (None, "") else 0,
             "lng": float(lng_val) if lng_val not in (None, "") else 0,
         }
@@ -205,14 +220,14 @@ def read_contact(path):
     ws = wb.active
     info = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
-        name = (row[1] or "").strip()
+        name = _strip(row[1])
         if not name:
             continue
         info[name] = {
-            "founded": str(row[2] or "").strip(),
-            "zipcode": str(row[3] or "").strip(),
-            "phone": str(row[4] or "").strip(),
-            "fax": str(row[5] or "").strip(),
+            "founded": _strip(row[2]),
+            "zipcode": _strip(row[3]),
+            "phone": _strip(row[4]),
+            "fax": _strip(row[5]),
             "homepage": normalize_homepage(str(row[6] or "")),
         }
     return info
@@ -248,10 +263,8 @@ def matched_key(name, lookup):
 
 def calc_stats(s):
     tc = s["total_classes"]
-    sc = s["special_classes"]
     ts = s["total_students"]
-    regular = tc - sc
-    s["avg_students_per_class"] = round(ts / regular, 1) if regular > 0 else 0
+    s["avg_students_per_class"] = round(ts / tc, 1) if tc > 0 else 0
 
     avg_bg = {}
     for g, cnt in s["classes_by_grade"].items():
@@ -264,11 +277,7 @@ def calc_stats(s):
 
 def main():
     # 1) 현황 엑셀 → 학교 기본 데이터
-    elem = read_elementary(XLSX_DIR / "초등학교현황.xlsx")
-    mid = read_middle(XLSX_DIR / "중학교현황.xlsx")
-    high = read_high(XLSX_DIR / "고등학교현황.xlsx")
-    special = read_special(XLSX_DIR / "특수학교현황.xlsx")
-    alt = read_alternative(XLSX_DIR / "각종학교현황.xlsx")
+    elem, mid, high, special, alt = read_status(STATUS_XLSX)
     all_schools = elem + mid + high + special + alt
     print(
         f"현황 엑셀: {len(all_schools)}개 "
@@ -276,7 +285,7 @@ def main():
     )
 
     # 2) 위치 엑셀 → 주소/위도/경도
-    loc = read_location(XLSX_DIR / "울산학교주소위도경도.xlsx")
+    loc = read_location(LOC_XLSX)
     print(f"위치 데이터: {len(loc)}개")
 
     loc_ok, loc_miss = 0, []
@@ -301,7 +310,7 @@ def main():
         print(f"  [신규 학교 의심] 현황에 있지만 위치 엑셀에 없음: {loc_miss}")
 
     # 3) 연락처 엑셀 → 개교일/우편번호/전화/팩스/홈페이지
-    contact = read_contact(XLSX_DIR / "울산학교개교일우편번호전화번호팩스번호홈페이지.xlsx")
+    contact = read_contact(CONTACT_XLSX)
     print(f"연락처 데이터: {len(contact)}개")
 
     ct_ok, ct_miss = 0, []
@@ -373,7 +382,7 @@ def main():
             "title": "울산광역시 학교 데이터",
             "source": "학교급별현황 + 학교위치표준데이터 + NEIS 학교정보",
             "coordinate_system": "WGS84 (EPSG:4326)",
-            "last_updated": "2026-04-03",
+            "last_updated": "2026-03",
             "total_count": len(all_schools),
             "types": types,
             "districts": districts,
