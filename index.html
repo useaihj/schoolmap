@@ -1041,6 +1041,8 @@
   let overlays = {};    // id → { overlay, marker }
   let activeMarker = null;
   let hoveredMarker = null;
+  // 검색 다중 매칭 시 호버 상태로 강조한 학교 id 목록 (다음 검색·해제 때 원상복구용)
+  let searchHighlightIds = [];
   // 다중 선택 가능: 'all' 또는 개별 유형들. 'all'과 개별은 상호 배타.
   // size 0 = 초기 상태 (아무것도 선택 안 함)
   let currentTypes = new Set(['all']);
@@ -2176,19 +2178,61 @@
     location.reload();
   };
 
+  // 검색 다중 매칭 시 적용한 호버 강조 해제
+  function clearSearchHighlights() {
+    searchHighlightIds.forEach(id => {
+      if (!overlays[id] || activeMarker === id) return;
+      const school = allSchools.find(s => s.id === id);
+      if (!school) return;
+      overlays[id].overlay.getContent().innerHTML = createPillHtml(school.type, 'normal', school);
+      overlays[id].overlay.setZIndex(10);
+      rebindOverlayEvents(id, school);
+    });
+    searchHighlightIds = [];
+  }
+
   // 이벤트: 검색 (Enter 키로만 트리거 — 단순 입력으로는 동작 안 함)
   document.getElementById('searchInput').addEventListener('keydown', function(e) {
     if (e.key !== 'Enter') return;
     e.preventDefault();
     currentSearch = this.value.trim();
     if (zoneFilter) { zoneFilter = null; document.getElementById('zoneFilterBar').classList.remove('active'); closeZoneInfo(); selectedZoneFeatures = []; }
+    // 이전 검색의 다중 매칭 호버 강조 해제
+    clearSearchHighlights();
     // 검색은 학교 목록/마커를 줄이지 않고, 매칭 카드를 강조 + 첫 매칭을 사이드바 최상단으로 스크롤
     applyFilters(true);
-    // 매칭이 있으면 첫 매칭 학교를 마커 클릭과 동일하게 선택
-    // (레벨 3 확대 + 중심 이동 + 정보창 + 통학구역/학교군 강조)
+
     if (currentSearch) {
-      const firstMatch = filteredSchools.find(s => s.name.includes(currentSearch));
-      if (firstMatch) selectSchool(firstMatch.id, true);
+      const matches = filteredSchools.filter(s => s.name.includes(currentSearch));
+      if (matches.length === 1) {
+        // 단일 매칭: 마커 클릭과 동일 (레벨 3 확대 + 정보창 + 통학구역/학교군 강조)
+        selectSchool(matches[0].id, true);
+      } else if (matches.length >= 2) {
+        // 다중 매칭: 팝업·통학구역 없이 모든 매칭 학교를 한 화면에 담음 + 마커 호버 효과
+        closeInfoWindow();
+        // 이전 active 마커 해제
+        if (activeMarker && overlays[activeMarker]) {
+          const prev = allSchools.find(s => s.id === activeMarker);
+          if (prev) {
+            overlays[activeMarker].overlay.getContent().innerHTML = createPillHtml(prev.type, 'normal', prev);
+            overlays[activeMarker].overlay.setZIndex(10);
+            rebindOverlayEvents(activeMarker, prev);
+          }
+          activeMarker = null;
+        }
+        // 매칭 학교 마커 생성(없으면) + 호버 상태 강조 + bounds 누적
+        const bounds = new kakao.maps.LatLngBounds();
+        matches.forEach(s => {
+          if (!overlays[s.id]) createOverlayForSchool(s);
+          overlays[s.id].overlay.getContent().innerHTML = createPillHtml(s.type, 'hovered', s);
+          overlays[s.id].overlay.setZIndex(500);
+          rebindOverlayEvents(s.id, s);
+          bounds.extend(new kakao.maps.LatLng(s.lat, s.lng));
+          searchHighlightIds.push(s.id);
+        });
+        map.setBounds(bounds, 80, 80, 80, 80);
+      }
+      // matches.length === 0 → 아무 동작 안 함
     }
     updateURLState();
   });
